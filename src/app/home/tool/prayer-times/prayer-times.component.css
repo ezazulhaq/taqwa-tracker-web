@@ -1,0 +1,15 @@
+.prayer-all {
+  @apply flex flex-row space-x-4 justify-between items-center outline outline-slate-800 dark:outline-gray-400 outline-1 rounded-md px-6 py-3 hover:outline-slate-600 dark:hover:outline-gray-200 hover:outline-2 hover:-translate-y-0.5 active:translate-y-0.5 transition-all duration-300;
+}
+
+.prayer-next {
+  @apply flex flex-row space-x-4 justify-between items-center outline outline-slate-600 dark:outline-gray-200 outline-2 rounded-md px-6 py-3;
+}
+
+.prayer-previous-day {
+  @apply text-3xl text-center px-2 font-semibold text-slate-600 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200 cursor-pointer hover:scale-110 hover:-translate-x-0.5 active:-translate-x-1 transition-all duration-300;
+}
+
+.prayer-next-day {
+  @apply text-3xl px-2 font-semibold text-slate-600 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200 cursor-pointer hover:scale-110 hover:translate-x-0.5 active:translate-x-1 transition-all duration-300;
+}

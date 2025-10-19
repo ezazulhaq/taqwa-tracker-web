@@ -1,0 +1,83 @@
+<div class="px-4 md:px-6 lg:px-8 pb-8">
+    <app-title [title]="'Feedback'" [routerLink]="'/home'"></app-title>
+
+    @if(submitSuccess()){
+    <app-success [success]="submitSuccess()" (successChange)="this.submitSuccess.set($event)"></app-success>
+    }
+    @else{
+    <form class="mx-4" [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+
+        @if(submitError){
+        <div class="my-4 p-3 bg-red-100 text-red-700 rounded">
+            {{ submitError }}
+        </div>
+        }
+
+        <div class="flex flex-col space-y-4">
+            <section>
+                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="category">
+                    Category
+                </label>
+                <select formControlName="category" id="category"
+                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600 cursor-pointer">
+                    <option value="General">General</option>
+                    <option value="Bug">Bug Report</option>
+                    <option value="Feature">Feature Request</option>
+                    <option value="Question">Question</option>
+                </select>
+            </section>
+
+            <section>
+                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="email">
+                    From
+                </label>
+                <input formControlName="email" id="email"
+                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600"
+                    placeholder="Please enter Email" />
+                @if(feedbackForm.get('email')?.invalid && feedbackForm.get('email')?.touched){
+                <div class="text-red-500 text-sm mt-1">
+                    Enter valid Email Address.
+                </div>
+                }
+            </section>
+
+            <section>
+                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="content">
+                    Your Feedback
+                </label>
+                <textarea formControlName="content" id="content" rows="4"
+                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600"
+                    placeholder="Please share your thoughts..."></textarea>
+                @if(feedbackForm.get('content')?.invalid && feedbackForm.get('content')?.touched){
+                <div class="text-red-500 text-sm mt-1">
+                    Feedback must be at least 10 characters long.
+                </div>
+                }
+            </section>
+
+            <!-- CAPTCHA Section -->
+            @if (showCaptcha) {
+            <div class="mt-6">
+                <app-captcha [showTypeSelector]="true" [challengeType]="'text'" (verified)="onCaptchaVerified($event)">
+                </app-captcha>
+            </div>
+            }
+
+            <button type="submit" [disabled]="feedbackForm.invalid || isSubmitting()"
+                class="w-full mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                {{ isSubmitting() ? 'Submitting...' : 'Submit Feedback' }}
+            </button>
+
+        </div>
+
+        <!-- CAPTCHA Status Info -->
+        @if (showCaptcha && !captchaVerified) {
+        <div class="text-center">
+            <p class="text-xs text-gray-500 mt-2">
+                Please complete the CAPTCHA verification above to continue
+            </p>
+        </div>
+        }
+    </form>
+    }
+</div>

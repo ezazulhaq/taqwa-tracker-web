@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'IndoPak';
+  src: url('/fonts/AlQuran-IndoPak-by-QuranWBW.v.4.2.2.ttf') format('truetype'),
+    url('/fonts/AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff') format('woff'),
+    url('/fonts/AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  /* This helps with font loading behavior */
+}
+
+.app-bg {
+  @apply bg-white dark:bg-slate-800 w-full md:max-w-2xl min-h-screen text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg;
+}
+
+.app-hamburger {
+  @apply hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2;
+}
+
+.app-theme {
+  @apply text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2;
+}
+
+.app-menu-close-btn {
+  @apply bg-gray-300 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 shadow-lg focus:outline-none rounded-full text-sm p-2;
+}
+
+.app-bookmark {
+  @apply inline-flex justify-center items-center space-x-3 rounded-full text-gray-300 dark:text-slate-900 bg-slate-800 dark:bg-white px-2 my-0.5;
+}
+
+.app-title {
+  @apply text-2xl font-semibold my-8 mx-10 md:mx-6;
+}
+
+.app-title-stick {
+  @apply fixed top-0 z-50 w-full md:max-w-2xl py-2 px-4 bg-white dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-600;
+}
+
+
+ol {
+  list-style-type: decimal !important;
+  /* Forces decimal numbering */
+  padding-left: 2rem;
+  /* Adds spacing for the numbers */
+}
+
+ul {
+  list-style-type: disc !important;
+  /* Forces bullet points */
+  padding-left: 2rem;
+  /* Adds spacing for the bullets */
+}

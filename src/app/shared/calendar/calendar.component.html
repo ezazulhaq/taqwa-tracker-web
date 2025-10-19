@@ -1,0 +1,33 @@
+<div class="w-64 bg-gray-100 dark:bg-slate-800 shadow-lg rounded-lg overflow-hidden">
+  <div class="flex justify-between items-center bg-slate-200 dark:bg-gray-600 px-4 py-2">
+    <button (click)="prevMonth()" class="cal-nav">
+      &lt;
+    </button>
+    <span class="font-bold text-lg">{{ currentMonth }} {{ currentYear }}</span>
+    <button (click)="nextMonth()" class="cal-nav">
+      &gt;
+    </button>
+  </div>
+  <div class="grid grid-cols-7 gap-1 p-2">
+    @for (day of daysOfWeek; track $index) {
+    <div class="text-center text-sm font-medium text-slate-700 dark:text-gray-200">
+      {{ day }}
+    </div>
+    }
+
+    @for (day of days; track $index) {
+    @if(day===0){
+    <div class="p-1"></div>
+    }
+    @else {
+    <div (click)="selectDate(day)" class="text-center p-1 hover:text-slate-800 hover:bg-blue-100 cursor-pointer rounded"
+      [ngClass]="{
+        'bg-blue-500 text-gray-100': isSelectedDate(day),
+        'text-gray-400': !isCurrentMonth(day)
+      }">
+      {{ day }}
+    </div>
+    }
+    }
+  </div>
+</div>

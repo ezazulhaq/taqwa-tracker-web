@@ -1,0 +1,17 @@
+import { Component, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-menu-mobile',
+  standalone: true,
+  imports: [RouterLink],
+  templateUrl: './menu.component.html',
+  styleUrl: './menu.component.css'
+})
+export class MenuComponent {
+
+  isMenuVisible = input.required<boolean>();
+
+  constructor() { }
+
+}

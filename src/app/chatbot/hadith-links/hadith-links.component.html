@@ -1,0 +1,13 @@
+<div class="italic font-light mb-2 border-t py-2">References</div>
+<div class="flex flex-col space-y-3 w-full">
+    @for (hadith of hadithLinks(); track $index) {
+    <details class="hadith-links-all">
+        <summary class="text-start font-semibold cursor-pointer">
+            <span>{{ $index + 1 }}. {{ hadith.metadata.book }} - {{ hadith.metadata.chapter }}</span>
+        </summary>
+        <div class="mt-2 pt-2 border-t">
+            <span>{{ hadith.metadata.hadith_number }}. {{ hadith.text }}</span>
+        </div>
+    </details>
+    }
+</div>

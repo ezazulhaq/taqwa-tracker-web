@@ -1,0 +1,7 @@
+.chatbot-assistant {
+    @apply text-start text-slate-800 dark:text-gray-200 bg-gray-300 dark:bg-slate-600 mr-8 p-2 rounded-lg rounded-bl-none;
+}
+
+.chatbot-user {
+    @apply text-end text-gray-300 dark:text-gray-200 bg-slate-600 dark:bg-slate-800 ml-8 p-2 rounded-lg rounded-br-none;
+}

@@ -1,0 +1,20 @@
+<app-title [title]="'Islamic Library'" [routerLink]="'/home'"></app-title>
+
+<div class="flex flex-col space-y-6 w-full md:w-4/5 px-10 mx-auto pb-20">
+    @for (category of getCategories(); track $index) {
+    <details class="library-all">
+        <summary class="text-xl text-start font-semibold cursor-pointer">
+            {{ category | replaceUnderline | titlecase }}
+        </summary>
+        <div class="flex flex-col ml-4 mt-2 border-t">
+            @for (library of getCategoryItems(category); track $index) {
+            <button class="text-md text-start py-2 font-normal hover:cursor-pointer hover:font-semibold"
+                [routerLink]="['../reader']"
+                [queryParams]="{ pdfName: library.pdfName, category: library.category, storageKey: library.storageKey }">
+                <span>{{ library.name | titlecase }}</span>
+            </button>
+            }
+        </div>
+    </details>
+    }
+</div>

@@ -1,0 +1,12 @@
+.module-outline {
+    @apply grid gap-4 p-5 mx-4 outline outline-1 rounded-md outline-slate-800 dark:outline-gray-400;
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+}
+
+.modules {
+    @apply flex flex-col space-y-2 justify-center items-center p-2 mx-auto;
+}
+
+.module-label {
+    @apply absolute z-10 -top-[8px] left-5 px-2 text-xs text-slate-700 dark:text-gray-400 bg-white dark:bg-slate-800
+}

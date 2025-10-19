@@ -1,0 +1,54 @@
+<div class="px-4 md:px-6 lg:px-8">
+    <app-title [title]="'Profile Information'" [subTitle]="'Update your personal details'"
+        [routerLink]="'/home'"></app-title>
+
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="p-6">
+        @if (profileForm.get('username')?.invalid && profileForm.get('username')?.touched) {
+        <div class="text-red-500 text-xs mt-1">
+            <div *ngIf="profileForm.get('username')?.errors?.['required']">
+                Username is required
+            </div>
+            <div *ngIf="profileForm.get('username')?.errors?.['minlength']">
+                Username must be at least 3 characters
+            </div>
+        </div>
+        }
+        @else if (updateSuccess()){
+        <div class="text-green-600 text-sm">
+            Profile updated successfully!
+        </div>
+        }
+        @else if (updateError()) {
+        <div class="text-red-600 text-sm">
+            {{ updateError() }}
+        </div>
+        }
+
+
+        <div class="flex flex-col space-y-4">
+            <div>
+                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="email">
+                    Email
+                </label>
+                <input type="email" name="email" id="email" formControlName="email"
+                    class="text-slate-400 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-100">
+            </div>
+
+            <div>
+                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="username">
+                    Full Name
+                </label>
+                <input type="text" name="username" id="username" formControlName="username"
+                    class="text-slate-700 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+            </div>
+
+            <div>
+                <button type="submit" [disabled]="profileForm.invalid || loading()"
+                    class="w-full mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span>{{ !loading() ? 'Update Profile' : 'Updating...' }}</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

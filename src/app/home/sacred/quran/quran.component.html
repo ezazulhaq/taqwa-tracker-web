@@ -1,0 +1,57 @@
+<app-title [title]="'Qur\'ān'" [subTitle]="'Surah'" [routerLink]="'/home'"></app-title>
+
+<!-- Sorting -->
+<div class="flex flex-col items-end mb-8 px-4 text-xs text-end">
+    @defer(when surahList() && surahList().length > 0){
+    <button (click)="toggleSort()" class="px-1 border-2 border-slate-800/40 dark:border-gray-200/40 rounded-md">
+        <span>{{ isAscending() ? 'Descending ↓' : 'Ascending ↑' }}</span>
+    </button>
+    }
+    @placeholder{
+    <div class="animate-pulse h-3 w-24 bg-gray-600 bark:bg-slate-200 rounded"></div>
+    }
+</div>
+
+@if(bookMarkDetails().length > 0 && isAuthenticated()){
+<div class="flex flex-wrap space-x-2 justify-start items-center text-sm w-full px-10 mb-4">
+    <div class="italic">Bookmarked :</div>
+    @for(bookmark of bookMarkDetails(); track $index){
+    <div class="app-bookmark">
+        <button [routerLink]="['./ayah']"
+            [queryParams]="{ surahNumber: bookmark.surah.surah_id, surahName: bookmark.surah.name_transliteration, surahName_ar: bookmark.surah.name, ayahNo: bookmark.bookmarked.ayah_id }">
+            {{ bookmark.surah.surah_id }}-{{ bookmark.surah.name_transliteration }} : {{ bookmark.bookmarked.ayah_id }}
+        </button>
+        <button (click)="removeBookmark(bookmark.bookmarked)">
+            x
+        </button>
+    </div>
+    }
+</div>
+}
+
+<!-- List All Surahs -->
+<div class="flex flex-col space-y-6 w-full md:w-4/5 px-10 mx-auto pb-20">
+    @defer(when surahList() && surahList().length > 0){
+    @for (surah of surahList(); track $index) {
+    <div class="surah-all" [routerLink]="['./ayah']"
+        [queryParams]="{ surahNumber: surah.surah_id, surahName: surah.name_transliteration, surahName_ar: surah.name }">
+        <div class="flex flex-row space-x-4 justify-center items-center w-full">
+            <div class="font-medium text-sm">
+                <span class="surah-numbers">{{ surah.surah_id }}</span>
+            </div>
+            <div class="grow flex flex-col justify-center items-start">
+                <div class="font-semibold">{{ surah.name_transliteration | titlecase }}</div>
+                <div class="surah-info">{{ surah.name_en | titlecase }}</div>
+            </div>
+            <div class="flex flex-col justify-center items-center">
+                <div class="text-xl font-indopak">{{ surah.name }}</div>
+                <div class="surah-info">{{ surah.total_ayas }} Ayahs</div>
+            </div>
+        </div>
+    </div>
+    }
+    }
+    @placeholder {
+    <app-list-home></app-list-home>
+    }
+</div>

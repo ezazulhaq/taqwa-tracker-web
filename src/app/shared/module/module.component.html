@@ -1,0 +1,11 @@
+<div class="relative module-outline">
+    <div class="module-label">
+        {{ label() }}
+    </div>
+
+    @for (icon of icons(); track icon.title) {
+    <!-- Modules Component -->
+    <app-icon [link]="icon.link" [viewBox]="icon.viewBox" [path]="icon.path" [title]="icon.title">
+    </app-icon>
+    }
+</div>

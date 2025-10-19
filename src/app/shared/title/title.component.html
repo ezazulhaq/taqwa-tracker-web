@@ -1,0 +1,7 @@
+<div class="my-8">
+    <button class="text-2xl font-semibold mb-2" (click)="redirectToHome(routerLink())">{{ title() }}</button>
+
+    @if(subTitle()) {
+    <div class="text-lg font-thin">{{ subTitle() }}</div>
+    }
+</div>

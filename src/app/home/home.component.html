@@ -1,0 +1,17 @@
+<app-title [title]="'Taqwa Tracker'"></app-title>
+
+<!-- App Introduction -->
+<app-welcome></app-welcome>
+
+<div class="flex flex-col space-y-6 mb-6">
+    <!-- Modules Component -->
+    <app-home-module [label]="'Sacred Text'" [icons]="modules"></app-home-module>
+
+    <!-- Tools Component -->
+    <app-home-module [label]="'Ibadah Tools'" [icons]="tools"></app-home-module>
+</div>
+
+<!-- Islamic Chatbot -->
+@if (isAuthenticated()) {
+<app-chatbot class="fixed bottom-0 right-0 m-5 z-20"></app-chatbot>
+}

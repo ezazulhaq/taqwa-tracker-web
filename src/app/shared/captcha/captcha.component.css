@@ -1,0 +1,112 @@
+.captcha-container {
+    transition: all 0.3s ease;
+}
+
+.captcha-container:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.captcha-image-container {
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.captcha-image-container:hover {
+    transform: scale(1.02);
+}
+
+.captcha-image-container img {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+
+/* Animation for verification states */
+.verification-success {
+    animation: successPulse 0.6s ease-in-out;
+}
+
+.verification-error {
+    animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes errorShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Loading state */
+.captcha-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Refresh button animation */
+.refresh-button {
+    transition: transform 0.2s ease;
+}
+
+.refresh-button:hover {
+    transform: rotate(90deg);
+}
+
+.refresh-button:active {
+    transform: rotate(180deg);
+}
+
+/* Input focus states */
+.captcha-input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #3b82f6;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+    .captcha-container {
+        padding: 12px;
+    }
+
+    .captcha-image-container {
+        width: 100%;
+    }
+
+    .captcha-image-container img {
+        width: 100%;
+        height: auto;
+        max-height: 60px;
+    }
+}

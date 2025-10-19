@@ -1,0 +1,100 @@
+<div class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Header -->
+    <app-title [title]="'Tasbih Counter'" [subTitle]="'تسبيح'" [routerLink]="'/home'"></app-title>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 flex flex-col">
+        <!-- Tasbih Selector -->
+        <div class="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+            <label for="tasbihSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Choose Dhikr:
+            </label>
+            <div class="relative">
+                <select id="tasbihSelect" [(ngModel)]="selectedTasbihId" (change)="onTasbihSelect(selectedTasbihId())"
+                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-700 dark:text-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option *ngFor="let tasbih of tasbihs()" [value]="tasbih.id">
+                        {{ tasbih.name }}
+                    </option>
+                </select>
+                <div
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Tasbih Display -->
+        @if (selectedTasbih()) {
+        <div class="flex-1 flex flex-col items-center justify-center mb-4">
+            <!-- Arabic Text -->
+            <div class="text-center mb-6">
+                <p class="text-4xl font-indopak mb-2">{{ selectedTasbih()!.arabicText }}</p>
+                <p class="text-lg text-gray-600 dark:text-gray-400">{{ selectedTasbih()!.transliteration }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">{{ selectedTasbih()!.translation }}</p>
+            </div>
+
+            <!-- Progress Circle -->
+            <div class="relative w-60 h-60 mb-6">
+                <!-- Background Circle -->
+                <svg class="w-full h-full" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor"
+                        class="text-gray-200 dark:text-gray-700" stroke-width="10" />
+                    <!-- Progress Circle -->
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor"
+                        class="text-emerald-500 dark:text-emerald-400" stroke-width="10" stroke-dasharray="282.74"
+                        [attr.stroke-dashoffset]="282.74 - (282.74 * getCompletionPercentage() / 100)"
+                        transform="rotate(-90 50 50)" />
+                </svg>
+                <!-- Count Display -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-5xl font-bold text-gray-800 dark:text-white">
+                        {{ selectedTasbih()!.count }}
+                    </span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                        of {{ selectedTasbih()!.targetCount }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Completion Message -->
+            @if (isCountingComplete()) {
+            <div class="text-center mb-6 animate-pulse">
+                <p class="text-emerald-600 dark:text-emerald-400 text-xl font-semibold">
+                    Dhikr Complete! Alhamdulillah
+                </p>
+            </div>
+            }
+
+            <!-- Counter Button -->
+            <button (click)="increment()" class="tap-button" [disabled]="isCountingComplete()"
+                [class.opacity-50]="isCountingComplete()">
+                Tap
+            </button>
+
+            <!-- Control Buttons -->
+            <div class="flex justify-center gap-4 mt-2">
+                <button (click)="resetCounter()"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    Reset
+                </button>
+                <button (click)="toggleVibration()"
+                    class="px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    [class.bg-emerald-100]="isVibrationEnabled()" [class.text-emerald-700]="isVibrationEnabled()"
+                    [class.bg-gray-200]="!isVibrationEnabled()" [class.dark:bg-gray-700]="!isVibrationEnabled()"
+                    [class.text-gray-700]="!isVibrationEnabled()" [class.dark:text-white]="!isVibrationEnabled()">
+                    Vibration: {{ isVibrationEnabled() ? 'On' : 'Off' }}
+                </button>
+            </div>
+        </div>
+        }
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-800 p-4 shadow-inner border-t border-gray-200 dark:border-gray-700">
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+            Remember Allah with every breath
+        </p>
+    </footer>
+</div>

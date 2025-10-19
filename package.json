@@ -1,0 +1,57 @@
+{
+  "name": "taqwa-tracker",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.3.2",
+    "@angular/common": "^20.3.2",
+    "@angular/compiler": "^20.3.2",
+    "@angular/core": "^20.3.2",
+    "@angular/forms": "^20.3.2",
+    "@angular/platform-browser": "^20.3.2",
+    "@angular/platform-browser-dynamic": "^20.3.2",
+    "@angular/router": "^20.3.2",
+    "@angular/service-worker": "^20.3.2",
+    "@ngx-env/core": "^16.1.3",
+    "@supabase/supabase-js": "^2.58.0",
+    "adhan": "^4.4.3",
+    "marked": "^16.3.0",
+    "ng2-pdf-viewer": "^10.4.0",
+    "ngx-markdown": "^20.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.3",
+    "@angular/cli": "^20.3.3",
+    "@angular/compiler-cli": "^20.3.2",
+    "@ngx-env/builder": "^20.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@types/jasmine": "~5.1.9",
+    "@types/showdown": "^2.0.6",
+    "autoprefixer": "^10.4.20",
+    "jasmine-core": "~5.11.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.5.4"
+  },
+  "overrides": {
+    "@ngx-env/core": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core"
+    }
+  }
+}

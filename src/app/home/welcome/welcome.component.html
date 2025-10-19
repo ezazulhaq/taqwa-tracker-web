@@ -1,0 +1,73 @@
+@if(showIntro()) {
+<div class="fixed z-20 top-0 left-0 w-full h-full bg-gray-500/60 flex items-center justify-center">
+    <div
+        class="relative space-y-4 max-w-md bg-gradient-to-r from-green-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 p-6 rounded-lg shadow-sm dark:shadow-slate-600 mb-6 mx-3">
+        <button (click)="closeIntro()"
+            class="absolute top-3 right-3 rounded-full bg-slate-600 hover:bg-slate-800 dark:bg-gray-400 hover:dark:bg-gray-200 p-1 text-gray-200 dark:text-slate-800">
+            <svg class="size-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+                <path
+                    d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+            </svg>
+        </button>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3 pr-8">
+            Welcome to Your Spiritual Journey
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-4">
+            Taqwa Tracker is your comprehensive Islamic companion app designed to strengthen your faith and enhance your
+            daily worship.
+        </p>
+
+        <div class="flex flex-col justify-center items-start space-y-4 text-sm py-3">
+            <div class="flex items-start space-x-2">
+                <span class="text-green-600 dark:text-green-400">
+                    📖
+                </span>
+                <span class="text-gray-700 dark:text-gray-300">
+                    Access sacred Islamic texts including Quran and Hadith
+                </span>
+            </div>
+            <div class="flex items-start space-x-2">
+                <span class="text-blue-600 dark:text-blue-400">
+                    🕌
+                </span>
+                <span class="text-gray-700 dark:text-gray-300">
+                    Essential tools for Prayer times, Kaaba direction, and more
+                </span>
+            </div>
+            @if(isAuthenticated()) {
+            <div class="flex items-start space-x-2">
+                <span class="text-purple-600 dark:text-purple-400">
+                    🤖
+                </span>
+                <span class="text-gray-700 dark:text-gray-300">
+                    AI-powered Islamic guidance and answers to your questions
+                </span>
+            </div>
+            }
+            <div class="flex items-start space-x-2">
+                <span class="text-orange-600 dark:text-orange-400">
+                    📱
+                </span>
+                <span class="text-gray-700 dark:text-gray-300">
+                    Track your spiritual progress and build consistent habits
+                </span>
+            </div>
+            @if(!isAuthenticated()) {
+            <div class="flex items-start space-x-2">
+                <span class="text-orange-600 dark:text-orange-400">
+                    ✨
+                </span>
+                <span class="text-gray-700 dark:text-gray-300">
+                    Login to get full access to all features like AI-powered Islamic guidance and more
+                </span>
+            </div>
+            }
+        </div>
+
+        <button type="button" (click)="hideWelcome()"
+            class="rounded text-sm p-2 text-slate-700 dark:text-gray-300 hover:text-gray-300 dark:hover:text-slate-700 ring-4 ring-slate-700 dark:ring-gray-300 hover:bg-slate-700 dark:hover:bg-gray-300 transition-all duration-300">
+            Don't Show
+        </button>
+    </div>
+</div>
+}

@@ -1,0 +1,29 @@
+<div class="relative flex flex-col space-y-4 justify-evenly items-center bg-gray-300 dark:bg-slate-700 rounded-lg p-4">
+    <button (click)="closeRakatsPopUp()"
+        class="absolute -top-2 -right-2 rounded-full bg-slate-800 dark:bg-gray-200 p-1 text-gray-200 dark:text-slate-800">
+        <svg class="size-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+            <path
+                d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+        </svg>
+    </button>
+
+    <div class="w-full text-lg font-semibold pb-4 border-slate-800/10 dark:border-gray-50/10 border-b-2">Rak'a</div>
+
+    @if(getRakat()?.before_fard?.sunnah != 0) {
+    <app-rakat-detail class="w-full mx-auto" [label]="'Before Fard (Sunnah)'" [value]="getRakat()?.before_fard?.sunnah" />
+    }
+
+    <app-rakat-detail class="w-full mx-auto" [label]="'Fard'" [value]="getRakat()?.fard" />
+
+    @if(getRakat()?.after_fard?.sunnah != 0) {
+    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Sunnah)'" [value]="getRakat()?.after_fard?.sunnah" />
+    }
+
+    @if(getRakat()?.after_fard?.nafl != 0) {
+    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Nafl)'" [value]="getRakat()?.after_fard?.nafl" />
+    }
+
+    @if(getRakat()?.after_fard?.wajib != 0) {
+    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Wajib)'" [value]="getRakat()?.after_fard?.wajib" />
+    }
+</div>

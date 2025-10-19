@@ -1,0 +1,38 @@
+<app-title [title]="'Hadith'" [subTitle]="hadithSource()" [routerLink]="'/home'"></app-title>
+
+@if(bookMarkDetails().length > 0 && isAuthenticated()){
+<div class="flex flex-wrap space-x-2 justify-start items-center text-sm w-full px-10 mb-4">
+    <div class="italic">Bookmarked :</div>
+    @for(bookmark of bookMarkDetails(); track $index){
+    <div class="app-bookmark">
+        <button class="font-indopak" [routerLink]="['./chapter']"
+            [queryParams]="{ id: bookmark.chapter_id, hadithNo: bookmark.hadith_no }">
+            {{ bookmark.chapter_name }} : {{ bookmark.hadith_no }}
+        </button>
+        <button (click)="removeBookmark(bookmark)">
+            x
+        </button>
+    </div>
+    }
+</div>
+}
+
+<div class="flex flex-col space-y-6 w-full md:w-4/5 px-10 mx-auto pb-20">
+    @defer(when chapterList() && chapterList().length > 0){
+    @for (chapter of chapterList(); track $index) {
+    <div class="chapter-all" [routerLink]="['./chapter']" [queryParams]="{ id: chapter.id }">
+        <div class="flex flex-row space-x-4 justify-center items-center w-full">
+            <div class="font-medium text-sm">
+                <span class="chapter-numbers">{{ chapter.chapter_no }}</span>
+            </div>
+            <div class="grow flex flex-col justify-center items-end">
+                <div class="font-semibold font-indopak text-end">{{ chapter.chapter_name }}</div>
+            </div>
+        </div>
+    </div>
+    }
+    }
+    @placeholder {
+    <app-list-home></app-list-home>
+    }
+</div>
