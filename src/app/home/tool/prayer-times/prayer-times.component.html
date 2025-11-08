@@ -43,6 +43,20 @@
         </button>
     </div>
 
+    <!-- Hanafi Switch -->
+    <div class="w-full flex flex-row justify-end items-center space-x-3 px-4 rounded-lg">
+        <label for="hanafi-toggle" class="text-sm font-medium text-slate-700 dark:text-gray-300">
+            Hanafi
+        </label>
+        <button type="button" id="hanafi-toggle" role="switch" [attr.aria-checked]="isHanafi()" (click)="toggleHanafi()"
+            [ngClass]="isHanafi() ? 'bg-slate-600 dark:bg-gray-400' : 'bg-gray-300 dark:bg-gray-600'"
+            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 dark:focus:ring-gray-400">
+            <span [ngClass]="isHanafi() ? 'translate-x-5' : 'translate-x-0'"
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
+            </span>
+        </button>
+    </div>
+
     @defer (when getTimes()) {
     <div class="flex flex-col space-y-8 w-full md:w-4/5 px-10">
         @for (prayer of getTimes() | async; track prayer.value) {
