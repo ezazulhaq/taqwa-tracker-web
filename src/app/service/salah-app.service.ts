@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Coordinates, PrayerTimes, CalculationMethod, Qibla } from 'adhan';
+import { Coordinates, PrayerTimes, CalculationMethod, Qibla, Madhab } from 'adhan';
 import { NamazTimes } from '../model/namaz-time.model';
 import { HttpClient } from '@angular/common/http';
 import { OpenStreetMapResponse } from '../model/open-stream-map.model';
@@ -56,12 +56,18 @@ export class SalahAppService {
     }
   }
 
-  getPrayerTimes(date: Date): Observable<NamazTimes | null> {
+  getPrayerTimes(date: Date, isHanafi: boolean = false): Observable<NamazTimes | null> {
     return this.location$.pipe(
       map(location => {
         if (!location) return null;
         const coordinates = new Coordinates(location.latitude, location.longitude);
         const params = CalculationMethod.MuslimWorldLeague();
+
+        // Set Madhab for Asr calculation
+        // Hanafi: Later Asr time (shadow length = 2x object height + Zuhr shadow)
+        // Shafi: Earlier Asr time (shadow length = 1x object height + Zuhr shadow)
+        params.madhab = isHanafi ? Madhab.Hanafi : Madhab.Shafi;
+        
         const prayerTimes = new PrayerTimes(coordinates, date, params);
         return {
           fajr: prayerTimes.fajr,

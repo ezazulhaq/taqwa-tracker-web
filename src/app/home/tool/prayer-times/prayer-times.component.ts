@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, signal } from '@angular/core';
+import { Component, linkedSignal, OnInit, signal } from '@angular/core';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { OpenStreetMapResponse } from '../../../model/open-stream-map.model';
@@ -29,8 +29,10 @@ export class PrayerTimesComponent implements OnInit {
 
   prayerName = signal<string>("");
 
-  getTimes = computed(() => {
-    return this.prayerService.getPrayerTimes(this.selectedDate())
+  isHanafi = signal<boolean>(false);
+
+  getTimes = linkedSignal(() => {
+    return this.prayerService.getPrayerTimes(this.selectedDate(), this.isHanafi())
       .pipe(
         map((namazTimes: NamazTimes | null) => {
           if (!namazTimes) return [];
@@ -62,7 +64,13 @@ export class PrayerTimesComponent implements OnInit {
 
   constructor(
     private prayerService: SalahAppService
-  ) { }
+  ) { 
+    // Load saved preference from localStorage
+    const savedPreference = localStorage.getItem('hanafiPreference');
+    if (savedPreference !== null) {
+      this.isHanafi.set(savedPreference === 'true');
+    }
+  }
 
   ngOnInit(): void {
     // check if location access allowed
@@ -101,6 +109,13 @@ export class PrayerTimesComponent implements OnInit {
   onDateSelected(newDate: Date) {
     this.isCalendarVisible.set(false);
     this.selectedDate.set(newDate);
+  }
+
+  toggleHanafi() {
+    const newValue = !this.isHanafi();
+    this.isHanafi.set(newValue);
+    // Save preference to localStorage
+    localStorage.setItem('hanafiPreference', newValue.toString());
   }
 }
 
