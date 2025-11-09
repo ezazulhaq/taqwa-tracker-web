@@ -1,0 +1,359 @@
+<app-title [title]="'Calendar'"></app-title>
+
+<div class="px-4 pb-6">
+    <!-- Calendar Header with Navigation -->
+    <div
+        class="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 rounded-t-xl p-6 text-white shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <button (click)="previousMonth()"
+                class="hover:bg-white/20 active:bg-white/30 rounded-full p-2.5 transition-all duration-200 hover:scale-110">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <div class="flex gap-2">
+                <button (click)="goToToday()"
+                    class="text-sm font-medium hover:bg-white/20 active:bg-white/30 px-4 py-2 rounded-lg transition-all duration-200">
+                    Today
+                </button>
+                <button (click)="toggleUpcomingEvents()"
+                    class="text-sm font-medium hover:bg-white/20 active:bg-white/30 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Events
+                </button>
+            </div>
+
+            <button (click)="nextMonth()"
+                class="hover:bg-white/20 active:bg-white/30 rounded-full p-2.5 transition-all duration-200 hover:scale-110">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="text-center space-y-2">
+            <h2 class="text-2xl font-bold tracking-tight">{{ currentMonthName() }}</h2>
+            <p class="text-base opacity-95 font-medium">{{ currentHijriMonth() }}</p>
+        </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div
+        class="bg-white dark:bg-slate-700 rounded-b-xl shadow-lg overflow-hidden border-x border-b border-gray-200 dark:border-slate-600">
+        <!-- Week Days Header -->
+        <div
+            class="grid grid-cols-7 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-600 dark:to-slate-650 border-b-2 border-gray-200 dark:border-slate-500">
+            @for (day of weekDays; track day) {
+            <div class="text-center py-3 text-xs font-bold tracking-wide uppercase"
+                [class]="day === 'Fri' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-700 dark:text-gray-200'">
+                {{ day }}
+            </div>
+            }
+        </div>
+
+        <!-- Calendar Days Grid -->
+        <div class="grid grid-cols-7 divide-x divide-y divide-gray-200 dark:divide-slate-600">
+            @for (day of calendarDays(); track day.gregorianDate.format('YYYY-MM-DD')) {
+            <button (click)="selectDay(day)"
+                class="relative min-h-[90px] p-2 hover:bg-gradient-to-br hover:from-gray-50 hover:to-gray-100 dark:hover:from-slate-600 dark:hover:to-slate-650 transition-all duration-200 text-left group"
+                [class.bg-gray-50/50]="!day.isCurrentMonth" [class.dark:bg-slate-800/50]="!day.isCurrentMonth"
+                [class.bg-emerald-50]="day.isToday && !day.hasEvent"
+                [class.dark:bg-emerald-900/30]="day.isToday && !day.hasEvent" [class.opacity-60]="!day.isCurrentMonth"
+                [class.bg-amber-50/30]="day.isFriday && day.isCurrentMonth && !day.isToday"
+                [class.dark:bg-amber-900/10]="day.isFriday && day.isCurrentMonth && !day.isToday">
+
+                <div class="flex flex-col h-full">
+                    <!-- Gregorian Date -->
+                    <div class="flex items-start justify-between mb-1">
+                        <span class="text-base font-bold leading-none" [class.text-gray-400]="!day.isCurrentMonth"
+                            [class.dark:text-gray-500]="!day.isCurrentMonth" [class.text-emerald-700]="day.isToday"
+                            [class.dark:text-emerald-400]="day.isToday"
+                            [class.text-emerald-600]="day.isFriday && !day.isToday && day.isCurrentMonth"
+                            [class.dark:text-emerald-500]="day.isFriday && !day.isToday && day.isCurrentMonth">
+                            {{ day.gregorianDay }}
+                        </span>
+
+                        <!-- Friday indicator -->
+                        @if (day.isFriday && day.isCurrentMonth) {
+                        <span
+                            class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded">
+                            Jumu'ah
+                        </span>
+                        }
+                    </div>
+
+                    <!-- Hijri Date -->
+                    <div class="text-[11px] leading-tight mb-1" [class.text-gray-400]="!day.isCurrentMonth"
+                        [class.dark:text-gray-500]="!day.isCurrentMonth" [class.text-gray-600]="day.isCurrentMonth"
+                        [class.dark:text-gray-300]="day.isCurrentMonth">
+                        {{ day.hijriDay }} {{ day.hijriMonth }}
+                    </div>
+
+                    <!-- Event Name (if present) -->
+                    @if (day.hasEvent && day.isCurrentMonth) {
+                    <div class="mt-auto">
+                        <div class="text-[10px] font-semibold leading-tight p-1.5 rounded"
+                            [class]="getEventBgColor(day.eventType) + ' ' + getEventTextColor(day.eventType)">
+                            {{ day.eventName }}
+                        </div>
+                    </div>
+                    }
+
+                    <!-- Event Dot Indicator -->
+                    @if (day.hasEvent && day.isCurrentMonth) {
+                    <div class="absolute bottom-2 right-2">
+                        <div class="w-2 h-2 rounded-full animate-pulse" [class]="getEventColor(day.eventType)"></div>
+                    </div>
+                    }
+                </div>
+
+                <!-- Today Border -->
+                @if (day.isToday) {
+                <div
+                    class="absolute inset-0 border-2 border-emerald-500 dark:border-emerald-400 rounded pointer-events-none">
+                </div>
+                }
+
+                <!-- Hover effect -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-teal-500/0 group-hover:from-emerald-500/5 group-hover:to-teal-500/5 transition-all duration-200 pointer-events-none rounded">
+                </div>
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="mt-6 bg-white dark:bg-slate-700 rounded-lg shadow p-4 border border-gray-200 dark:border-slate-600">
+        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Legend</h3>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-5 h-5 bg-emerald-50 dark:bg-emerald-900/30 border-2 border-emerald-500 dark:border-emerald-400 rounded flex-shrink-0">
+                </div>
+                <span class="text-gray-600 dark:text-gray-300">Today</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-5 h-5 bg-amber-50/30 dark:bg-amber-900/10 border border-emerald-300 dark:border-emerald-700 rounded flex-shrink-0">
+                </div>
+                <span class="text-gray-600 dark:text-gray-300">Jumu'ah</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-amber-500 rounded-full flex-shrink-0"></div>
+                <span class="text-gray-600 dark:text-gray-300">Major Event</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-emerald-500 rounded-full flex-shrink-0"></div>
+                <span class="text-gray-600 dark:text-gray-300">Important</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-3 h-3 bg-blue-500 rounded-full flex-shrink-0"></div>
+                <span class="text-gray-600 dark:text-gray-300">Special Day</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Events Modal -->
+@if (showUpcomingEvents()) {
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+    (click)="toggleUpcomingEvents()">
+    <div class="bg-white dark:bg-slate-700 rounded-xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden"
+        (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div
+            class="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-700 p-5 text-white">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-xl font-bold">Upcoming Events</h3>
+                </div>
+                <button (click)="toggleUpcomingEvents()" class="hover:bg-white/20 rounded-full p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Events List -->
+        <div class="overflow-y-auto max-h-[calc(80vh-120px)] p-5">
+            @if (upcomingEvents().length > 0) {
+            <div class="space-y-3">
+                @for (item of upcomingEvents(); track item.date.format('YYYY-MM-DD')) {
+                <div class="border-l-4 rounded-lg p-4 transition-all duration-200 hover:shadow-md"
+                    [class]="getEventBgColor(item.event.type) + ' ' + getEventBorderColor(item.event.type)">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2 h-2 rounded-full" [class]="getEventColor(item.event.type)"></div>
+                                <h4 class="font-bold" [class]="getEventTextColor(item.event.type)">
+                                    {{ item.event.name }}
+                                </h4>
+                            </div>
+                            <p class="text-xs text-gray-600 dark:text-gray-300 mb-2">
+                                {{ item.event.description }}
+                            </p>
+                            <div class="flex items-center gap-4 text-xs">
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ item.date.format('ddd, MMM D, YYYY') }}
+                                </span>
+                                <span class="text-gray-500 dark:text-gray-400">
+                                    {{ item.date.format('iD iMMMM iYYYY') }} H
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap"
+                                [class]="getEventBgColor(item.event.type) + ' ' + getEventTextColor(item.event.type)">
+                                {{ getDaysUntilText(item.daysUntil) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            } @else {
+            <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p class="text-sm">No upcoming events in the next 90 days</p>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+}
+
+<!-- Day Details Modal -->
+@if (selectedDay()) {
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
+    (click)="closeModal()">
+    <div class="bg-white dark:bg-slate-700 rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
+        (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div
+            class="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-700 p-5 text-white">
+            <div class="flex justify-between items-start mb-3">
+                <h3 class="text-xl font-bold">
+                    {{ selectedDay()!.gregorianDate.format('dddd') }}
+                </h3>
+                <button (click)="closeModal()" class="hover:bg-white/20 rounded-full p-2 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-base opacity-95">
+                {{ selectedDay()!.gregorianDate.format('MMMM D, YYYY') }}
+            </p>
+        </div>
+
+        <!-- Content -->
+        <div class="p-5 space-y-4">
+            <!-- Hijri Date Card -->
+            <div
+                class="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
+                <div class="flex items-center gap-3 mb-2">
+                    <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 011 1v3a1 1 0 11-2 0V8a1 1 0 011-1zm6 0a1 1 0 011 1v3a1 1 0 11-2 0V8a1 1 0 011-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <p class="text-sm text-emerald-700 dark:text-emerald-400 font-semibold">
+                        Islamic Date (Hijri)
+                    </p>
+                </div>
+                <p class="text-lg font-bold text-emerald-900 dark:text-emerald-300">
+                    {{ selectedDay()!.hijriDay }} {{ selectedDay()!.hijriMonth }} {{ selectedDay()!.hijriYear }} H
+                </p>
+            </div>
+
+            <!-- Friday Badge -->
+            @if (selectedDay()!.isFriday) {
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg p-4">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="font-bold text-lg">Jumu'ah (Friday)</p>
+                        <p class="text-sm opacity-90">The best day of the week</p>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <!-- Event Details -->
+            @if (selectedDay()!.hasEvent) {
+            @let event = getEventDetails(selectedDay()!);
+            @if (event) {
+            <div class="rounded-lg p-4 border-2"
+                [class]="getEventBgColor(event.type) + ' ' + getEventBorderColor(event.type)">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 mt-1">
+                        <svg class="w-7 h-7" [class]="getEventTextColor(event.type)" fill="currentColor"
+                            viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-lg mb-1" [class]="getEventTextColor(event.type)">
+                            {{ event.name }}
+                        </h4>
+                        <p class="text-sm mb-2" [class]="getEventTextColor(event.type) + ' opacity-90'">
+                            {{ event.description }}
+                        </p>
+                        <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full"
+                            [class]="getEventBgColor(event.type) + ' ' + getEventTextColor(event.type)">
+                            {{ event.type === 'major' ? '⭐ Major Event' : event.type === 'important' ? '✨ Important' :
+                            '🌟 Special Day' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+
+            <!-- Quick Actions -->
+            <div class="bg-gray-50 dark:bg-slate-600 rounded-lg p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-300 flex items-start gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>
+                        <strong class="text-gray-900 dark:text-gray-100">Tip:</strong> Check Prayer Times tool to view
+                        salah schedules for this day.
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-5 bg-gray-50 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-600">
+            <button (click)="closeModal()"
+                class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+}

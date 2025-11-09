@@ -1,112 +1,98 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { FeedbackComponent } from './feedback/feedback.component';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
 import { authGuard } from './guard/auth.gaurd';
-import { ProfileComponent } from './profile/profile.component';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
-import { ChapterComponent } from './home/sacred/hadith/chapter/chapter.component';
-import { HadithComponent } from './home/sacred/hadith/hadith.component';
-import { LibraryComponent } from './home/sacred/library/library.component';
-import { ReaderComponent } from './home/sacred/library/reader/reader.component';
-import { AyahComponent } from './home/sacred/quran/ayah/ayah.component';
-import { QuranComponent } from './home/sacred/quran/quran.component';
-import { KaabaComponent } from './home/tool/kaaba/kaaba.component';
-import { PrayerTimesComponent } from './home/tool/prayer-times/prayer-times.component';
-import { TasbihComponent } from './home/tool/tasbih/tasbih.component';
-import { AuthComponent } from './auth/auth.component';
 
 export const routes: Routes = [
     {
         path: 'auth',
-        component: AuthComponent,
+        loadComponent: () => import('./auth/auth.component').then(m => m.AuthComponent),
         children: [
             {
                 path: 'login',
                 title: 'Login',
-                component: LoginComponent
+                loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent)
             },
             {
                 path: 'register',
                 title: 'Register',
-                component: RegisterComponent
+                loadComponent: () => import('./auth/register/register.component').then(m => m.RegisterComponent)
             },
             {
                 path: 'forgot-password',
                 title: 'Forgot Password',
-                component: ForgotPasswordComponent
+                loadComponent: () => import('./auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
             },
             {
                 path: 'reset-password',
                 title: 'Reset Password',
-                component: ResetPasswordComponent
+                loadComponent: () => import('./auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
             }
         ]
     },
     {
         path: 'profile',
         title: 'Profile',
-        component: ProfileComponent,
-        canActivate: [
-            authGuard
-        ]
+        loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [authGuard]
     },
     {
         path: 'home',
         title: 'Home',
-        component: HomeComponent
+        loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
     },
     {
         path: 'prayer',
         title: 'Prayer Times',
-        component: PrayerTimesComponent
+        loadComponent: () => import('./home/tool/prayer-times/prayer-times.component').then(m => m.PrayerTimesComponent)
     },
     {
         path: 'kaaba',
         title: 'Kaaba',
-        component: KaabaComponent
+        loadComponent: () => import('./home/tool/kaaba/kaaba.component').then(m => m.KaabaComponent)
     },
     {
         path: 'quran',
         title: 'Quran',
-        component: QuranComponent
+        loadComponent: () => import('./home/sacred/quran/quran.component').then(m => m.QuranComponent)
     },
     {
         path: 'quran/ayah',
         title: 'Ayah',
-        component: AyahComponent
+        loadComponent: () => import('./home/sacred/quran/ayah/ayah.component').then(m => m.AyahComponent)
     },
     {
         path: 'hadith',
         title: 'Hadith',
-        component: HadithComponent
+        loadComponent: () => import('./home/sacred/hadith/hadith.component').then(m => m.HadithComponent)
     },
     {
         path: 'hadith/chapter',
         title: 'Chapter',
-        component: ChapterComponent
+        loadComponent: () => import('./home/sacred/hadith/chapter/chapter.component').then(m => m.ChapterComponent)
     },
     {
         path: 'library',
         title: 'Islamic Library',
-        component: LibraryComponent
+        loadComponent: () => import('./home/sacred/library/library.component').then(m => m.LibraryComponent)
     },
     {
         path: 'reader',
         title: 'Library Reader',
-        component: ReaderComponent
+        loadComponent: () => import('./home/sacred/library/reader/reader.component').then(m => m.ReaderComponent)
     },
     {
         path: 'feedback',
         title: 'Feedback',
-        component: FeedbackComponent
+        loadComponent: () => import('./feedback/feedback.component').then(m => m.FeedbackComponent)
     },
     {
         path: 'tasbih',
         title: 'Tasbih Counter',
-        component: TasbihComponent
+        loadComponent: () => import('./home/tool/tasbih/tasbih.component').then(m => m.TasbihComponent)
+    },
+    {
+        path: 'calendar',
+        title: 'Islamic Calendar',
+        loadComponent: () => import('./home/tool/calendar/calendar.component').then(m => m.IslamicCalendarComponent)
     },
     {
         path: '',
