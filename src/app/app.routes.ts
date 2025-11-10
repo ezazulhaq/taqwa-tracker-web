@@ -95,6 +95,11 @@ export const routes: Routes = [
         loadComponent: () => import('./home/tool/calendar/calendar.component').then(m => m.IslamicCalendarComponent)
     },
     {
+        path: 'calculator',
+        title: 'Zakat Calculator',
+        loadComponent: () => import('./home/tool/calculator/calculator.component').then(m => m.CalculatorComponent)
+    },
+    {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
