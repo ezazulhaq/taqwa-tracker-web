@@ -76,14 +76,6 @@
                             [class.dark:text-emerald-500]="day.isFriday && !day.isToday && day.isCurrentMonth">
                             {{ day.gregorianDay }}
                         </span>
-
-                        <!-- Friday indicator -->
-                        @if (day.isFriday && day.isCurrentMonth) {
-                        <span
-                            class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded">
-                            Jumu'ah
-                        </span>
-                        }
                     </div>
 
                     <!-- Hijri Date -->
