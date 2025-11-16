@@ -34,6 +34,7 @@ export class AyahComponent {
 
   private ayahIdToScrollTo = signal<number | null>(null);
   private readAyahsSet = new Set<number>(); // Track read ayahs in current session
+  private lastReadAyahNo = signal<number | null>(null);
 
   surahNumber!: string;
   surahName!: string;
@@ -115,6 +116,7 @@ export class AyahComponent {
             // Only track if not already tracked in this session
             if (!this.readAyahsSet.has(ayahNumber)) {
               this.readAyahsSet.add(ayahNumber);
+              this.lastReadAyahNo.set(ayahNumber);
               this.trackReading();
             }
           }
@@ -131,11 +133,16 @@ export class AyahComponent {
    * Track reading in the streak service
    */
   private trackReading(): void {
+    let link = `/quran/ayah?surahNumber=${this.surahNumber}&surahName=${encodeURIComponent(this.surahName)}&surahName_ar=${encodeURIComponent(this.surahName_ar)}`;
+    if (this.lastReadAyahNo()) {
+      link += `&ayahNo=${this.lastReadAyahNo()}`;
+    }
+
     const readItem: ReadItem = {
       type: 'quran',
       title: `${this.surahName}`,
       subtitle: `Surah ${this.surahNumber}`,
-      link: `/quran/ayah?surahNumber=${this.surahNumber}&surahName=${encodeURIComponent(this.surahName)}&surahName_ar=${encodeURIComponent(this.surahName_ar)}`,
+      link: link,
       timestamp: new Date().toISOString()
     };
     this.readStreakService.trackRead(1, readItem);

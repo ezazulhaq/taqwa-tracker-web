@@ -28,6 +28,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
 
   private hadithIdToScrollTo = signal<number | null>(null);
   private readHadithsSet = new Set<string>(); // Track read hadiths in current session
+  private lastReadHadithNo = signal<number | null>(null);
 
   chapterId!: string;
   hadithNoParam!: number;
@@ -100,10 +101,12 @@ export class ChapterComponent implements OnInit, AfterViewInit {
           if (entry.isIntersecting) {
             const hadithElement = entry.target as HTMLElement;
             const hadithId = hadithElement.id.replace('hadith-', '');
+            const hadithNo = parseInt(hadithId);
 
             // Only track if not already tracked in this session
             if (!this.readHadithsSet.has(hadithId)) {
               this.readHadithsSet.add(hadithId);
+              this.lastReadHadithNo.update((value) => hadithNo > (value || 0) ? hadithNo : value);
               this.trackReading();
             }
           }
@@ -120,11 +123,16 @@ export class ChapterComponent implements OnInit, AfterViewInit {
    * Track reading in the streak service
    */
   private trackReading(): void {
+    let link = `/hadith/chapter?id=${this.chapterId}`;
+    if (this.lastReadHadithNo()) {
+      link += `&hadithNo=${this.lastReadHadithNo()}`;
+    }
+
     const readItem: ReadItem = {
       type: 'hadith',
       title: `${this.splitChapterName().name_en}`,
       subtitle: `${this.splitChapterName().name_ar || 'Hadith Collection'}`,
-      link: `/hadith/chapter?id=${this.chapterId}`,
+      link: link,
       timestamp: new Date().toISOString()
     };
     this.readStreakService.trackRead(1, readItem);
