@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Hadiths } from '../hadith.model';
 import { BookmarkService } from '../../../../service/bookmark.service';
 import { AuthService } from '../../../../service/auth.service';
+import { ReadStreakService } from '../../../../service/read-streak.service';
 
 @Component({
   selector: 'app-chapter',
@@ -17,6 +18,7 @@ import { AuthService } from '../../../../service/auth.service';
 export class ChapterComponent implements OnInit, AfterViewInit {
 
   private readonly authService = inject(AuthService);
+  private readonly readStreakService = inject(ReadStreakService);
 
   @ViewChild('stickyTitle') stickyTitle!: ElementRef;
   private originalOffset: number = 0;
@@ -24,6 +26,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   @ViewChild('hadithContainer') hadithContainer!: ElementRef;
 
   private hadithIdToScrollTo = signal<number | null>(null);
+  private readHadithsSet = new Set<string>(); // Track read hadiths in current session
 
   chapterId!: string;
   hadithNoParam!: number;
@@ -57,6 +60,14 @@ export class ChapterComponent implements OnInit, AfterViewInit {
         }
       }
     );
+
+    // Track page view for streak (user opened Hadith)
+    //if (this.isAuthenticated()) {
+    this.trackReading();
+    //}
+
+    // Setup reading tracker
+    this.setupReadingTracker();
   }
 
   ngAfterViewInit() {
@@ -67,6 +78,47 @@ export class ChapterComponent implements OnInit, AfterViewInit {
         this.scrollToHadith(this.hadithIdToScrollTo());
       }, 1000);
     }
+  }
+
+  /**
+ * Setup Intersection Observer to track when hadiths are read
+ */
+  private setupReadingTracker(): void {
+    if (!this.isAuthenticated()) return;
+
+    setTimeout(() => {
+      const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.7 // 70% of hadith must be visible
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const hadithElement = entry.target as HTMLElement;
+            const hadithId = hadithElement.id.replace('hadith-', '');
+
+            // Only track if not already tracked in this session
+            if (!this.readHadithsSet.has(hadithId)) {
+              this.readHadithsSet.add(hadithId);
+              this.trackReading();
+            }
+          }
+        });
+      }, options);
+
+      // Observe all hadith elements
+      const hadithElements = this.hadithContainer.nativeElement.querySelectorAll('[id^="hadith-"]');
+      hadithElements.forEach((element: Element) => observer.observe(element));
+    }, 1000);
+  }
+
+  /**
+   * Track reading in the streak service
+   */
+  private trackReading(): void {
+    this.readStreakService.trackRead();
   }
 
   splitChapterName = computed(
