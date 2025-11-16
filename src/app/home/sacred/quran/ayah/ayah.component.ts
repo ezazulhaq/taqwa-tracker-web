@@ -71,13 +71,6 @@ export class AyahComponent {
   }
 
   ngOnInit(): void {
-    // Track page view for streak (user opened Quran)
-    //if (this.isAuthenticated()) {
-    this.trackReading();
-    //}
-
-    // Setup Intersection Observer for tracking visible ayahs
-    this.setupReadingTracker();
   }
 
   ngAfterViewInit() {
@@ -90,6 +83,14 @@ export class AyahComponent {
         this.selectedAyahNumber.set(this.ayahIdToScrollTo()?.toString() || '');
       }, 1000);
     }
+
+    // Track page view for streak (user opened Quran)
+    //if (this.isAuthenticated()) {
+    this.trackReading();
+    //}
+
+    // Setup Intersection Observer for tracking visible ayahs
+    this.setupReadingTracker();
   }
 
   /**
@@ -98,7 +99,9 @@ export class AyahComponent {
   private setupReadingTracker(): void {
     if (!this.isAuthenticated()) return;
 
-    // Wait for ayahs to be loaded
+    // Wait longer to avoid tracking during initial scroll navigation
+    const delay = this.ayahIdToScrollTo() !== null ? 3000 : 1000;
+
     setTimeout(() => {
       const options = {
         root: null,
@@ -126,7 +129,7 @@ export class AyahComponent {
       // Observe all ayah elements
       const ayahElements = this.ayahContainer.nativeElement.querySelectorAll('[id^="ayah-"]');
       ayahElements.forEach((element: Element) => observer.observe(element));
-    }, 1000);
+    }, delay);
   }
 
   /**

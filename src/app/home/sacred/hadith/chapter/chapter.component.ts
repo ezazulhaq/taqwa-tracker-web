@@ -89,6 +89,9 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   private setupReadingTracker(): void {
     if (!this.isAuthenticated()) return;
 
+    // Wait longer to avoid tracking during initial scroll navigation
+    const delay = this.hadithIdToScrollTo() !== null ? 3000 : 1000;
+
     setTimeout(() => {
       const options = {
         root: null,
@@ -116,7 +119,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
       // Observe all hadith elements
       const hadithElements = this.hadithContainer.nativeElement.querySelectorAll('[id^="hadith-"]');
       hadithElements.forEach((element: Element) => observer.observe(element));
-    }, 1000);
+    }, delay);
   }
 
   /**
