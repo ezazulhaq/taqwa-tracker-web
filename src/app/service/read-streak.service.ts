@@ -1,5 +1,5 @@
 import { Injectable, signal } from "@angular/core";
-import { ReadActivity, StreakStats } from "../home/streak-dashboard/streak-dashboard.model";
+import { ReadActivity, StreakStats, ReadItem } from "../home/streak-dashboard/streak-dashboard.model";
 
 @Injectable({
     providedIn: 'root'
@@ -98,13 +98,29 @@ export class ReadStreakService {
     /**
      * Track reading (Ayah or Hadith)
      */
-    trackRead(count: number = 1): void {
+    trackRead(count: number = 1, readItem?: ReadItem): void {
         const stats = this.loadStreakData();
         const today = this.getTodayDate();
 
         // Update or create today's activity
         const todayActivity = this.getTodaysActivity(stats, today);
         todayActivity.itemsRead += count;
+
+        // Add read item if provided
+        if (readItem) {
+            todayActivity.recentItems = todayActivity.recentItems || [];
+            // Avoid duplicates by checking if item already exists
+            const exists = todayActivity.recentItems.some(item => 
+                item.link === readItem.link && item.title === readItem.title
+            );
+            if (!exists) {
+                todayActivity.recentItems.unshift(readItem);
+                // Keep only last 5 items per day
+                if (todayActivity.recentItems.length > 5) {
+                    todayActivity.recentItems = todayActivity.recentItems.slice(0, 5);
+                }
+            }
+        }
 
         // Update totals
         stats.totalItemsRead += count;
@@ -126,7 +142,8 @@ export class ReadStreakService {
         if (!todayActivity) {
             todayActivity = {
                 date: today,
-                itemsRead: 0
+                itemsRead: 0,
+                recentItems: []
             };
             stats.readingHistory.push(todayActivity);
 
@@ -193,6 +210,27 @@ export class ReadStreakService {
             readingHistory: []
         };
         this.saveStreakData(defaultStats);
+    }
+
+    /**
+     * Get recent read items across all days
+     */
+    getRecentReadItems(limit: number = 10): ReadItem[] {
+        const stats = this.loadStreakData();
+        const allItems: ReadItem[] = [];
+        
+        // Get items from recent days, newest first
+        const sortedHistory = [...stats.readingHistory]
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            
+        for (const activity of sortedHistory) {
+            if (activity.recentItems) {
+                allItems.push(...activity.recentItems);
+            }
+            if (allItems.length >= limit) break;
+        }
+        
+        return allItems.slice(0, limit);
     }
 
     /**

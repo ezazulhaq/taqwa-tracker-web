@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { ReadStreakService } from '../../service/read-streak.service';
+import { Router } from '@angular/router';
+import { ReadItem } from './streak-dashboard.model';
 
 @Component({
   selector: 'app-streak-dashboard',
@@ -10,8 +12,10 @@ import { ReadStreakService } from '../../service/read-streak.service';
 export class StreakDashboardComponent {
 
   private readonly readStreakService = inject(ReadStreakService);
+  private readonly router = inject(Router);
 
   streakStats = computed(() => this.readStreakService.streakStats());
+  recentReads = computed(() => this.readStreakService.getRecentReadItems(5));
 
   formatLastReadDate(): string {
     const lastRead = this.streakStats().lastReadDate;
@@ -52,6 +56,14 @@ export class StreakDashboardComponent {
     if (confirm('Are you sure you want to reset your reading streak? This cannot be undone.')) {
       this.readStreakService.resetStreak();
     }
+  }
+
+  navigateToRead(item: ReadItem): void {
+    this.router.navigateByUrl(item.link);
+  }
+
+  getItemIcon(type: string): string {
+    return type === 'quran' ? '📖' : '📚';
   }
 
 }

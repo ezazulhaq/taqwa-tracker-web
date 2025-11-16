@@ -5,6 +5,7 @@ import { Hadiths } from '../hadith.model';
 import { BookmarkService } from '../../../../service/bookmark.service';
 import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
+import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 
 @Component({
   selector: 'app-chapter',
@@ -57,17 +58,18 @@ export class ChapterComponent implements OnInit, AfterViewInit {
         next: (data: any) => {
           this.hadiths.set(data.data);
           this.chapterName.set(data.data[0].chapter_name);
+        },
+        complete: () => {
+          // Track page view for streak (user opened Hadith)
+          //if (this.isAuthenticated()) {
+          this.trackReading();
+          //}
+
+          // Setup reading tracker
+          this.setupReadingTracker();
         }
       }
     );
-
-    // Track page view for streak (user opened Hadith)
-    //if (this.isAuthenticated()) {
-    this.trackReading();
-    //}
-
-    // Setup reading tracker
-    this.setupReadingTracker();
   }
 
   ngAfterViewInit() {
@@ -118,7 +120,14 @@ export class ChapterComponent implements OnInit, AfterViewInit {
    * Track reading in the streak service
    */
   private trackReading(): void {
-    this.readStreakService.trackRead();
+    const readItem: ReadItem = {
+      type: 'hadith',
+      title: `${this.splitChapterName().name_en}`,
+      subtitle: `${this.splitChapterName().name_ar || 'Hadith Collection'}`,
+      link: `/hadith/chapter?id=${this.chapterId}`,
+      timestamp: new Date().toISOString()
+    };
+    this.readStreakService.trackRead(1, readItem);
   }
 
   splitChapterName = computed(

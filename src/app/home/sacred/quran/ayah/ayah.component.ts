@@ -8,6 +8,7 @@ import { BookMarkedSurah } from '../../../../model/surah.model';
 import { TitleComponent } from '../../../../shared/title/title.component';
 import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
+import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 
 @Component({
   selector: 'app-ayah',
@@ -130,7 +131,14 @@ export class AyahComponent {
    * Track reading in the streak service
    */
   private trackReading(): void {
-    this.readStreakService.trackRead();
+    const readItem: ReadItem = {
+      type: 'quran',
+      title: `${this.surahName}`,
+      subtitle: `Surah ${this.surahNumber}`,
+      link: `/quran/ayah?surahNumber=${this.surahNumber}&surahName=${encodeURIComponent(this.surahName)}&surahName_ar=${encodeURIComponent(this.surahName_ar)}`,
+      timestamp: new Date().toISOString()
+    };
+    this.readStreakService.trackRead(1, readItem);
   }
 
   @HostListener('window:scroll', ['$event'])
