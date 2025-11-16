@@ -108,18 +108,7 @@ export class ReadStreakService {
 
         // Add read item if provided
         if (readItem) {
-            todayActivity.recentItems = todayActivity.recentItems || [];
-            // Avoid duplicates by checking if item already exists
-            const exists = todayActivity.recentItems.some(item => 
-                item.link === readItem.link && item.title === readItem.title
-            );
-            if (!exists) {
-                todayActivity.recentItems.unshift(readItem);
-                // Keep only last 5 items per day
-                if (todayActivity.recentItems.length > 5) {
-                    todayActivity.recentItems = todayActivity.recentItems.slice(0, 5);
-                }
-            }
+            this.updateRecentItems(stats, readItem);
         }
 
         // Update totals
@@ -213,23 +202,48 @@ export class ReadStreakService {
     }
 
     /**
+     * Update recent items across all days, keeping only the latest for each title/subtitle
+     */
+    private updateRecentItems(stats: StreakStats, newItem: ReadItem): void {
+        // Remove any existing item with same title and subtitle from all days
+        stats.readingHistory.forEach(activity => {
+            if (activity.recentItems) {
+                activity.recentItems = activity.recentItems.filter(item => 
+                    !(item.title === newItem.title && item.subtitle === newItem.subtitle)
+                );
+            }
+        });
+
+        // Add new item to today's activity
+        const today = this.getTodayDate();
+        const todayActivity = this.getTodaysActivity(stats, today);
+        todayActivity.recentItems = todayActivity.recentItems || [];
+        todayActivity.recentItems.unshift(newItem);
+
+        // Keep only last 5 items per day
+        if (todayActivity.recentItems.length > 5) {
+            todayActivity.recentItems = todayActivity.recentItems.slice(0, 5);
+        }
+    }
+
+    /**
      * Get recent read items across all days
      */
     getRecentReadItems(limit: number = 10): ReadItem[] {
         const stats = this.loadStreakData();
         const allItems: ReadItem[] = [];
-        
+
         // Get items from recent days, newest first
         const sortedHistory = [...stats.readingHistory]
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-            
+
         for (const activity of sortedHistory) {
             if (activity.recentItems) {
                 allItems.push(...activity.recentItems);
             }
             if (allItems.length >= limit) break;
         }
-        
+
         return allItems.slice(0, limit);
     }
 
