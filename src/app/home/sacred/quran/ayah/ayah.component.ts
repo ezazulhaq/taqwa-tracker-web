@@ -7,6 +7,8 @@ import { BookmarkService } from '../../../../service/bookmark.service';
 import { BookMarkedSurah } from '../../../../model/surah.model';
 import { TitleComponent } from '../../../../shared/title/title.component';
 import { AuthService } from '../../../../service/auth.service';
+import { ReadStreakService } from '../../../../service/read-streak.service';
+import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 
 @Component({
   selector: 'app-ayah',
@@ -23,6 +25,7 @@ import { AuthService } from '../../../../service/auth.service';
 export class AyahComponent {
 
   private readonly authService = inject(AuthService);
+  private readonly readStreakService = inject(ReadStreakService);
 
   @ViewChild('stickyCheckbox') stickyCheckbox!: ElementRef;
   private originalOffset: number = 0;
@@ -30,6 +33,8 @@ export class AyahComponent {
   @ViewChild('ayahContainer') ayahContainer!: ElementRef;
 
   private ayahIdToScrollTo = signal<number | null>(null);
+  private readAyahsSet = new Set<number>(); // Track read ayahs in current session
+  private lastReadAyahNo = signal<number | null>(null);
 
   surahNumber!: string;
   surahName!: string;
@@ -66,7 +71,6 @@ export class AyahComponent {
   }
 
   ngOnInit(): void {
-    // Initial data loading is handled by the effect
   }
 
   ngAfterViewInit() {
@@ -79,6 +83,72 @@ export class AyahComponent {
         this.selectedAyahNumber.set(this.ayahIdToScrollTo()?.toString() || '');
       }, 1000);
     }
+
+    // Track page view for streak (user opened Quran)
+    //if (this.isAuthenticated()) {
+    this.trackReading();
+    //}
+
+    // Setup Intersection Observer for tracking visible ayahs
+    this.setupReadingTracker();
+  }
+
+  /**
+ * Setup Intersection Observer to track when ayahs are read
+ */
+  private setupReadingTracker(): void {
+    if (!this.isAuthenticated()) return;
+
+    // Wait longer to avoid tracking during initial scroll navigation
+    const delay = this.ayahIdToScrollTo() !== null ? 3000 : 1000;
+
+    setTimeout(() => {
+      const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.8 // 80% of ayah must be visible
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const ayahElement = entry.target as HTMLElement;
+            const ayahId = ayahElement.id.replace('ayah-', '');
+            const ayahNumber = parseInt(ayahId);
+
+            // Only track if not already tracked in this session
+            if (!this.readAyahsSet.has(ayahNumber)) {
+              this.readAyahsSet.add(ayahNumber);
+              this.lastReadAyahNo.set(ayahNumber);
+              this.trackReading();
+            }
+          }
+        });
+      }, options);
+
+      // Observe all ayah elements
+      const ayahElements = this.ayahContainer.nativeElement.querySelectorAll('[id^="ayah-"]');
+      ayahElements.forEach((element: Element) => observer.observe(element));
+    }, delay);
+  }
+
+  /**
+   * Track reading in the streak service
+   */
+  private trackReading(): void {
+    let link = `/quran/ayah?surahNumber=${this.surahNumber}&surahName=${encodeURIComponent(this.surahName)}&surahName_ar=${encodeURIComponent(this.surahName_ar)}`;
+    if (this.lastReadAyahNo()) {
+      link += `&ayahNo=${this.lastReadAyahNo()}`;
+    }
+
+    const readItem: ReadItem = {
+      type: 'quran',
+      title: `${this.surahName}`,
+      subtitle: `Surah ${this.surahNumber}`,
+      link: link,
+      timestamp: new Date().toISOString()
+    };
+    this.readStreakService.trackRead(1, readItem);
   }
 
   @HostListener('window:scroll', ['$event'])
