@@ -14,7 +14,7 @@
 }
 
 .app-bg {
-  @apply bg-white dark:bg-slate-800 w-full md:max-w-2xl min-h-screen text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg;
+  @apply bg-white dark:bg-slate-800 w-full md:max-w-2xl h-full min-h-screen max-h-screen text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg;
 }
 
 .app-hamburger {
