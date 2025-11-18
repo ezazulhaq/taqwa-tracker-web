@@ -7,52 +7,136 @@ The Taqwa Tracker combines modern web technologies with traditional Islamic reso
 ## Repository Structure
 
 ```
-salah-app/
+taqwa-tracker-web/
 ├── docs/
 │   └── edge_functions/
 │       └── islamic_chatbot.md
 ├── public/
 │   ├── fonts/
+│   │   ├── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.ttf
+│   │   ├── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff
+│   │   └── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff2
 │   ├── icons/
+│   │   ├── icon-128x128.png
+│   │   ├── icon-144x144.png
+│   │   ├── icon-152x152.png
+│   │   ├── icon-192x192.png
+│   │   ├── icon-384x384.png
+│   │   ├── icon-512x512.png
+│   │   ├── icon-72x72.png
+│   │   └── icon-96x96.png
 │   ├── favicon.ico
+│   ├── icon.png
 │   └── manifest.webmanifest
 ├── src/
 │   ├── app/
 │   │   ├── auth/
+│   │   │   ├── forgot-password/
 │   │   │   ├── login/
 │   │   │   ├── register/
-│   │   │   ├── forgot-password/
-│   │   │   └── reset-password/
+│   │   │   ├── reset-password/
+│   │   │   └── auth.component.*
 │   │   ├── chatbot/
-│   │   │   └── hadith-links/
+│   │   │   ├── hadith-links/
+│   │   │   ├── chatbot.component.*
+│   │   │   └── chatbot.model.ts
+│   │   ├── config/
+│   │   │   └── security.config.ts
 │   │   ├── feedback/
+│   │   │   ├── success/
+│   │   │   └── feedback.component.*
 │   │   ├── guard/
+│   │   │   └── auth.gaurd.ts
 │   │   ├── header/
 │   │   │   ├── menu/
-│   │   │   └── settings/
+│   │   │   ├── settings/
+│   │   │   ├── header.component.*
+│   │   │   └── header.service.ts
 │   │   ├── home/
 │   │   │   ├── sacred/
 │   │   │   │   ├── hadith/
+│   │   │   │   │   └── chapter/
 │   │   │   │   ├── library/
+│   │   │   │   │   └── reader/
 │   │   │   │   └── quran/
-│   │   │   └── tool/
-│   │   │       ├── kaaba/
-│   │   │       ├── prayer-times/
-│   │   │       └── tasbih/
+│   │   │   │       └── ayah/
+│   │   │   ├── streak-dashboard/
+│   │   │   ├── tool/
+│   │   │   │   ├── calculator/
+│   │   │   │   ├── calendar/
+│   │   │   │   ├── kaaba/
+│   │   │   │   ├── prayer-times/
+│   │   │   │   │   └── rakat/
+│   │   │   │   │       └── rakat-detail/
+│   │   │   │   └── tasbih/
+│   │   │   ├── welcome/
+│   │   │   └── home.component.*
 │   │   ├── interceptor/
+│   │   │   └── auth.interceptor.ts
+│   │   ├── mobile/
+│   │   │   └── menu/
 │   │   ├── model/
+│   │   │   ├── auth.model.ts
+│   │   │   ├── captcha.model.ts
+│   │   │   ├── feedback.model.ts
+│   │   │   ├── home.model.ts
+│   │   │   ├── islamic-library.model.ts
+│   │   │   ├── namaz-time.model.ts
+│   │   │   ├── open-stream-map.model.ts
+│   │   │   ├── search-hadith.model.ts
+│   │   │   ├── supabase.model.ts
+│   │   │   ├── surah.model.ts
+│   │   │   ├── tasbih.model.ts
+│   │   │   └── translation.model.ts
 │   │   ├── pipes/
+│   │   │   └── replace-underline.pipe.ts
 │   │   ├── profile/
+│   │   │   └── profile.component.*
 │   │   ├── service/
-│   │   └── shared/
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auto-update.service.ts
+│   │   │   ├── bookmark.service.ts
+│   │   │   ├── captcha.service.ts
+│   │   │   ├── chatbot.service.ts
+│   │   │   ├── feedback.service.ts
+│   │   │   ├── https-redirect.service.ts
+│   │   │   ├── library.service.ts
+│   │   │   ├── rate-limit.service.ts
+│   │   │   ├── read-streak.service.ts
+│   │   │   ├── salah-app.service.ts
+│   │   │   ├── sanitization.service.ts
+│   │   │   ├── security-headers.service.ts
+│   │   │   ├── supabase.service.ts
+│   │   │   ├── tasbih.service.ts
+│   │   │   └── theme.service.ts
+│   │   ├── shared/
+│   │   │   ├── calendar/
+│   │   │   ├── captcha/
+│   │   │   ├── icon/
+│   │   │   ├── module/
+│   │   │   ├── pdf-viewer/
+│   │   │   ├── scroll-top/
+│   │   │   ├── skeleton/
+│   │   │   │   └── list-home/
+│   │   │   └── title/
+│   │   ├── app.component.*
+│   │   ├── app.config.ts
+│   │   └── app.routes.ts
 │   ├── environments/
+│   │   ├── environment.prod.ts
+│   │   └── environment.ts
+│   ├── env.d.ts
 │   ├── index.html
-│   └── main.ts
+│   ├── main.ts
+│   └── styles.css
+├── .env
 ├── angular.json
 ├── ngsw-config.json
 ├── package.json
 ├── tailwind.config.js
-└── tsconfig.json
+├── tsconfig.json
+├── tsconfig.app.json
+└── tsconfig.spec.json
 ```
 
 ### Key Files:
