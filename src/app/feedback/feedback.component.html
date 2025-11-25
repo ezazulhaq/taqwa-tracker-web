@@ -6,78 +6,124 @@
     }
     @else{
     <form class="mx-4" [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
-
-        @if(submitError){
-        <div class="my-4 p-3 bg-red-100 text-red-700 rounded">
-            {{ submitError }}
-        </div>
-        }
-
-        <div class="flex flex-col space-y-4">
-            <section>
-                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="category">
-                    Category
-                </label>
-                <select formControlName="category" id="category"
-                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600 cursor-pointer">
-                    <option value="General">General</option>
-                    <option value="Bug">Bug Report</option>
-                    <option value="Feature">Feature Request</option>
-                    <option value="Question">Question</option>
-                </select>
-            </section>
-
-            <section>
-                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="email">
-                    From
-                </label>
-                <input formControlName="email" id="email"
-                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600"
-                    placeholder="Please enter Email" />
-                @if(feedbackForm.get('email')?.invalid && feedbackForm.get('email')?.touched){
-                <div class="text-red-500 text-sm mt-1">
-                    Enter valid Email Address.
+        <div class="space-y-6">
+            @if(submitError){
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                <div class="flex items-center">
+                    <svg class="size-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <div class="text-red-700 dark:text-red-300 text-sm">
+                        {{ submitError }}
+                    </div>
                 </div>
-                }
-            </section>
-
-            <section>
-                <label class="block text-start text-slate-700 dark:text-gray-400 text-sm font-bold mb-2" for="content">
-                    Your Feedback
-                </label>
-                <textarea formControlName="content" id="content" rows="4"
-                    class="w-full px-3 py-2 text-slate-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-600"
-                    placeholder="Please share your thoughts..."></textarea>
-                @if(feedbackForm.get('content')?.invalid && feedbackForm.get('content')?.touched){
-                <div class="text-red-500 text-sm mt-1">
-                    Feedback must be at least 10 characters long.
-                </div>
-                }
-            </section>
-
-            <!-- CAPTCHA Section -->
-            @if (showCaptcha) {
-            <div class="mt-6">
-                <app-captcha [showTypeSelector]="true" [challengeType]="'text'" (verified)="onCaptchaVerified($event)">
-                </app-captcha>
             </div>
             }
 
-            <button type="submit" [disabled]="feedbackForm.invalid || isSubmitting()"
-                class="w-full mt-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ isSubmitting() ? 'Submitting...' : 'Submit Feedback' }}
-            </button>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2" for="category">
+                        Category
+                    </label>
+                    <select formControlName="category" id="category"
+                        class="w-full px-4 py-3 border border-stone-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-stone-500 dark:focus:ring-stone-400 focus:border-transparent transition-colors cursor-pointer">
+                        <option value="General">General</option>
+                        <option value="Bug">Bug Report</option>
+                        <option value="Feature">Feature Request</option>
+                        <option value="Question">Question</option>
+                    </select>
+                </div>
 
-        </div>
+                <div>
+                    <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2" for="email">
+                        Email Address
+                    </label>
+                    <input formControlName="email" id="email" type="email"
+                        class="w-full px-4 py-3 border border-stone-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-stone-900 dark:text-stone-100 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-500 dark:focus:ring-stone-400 focus:border-transparent transition-colors"
+                        placeholder="Enter your email address" />
+                    @if(feedbackForm.get('email')?.invalid && feedbackForm.get('email')?.touched){
+                    <div
+                        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 mt-2">
+                        <div class="flex items-center">
+                            <svg class="size-3 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="text-red-700 dark:text-red-300 text-xs">
+                                Enter valid Email Address.
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
 
-        <!-- CAPTCHA Status Info -->
-        @if (showCaptcha && !captchaVerified) {
-        <div class="text-center">
-            <p class="text-xs text-gray-500 mt-2">
-                Please complete the CAPTCHA verification above to continue
-            </p>
+                <div>
+                    <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2" for="content">
+                        Your Feedback
+                    </label>
+                    <textarea formControlName="content" id="content" rows="4"
+                        class="w-full px-4 py-3 border border-stone-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-stone-900 dark:text-stone-100 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-500 dark:focus:ring-stone-400 focus:border-transparent transition-colors resize-vertical"
+                        placeholder="Please share your thoughts and feedback..."></textarea>
+                    @if(feedbackForm.get('content')?.invalid && feedbackForm.get('content')?.touched){
+                    <div
+                        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2 mt-2">
+                        <div class="flex items-center">
+                            <svg class="size-3 text-red-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="text-red-700 dark:text-red-300 text-xs">
+                                Feedback must be at least 10 characters long.
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <!-- CAPTCHA Section -->
+                @if (showCaptcha) {
+                <div class="border border-stone-200 dark:border-slate-600 rounded-lg p-4 bg-stone-50 dark:bg-slate-700">
+                    <app-captcha [showTypeSelector]="true" [challengeType]="'text'"
+                        (verified)="onCaptchaVerified($event)">
+                    </app-captcha>
+                </div>
+                }
+
+                <button type="submit" [disabled]="feedbackForm.invalid || isSubmitting()"
+                    class="w-full flex justify-center items-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                    @if (isSubmitting()) {
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Submitting...
+                    } @else {
+                    <svg class="size-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    Submit Feedback
+                    }
+                </button>
+
+                <!-- CAPTCHA Status Info -->
+                @if (showCaptcha && !captchaVerified) {
+                <div class="text-center">
+                    <p class="text-xs text-stone-500 dark:text-stone-400">
+                        Please complete the CAPTCHA verification above to continue
+                    </p>
+                </div>
+                }
+            </div>
         </div>
-        }
     </form>
     }
 </div>
