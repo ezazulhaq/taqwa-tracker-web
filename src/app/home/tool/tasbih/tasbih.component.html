@@ -114,14 +114,30 @@
                     Reset
                 </button>
                 <button (click)="toggleVibration()"
-                    class="flex items-center px-6 py-3 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors shadow-md"
-                    [class.bg-emerald-100]="isVibrationEnabled()" [class.text-emerald-700]="isVibrationEnabled()" [class.border-emerald-200]="isVibrationEnabled()"
-                    [class.bg-white]="!isVibrationEnabled()" [class.dark:bg-slate-700]="!isVibrationEnabled()" [class.border-stone-300]="!isVibrationEnabled()"
-                    [class.text-stone-700]="!isVibrationEnabled()" [class.dark:text-stone-200]="!isVibrationEnabled()" [class.dark:border-slate-600]="!isVibrationEnabled()"
-                    class="border">
-                    <svg class="size-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2v1a1 1 0 002 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zM3 8a1 1 0 011-1v1a1 1 0 11-2 0zm10-1a1 1 0 011 1v1a1 1 0 11-2 0V8a1 1 0 011-1zM9 15a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                    class="flex items-center px-6 py-3 rounded-xl font-medium focus:outline-none focus:ring-2 transition-all duration-200 shadow-md border"
+                    [class.bg-emerald-100]="isVibrationEnabled()" 
+                    [class.dark:bg-emerald-900/30]="isVibrationEnabled()"
+                    [class.text-emerald-700]="isVibrationEnabled()" 
+                    [class.dark:text-emerald-300]="isVibrationEnabled()"
+                    [class.border-emerald-200]="isVibrationEnabled()" 
+                    [class.dark:border-emerald-800]="isVibrationEnabled()"
+                    [class.focus:ring-emerald-500]="isVibrationEnabled()"
+                    [class.bg-white]="!isVibrationEnabled()" 
+                    [class.dark:bg-slate-700]="!isVibrationEnabled()" 
+                    [class.border-stone-300]="!isVibrationEnabled()"
+                    [class.dark:border-slate-600]="!isVibrationEnabled()"
+                    [class.text-stone-700]="!isVibrationEnabled()" 
+                    [class.dark:text-stone-200]="!isVibrationEnabled()"
+                    [class.focus:ring-stone-500]="!isVibrationEnabled()">
+                    @if (isVibrationEnabled()) {
+                    <svg class="size-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M0,12c0,2.4,0.85,4.5,2.55,6.3c0.2,0.2,0.45,0.3,0.7,0.3s0.5-0.1,0.7-0.3c0.4-0.4,0.4-1,0-1.4C2.55,15.5,2,13.8,2,12s0.55-3.5,1.95-4.9c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0C0.85,7.5,0,9.6,0,12z M6,12c0,1.25,0.45,2.4,1.2,3.3c0.2,0.2,0.45,0.3,0.7,0.3s0.5-0.1,0.7-0.3c0.4-0.4,0.4-1,0-1.4C7.85,13.2,7.5,12.65,7.5,12s0.35-1.2,1.1-1.9c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0C6.45,9.6,6,10.75,6,12z M16,4c0-1.1,0.9-2,2-2s2,0.9,2,2v16c0,1.1-0.9,2-2,2s-2-0.9-2-2V4z M10,7c0-1.1,0.9-2,2-2s2,0.9,2,2v10c0,1.1-0.9,2-2,2s-2-0.9-2-2V7z"/>
                     </svg>
+                    } @else {
+                    <svg class="size-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M16,4c0-1.1,0.9-2,2-2s2,0.9,2,2v16c0,1.1-0.9,2-2,2s-2-0.9-2-2V4z M10,7c0-1.1,0.9-2,2-2s2,0.9,2,2v10c0,1.1-0.9,2-2,2s-2-0.9-2-2V7z M2.5,10.5L4.9,8.1c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-2.4,2.4l2.4,2.4c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L2.5,13.5c-0.4-0.4-0.4-1,0-1.4z M7.5,10.5L5.1,8.1c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l2.4,2.4c0.4,0.4,0.4,1,0,1.4L6.5,13.9c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.5,10.5z"/>
+                    </svg>
+                    }
                     {{ isVibrationEnabled() ? 'Vibration On' : 'Vibration Off' }}
                 </button>
             </div>
