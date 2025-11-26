@@ -1,29 +1,47 @@
-<div class="relative flex flex-col space-y-4 justify-evenly items-center bg-gray-300 dark:bg-slate-700 rounded-lg p-4">
+<div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-stone-200 dark:border-slate-600 overflow-hidden max-w-sm w-full">
     <button (click)="closeRakatsPopUp()"
-        class="absolute -top-2 -right-2 rounded-full bg-slate-800 dark:bg-gray-200 p-1 text-gray-200 dark:text-slate-800">
-        <svg class="size-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+        class="absolute top-4 right-4 z-10 rounded-full bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 p-2 text-stone-600 dark:text-stone-300 transition-colors">
+        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
             <path
                 d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
         </svg>
     </button>
 
-    <div class="w-full text-lg font-semibold pb-4 border-slate-800/10 dark:border-gray-50/10 border-b-2">Rak'a</div>
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 text-center">
+        <h2 class="text-xl font-bold text-white">Salah Rak'ahs</h2>
+        <p class="text-emerald-100 text-sm mt-1">{{ name() | titlecase }}</p>
+    </div>
 
-    @if(getRakat()?.before_fard?.sunnah != 0) {
-    <app-rakat-detail class="w-full mx-auto" [label]="'Before Fard (Sunnah)'" [value]="getRakat()?.before_fard?.sunnah" />
-    }
+    <!-- Content -->
+    <div class="p-6 space-y-4">
 
-    <app-rakat-detail class="w-full mx-auto" [label]="'Fard'" [value]="getRakat()?.fard" />
+        @if(getRakat()?.before_fard?.sunnah != 0) {
+        <div class="bg-stone-50 dark:bg-slate-700 rounded-lg p-3">
+            <app-rakat-detail class="w-full" [label]="'Before Fard (Sunnah)'" [value]="getRakat()?.before_fard?.sunnah" />
+        </div>
+        }
 
-    @if(getRakat()?.after_fard?.sunnah != 0) {
-    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Sunnah)'" [value]="getRakat()?.after_fard?.sunnah" />
-    }
+        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
+            <app-rakat-detail class="w-full" [label]="'Fard'" [value]="getRakat()?.fard" />
+        </div>
 
-    @if(getRakat()?.after_fard?.nafl != 0) {
-    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Nafl)'" [value]="getRakat()?.after_fard?.nafl" />
-    }
+        @if(getRakat()?.after_fard?.sunnah != 0) {
+        <div class="bg-stone-50 dark:bg-slate-700 rounded-lg p-3">
+            <app-rakat-detail class="w-full" [label]="'After Fard (Sunnah)'" [value]="getRakat()?.after_fard?.sunnah" />
+        </div>
+        }
 
-    @if(getRakat()?.after_fard?.wajib != 0) {
-    <app-rakat-detail class="w-full mx-auto" [label]="'After Fard (Wajib)'" [value]="getRakat()?.after_fard?.wajib" />
-    }
+        @if(getRakat()?.after_fard?.nafl != 0) {
+        <div class="bg-stone-50 dark:bg-slate-700 rounded-lg p-3">
+            <app-rakat-detail class="w-full" [label]="'After Fard (Nafl)'" [value]="getRakat()?.after_fard?.nafl" />
+        </div>
+        }
+
+        @if(getRakat()?.after_fard?.wajib != 0) {
+        <div class="bg-stone-50 dark:bg-slate-700 rounded-lg p-3">
+            <app-rakat-detail class="w-full" [label]="'After Fard (Wajib)'" [value]="getRakat()?.after_fard?.wajib" />
+        </div>
+        }
+    </div>
 </div>

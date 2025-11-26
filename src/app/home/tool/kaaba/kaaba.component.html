@@ -1,29 +1,87 @@
 <app-title [title]="'Kaaba Compass'" [routerLink]="'/home'"></app-title>
 
-<div class="flex items-center justify-center py-20">
-    <div class="relative w-64 h-64 sm:w-80 sm:h-80">
-        <!-- Rotating container -->
-        <div class="absolute inset-0 w-full h-full" [style.transform]="'rotate(' + compassDeg() + 'deg)'">
-            <!-- Background circle -->
-            <div
-                class="w-full h-full bg-gray-400 dark:bg-slate-700 border-2 border-slate-400 dark:border-gray-700 rounded-full flex items-center justify-center">
-                <!-- Kaaba icon -->
-                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-8">
-                    <svg class="size-10 text-slate-800 dark:text-gray-400" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 576 512" aria-label="Kaaba icon">
-                        <path
-                            d="M60 120l228 71.2L516 120 288 48.8 60 120zM278.5 1.5c6.2-1.9 12.9-1.9 19.1 0l256 80C566.9 85.6 576 98 576 112l0 16s0 0 0 0l0 21.2L292.8 237.7c-3.1 1-6.4 1-9.5 0L0 149.2 0 128l0-16C0 98 9.1 85.6 22.5 81.5l256-80zm23.9 266.8L576 182.8l0 46.5-52.8 16.5c-8.4 2.6-13.1 11.6-10.5 20s11.6 13.1 20 10.5L576 262.8 576 400c0 14-9.1 26.4-22.5 30.5l-256 80c-6.2 1.9-12.9 1.9-19.1 0l-256-80C9.1 426.4 0 414 0 400L0 262.8l43.2 13.5c8.4 2.6 17.4-2.1 20-10.5s-2.1-17.4-10.5-20L0 229.2l0-46.5 273.7 85.5c9.3 2.9 19.3 2.9 28.6 0zm-185.5-2.6c-8.4-2.6-17.4 2.1-20 10.5s2.1 17.4 10.5 20l64 20c8.4 2.6 17.4-2.1 20-10.5s-2.1-17.4-10.5-20l-64-20zm352 30.5c8.4-2.6 13.1-11.6 10.5-20s-11.6-13.1-20-10.5l-64 20c-8.4 2.6-13.1 11.6-10.5 20s11.6 13.1 20 10.5l64-20zm-224 9.5c-8.4-2.6-17.4 2.1-20 10.5s2.1 17.4 10.5 20l38.5 12c9.3 2.9 19.3 2.9 28.6 0l38.5-12c8.4-2.6 13.1-11.6 10.5-20s-11.6-13.1-20-10.5l-38.5 12c-3.1 1-6.4 1-9.5 0l-38.5-12z" />
-                    </svg>
+<div class="flex flex-col items-center justify-center p-4">
+    <!-- Compass Info Card -->
+    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 mb-8 shadow-lg border border-emerald-100 dark:border-slate-600 max-w-md w-full">
+        <div class="text-center">
+            <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-full inline-block mb-3">
+                <svg class="size-8 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-2">Qibla Direction</h3>
+            <p class="text-sm text-stone-600 dark:text-stone-400">Point your device towards the Kaaba for prayer</p>
+        </div>
+    </div>
+
+    <!-- Compass Container -->
+    <div class="relative w-80 h-80 sm:w-96 sm:h-96">
+        <!-- Outer Ring with Markings -->
+        <div class="absolute inset-0 w-full h-full">
+            <div class="w-full h-full border-4 border-stone-300 dark:border-slate-600 rounded-full relative">
+                <!-- Cardinal Direction Markers -->
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1">
+                    <div class="w-1 h-6 bg-stone-600 dark:bg-stone-300"></div>
+                    <span class="absolute top-7 left-1/2 transform -translate-x-1/2 text-sm font-bold text-stone-700 dark:text-stone-300">N</span>
+                </div>
+                <div class="absolute right-0 top-1/2 transform translate-x-1 -translate-y-1/2">
+                    <div class="w-6 h-1 bg-stone-400 dark:bg-stone-500"></div>
+                    <span class="absolute left-7 top-1/2 transform -translate-y-1/2 text-sm text-stone-600 dark:text-stone-400">E</span>
+                </div>
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1">
+                    <div class="w-1 h-6 bg-stone-400 dark:bg-stone-500"></div>
+                    <span class="absolute bottom-7 left-1/2 transform -translate-x-1/2 text-sm text-stone-600 dark:text-stone-400">S</span>
+                </div>
+                <div class="absolute left-0 top-1/2 transform -translate-x-1 -translate-y-1/2">
+                    <div class="w-6 h-1 bg-stone-400 dark:bg-stone-500"></div>
+                    <span class="absolute right-7 top-1/2 transform -translate-y-1/2 text-sm text-stone-600 dark:text-stone-400">W</span>
                 </div>
             </div>
         </div>
 
-        <!-- Fixed compass needle (centered) -->
+        <!-- Rotating Compass -->
+        <div class="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)]" [style.transform]="'rotate(' + compassDeg() + 'deg)'">
+            <!-- Compass Background -->
+            <div class="w-full h-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-slate-700 dark:to-slate-600 border-2 border-emerald-200 dark:border-slate-500 rounded-full flex items-center justify-center shadow-inner relative">
+                <!-- Kaaba Icon -->
+                <div class="absolute top-2 left-1/2 transform -translate-x-1/2">
+                    <div class="bg-emerald-600 dark:bg-emerald-500 rounded-full p-3 shadow-lg">
+                        <svg class="size-8 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 576 512" aria-label="Kaaba icon">
+                            <path
+                                d="M60 120l228 71.2L516 120 288 48.8 60 120zM278.5 1.5c6.2-1.9 12.9-1.9 19.1 0l256 80C566.9 85.6 576 98 576 112l0 16s0 0 0 0l0 21.2L292.8 237.7c-3.1 1-6.4 1-9.5 0L0 149.2 0 128l0-16C0 98 9.1 85.6 22.5 81.5l256-80zm23.9 266.8L576 182.8l0 46.5-52.8 16.5c-8.4 2.6-13.1 11.6-10.5 20s11.6 13.1 20 10.5L576 262.8 576 400c0 14-9.1 26.4-22.5 30.5l-256 80c-6.2 1.9-12.9 1.9-19.1 0l-256-80C9.1 426.4 0 414 0 400L0 262.8l43.2 13.5c8.4 2.6 17.4-2.1 20-10.5s-2.1-17.4-10.5-20L0 229.2l0-46.5 273.7 85.5c9.3 2.9 19.3 2.9 28.6 0zm-185.5-2.6c-8.4-2.6-17.4 2.1-20 10.5s2.1 17.4 10.5 20l64 20c8.4 2.6 17.4-2.1 20-10.5s-2.1-17.4-10.5-20l-64-20zm352 30.5c8.4-2.6 13.1-11.6 10.5-20s-11.6-13.1-20-10.5l-64 20c-8.4 2.6-13.1 11.6-10.5 20s11.6 13.1 20 10.5l64-20zm-224 9.5c-8.4-2.6-17.4 2.1-20 10.5s2.1 17.4 10.5 20l38.5 12c9.3 2.9 19.3 2.9 28.6 0l38.5-12c8.4-2.6 13.1-11.6 10.5-20s-11.6-13.1-20-10.5l-38.5 12c-3.1 1-6.4 1-9.5 0l-38.5-12z" />
+                        </svg>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-800 px-2 py-1 rounded-full shadow">QIBLA</span>
+                    </div>
+                </div>
+                
+                <!-- Center Dot -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-4 h-4 bg-stone-600 dark:bg-stone-300 rounded-full shadow-lg"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fixed Compass Needle -->
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"
-                 class="w-full h-full" aria-label="Compass needle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-full h-full" aria-label="Compass needle">
+                <!-- Needle Shadow -->
+                <polygon points="101,41 95,161 107,161" class="text-black opacity-20" fill="currentColor" />
+                <!-- Main Needle -->
                 <polygon points="100,40 94,160 106,160" class="text-red-600" fill="currentColor" />
+                <!-- Needle Tip -->
+                <circle cx="100" cy="40" r="3" class="text-red-700" fill="currentColor" />
             </svg>
         </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="mt-8 text-center max-w-md">
+        <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+            Hold your device flat and rotate until the red needle points to the Kaaba icon. 
+            This indicates the direction of Mecca for your prayers.
+        </p>
     </div>
 </div>
