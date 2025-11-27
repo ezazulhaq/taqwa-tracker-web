@@ -23,6 +23,7 @@ import { TitleComponent } from '../../../shared/title/title.component';
 export class LibraryComponent {
 
   islamic_library = signal<IslamicLibrary[]>([]);
+  openCategoryIndex = signal<number | null>(null);
 
   constructor(
     private readonly libraryService: LibraryService,
@@ -47,6 +48,29 @@ export class LibraryComponent {
 
   getCategoryItems(category: string) {
     return this.islamic_library().filter(item => item.category === category);
+  }
+
+  toggleCategory(index: number, event: Event) {
+    event.preventDefault();
+    const detailsElements = document.querySelectorAll('details');
+    
+    if (this.openCategoryIndex() === index) {
+      detailsElements[index].removeAttribute('open');
+      this.openCategoryIndex.set(null);
+    } else {
+      detailsElements.forEach((details, i) => {
+        if (i !== index) details.removeAttribute('open');
+      });
+      detailsElements[index].setAttribute('open', '');
+      this.openCategoryIndex.set(index);
+    }
+  }
+
+  onToggle(event: Event, index: number) {
+    const target = event.target as HTMLDetailsElement;
+    if (!target.open && this.openCategoryIndex() === index) {
+      this.openCategoryIndex.set(null);
+    }
   }
 
 }
