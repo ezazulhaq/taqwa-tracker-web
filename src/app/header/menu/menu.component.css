@@ -5,3 +5,11 @@
 .app-menu-item {
   @apply flex flex-row justify-center items-center space-x-4 md:space-x-0 py-3 md:justify-between md:w-full;
 }
+
+.app-menu-title {
+  @apply text-slate-700 dark:text-gray-400 group-hover:text-emerald-600 text-lg font-semibold;
+}
+
+.app-menu-icon {
+  @apply size-5 fill-slate-600 dark:fill-gray-400 group-hover:fill-emerald-600 group-active:fill-emerald-600 group-focus:fill-emerald-600;
+}
