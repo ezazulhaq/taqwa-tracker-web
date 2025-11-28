@@ -1,37 +1,37 @@
 <app-title [title]="surahName" [subTitle]="surahName_ar" [routerLink]="'/quran'"></app-title>
 
 <div #stickyCheckbox class="w-full mb-6 px-4">
-    <div
-        class="flex flex-col justify-center items-center space-y-4 sm:flex-row-reverse sm:space-y-0 sm:space-x-4 sm:justify-evenly">
-        <!-- Translation Toggle -->
-        <label class="inline-flex items-center">
-            <input type="checkbox" [(ngModel)]="isTranslationVisible"
-                class="form-checkbox size-4 rounded border-slate-300 text-slate-600 focus:ring-slate-500 cursor-pointer hover:border-slate-500" />
-            <span class="ml-2">Translation</span>
-        </label>
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-stone-200 dark:border-slate-600 p-3">
+        <div class="flex justify-between items-center space-x-4">
+            <!-- Translation Toggle -->
+            <div class="flex items-center">
 
-        <!-- Ayah Navigation Dropdown -->
-        <div class="flex flex-row space-x-2 justify-center items-center">
-            <label for="ayahSelect" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Navigate to Ayah
-            </label>
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="isTranslationVisible" class="sr-only" />
+                    <div class="relative">
+                        <div class="w-10 h-6 bg-stone-300 dark:bg-slate-600 rounded-full shadow-inner transition-colors"
+                            [class.bg-emerald-500]="isTranslationVisible()"
+                            [class.dark:bg-emerald-400]="isTranslationVisible()"></div>
+                        <div class="absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition-transform"
+                            [class.translate-x-4]="isTranslationVisible()"></div>
+                    </div>
+                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">Translation</span>
+                </label>
+            </div>
+
+            <!-- Ayah Navigation Dropdown -->
             <div class="relative">
                 <select id="ayahSelect" [(ngModel)]="selectedAyahNumber" (ngModelChange)="onAyahSelect($event)"
-                    class="ayahSelect">
-                    <option value="" class="py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
-                        🕌 Select
-                    </option>
+                    class="w-32 px-3 py-1 text-sm border border-stone-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-stone-800 dark:text-stone-200 focus:border-emerald-500 focus:outline-none appearance-none">
+                    <option value="">Go to Ayah</option>
                     @for (ayah of ayahs(); track ayah.ayah_number) {
-                    <option [value]="ayah.ayah_number"
-                        class="py-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
-                        📖 {{ ayah.ayah_number }}
+                    <option [value]="ayah.ayah_number">
+                        {{ ayah.ayah_number }}
                     </option>
                     }
                 </select>
-                <!-- Custom dropdown arrow -->
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg class="w-5 h-5 text-slate-400 dark:text-slate-500 transition-colors duration-200" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <svg class="w-3 h-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
@@ -39,17 +39,19 @@
         </div>
     </div>
 </div>
-<div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6">
+<div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
     @for (ayah of ayahs(); track $index) {
-    <div class="relative flex flex-col space-y-6 w-full border-gray-600 border-b-2 pb-4 px-4">
+    <div class="relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8"
+        [id]="'ayah-' + ayah.ayah_number">
         @if(isAuthenticated()){
         <!-- Action buttons container -->
-        <div class="absolute top-2 right-4 flex items-center space-x-4">
+        <div class="absolute top-4 right-4 flex items-center space-x-2">
             <!-- Copy Button -->
             <button (click)="copyAyah(ayah)"
-                class="size-4 fill-slate-800 dark:fill-gray-200 hover:fill-slate-600 dark:hover:fill-gray-400 transition-colors"
+                class="p-2 bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 rounded-lg transition-colors group"
                 title="Copy Ayah">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                     <path
                         d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z" />
                 </svg>
@@ -57,16 +59,26 @@
 
             <!-- Bookmark Button -->
             <button (click)="toggleBookmark({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                class="size-3 fill-slate-800 dark:fill-gray-200 hover:fill-slate-600 dark:hover:fill-gray-400 transition-colors"
+                class="p-2 rounded-lg transition-colors group"
+                [class.bg-emerald-100]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.dark:bg-emerald-900/30]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.hover:bg-emerald-200]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.dark:hover:bg-emerald-900/50]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.bg-stone-100]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.dark:bg-slate-700]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.hover:bg-stone-200]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.dark:hover:bg-slate-600]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
                 title="Bookmark Ayah">
                 @if(isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})){
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path
                         d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
                 </svg>
                 }
                 @else{
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path
                         d="M0 48C0 21.5 21.5 0 48 0l0 48 0 393.4 130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4 336 48 48 48 48 0 336 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488L0 48z" />
                 </svg>
@@ -75,12 +87,34 @@
         </div>
         }
 
-        <div [id]="'ayah-' + ayah.ayah_number" class="font-medium text-sm">
-            <span class="ayah-numbers">{{ayah.ayah_number}}</span>
+        <!-- Ayah Number -->
+        <div class="mb-6">
+            <div
+                class="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full border-2 border-emerald-200 dark:border-emerald-800">
+                <span class="text-emerald-700 dark:text-emerald-300 font-bold text-sm">{{ayah.ayah_number}}</span>
+            </div>
         </div>
-        <div class="text-end text-3xl font-indopak leading-[50px]">{{ayah.arabic_text_original}} ۝</div>
+
+        <!-- Arabic Text -->
+        <div
+            class="text-right text-4xl md:text-5xl font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200 mb-6">
+            {{ayah.arabic_text_original}} ۝
+        </div>
+
+        <!-- Translation -->
         @if(isTranslationVisible()){
-        <div class="font-app-serif text-lg text-start">{{ayah.translation}}</div>
+        <div class="border-t border-stone-200 dark:border-slate-600 pt-6">
+            <div class="flex items-start space-x-3">
+                <div class="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-1">
+                    <svg class="size-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+                    </svg>
+                </div>
+                <p class="font-app-serif text-lg text-stone-700 dark:text-stone-300 leading-relaxed italic">
+                    {{ayah.translation}}</p>
+            </div>
+        </div>
         }
     </div>
     }

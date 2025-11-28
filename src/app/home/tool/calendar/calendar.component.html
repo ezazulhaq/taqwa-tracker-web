@@ -37,7 +37,7 @@
 
         <div class="text-center space-y-2">
             <h2 class="text-2xl font-bold tracking-tight">{{ currentMonthName() }}</h2>
-            <p class="text-base opacity-95 font-medium">{{ currentHijriMonth() }}</p>
+            <p class="text-lg opacity-95 font-medium font-indopak">{{ currentHijriMonth() }}</p>
         </div>
     </div>
 
@@ -79,7 +79,7 @@
                     </div>
 
                     <!-- Hijri Date -->
-                    <div class="text-[11px] leading-tight mb-1" [class.text-gray-400]="!day.isCurrentMonth"
+                    <div class="text-xs leading-tight mb-1 font-indopak" [class.text-gray-400]="!day.isCurrentMonth"
                         [class.dark:text-gray-500]="!day.isCurrentMonth" [class.text-gray-600]="day.isCurrentMonth"
                         [class.dark:text-gray-300]="day.isCurrentMonth">
                         {{ day.hijriDay }} {{ day.hijriMonth }}

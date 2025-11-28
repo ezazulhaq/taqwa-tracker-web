@@ -1,20 +1,43 @@
 <app-title [title]="'Islamic Library'" [routerLink]="'/home'"></app-title>
 
-<div class="flex flex-col space-y-6 w-full md:w-4/5 px-10 mx-auto pb-20">
+<div class="flex flex-col space-y-6 w-full px-4 mx-auto pb-20">
     @for (category of getCategories(); track $index) {
-    <details class="library-all">
-        <summary class="text-xl text-start font-semibold cursor-pointer">
-            {{ category | replaceUnderline | titlecase }}
-        </summary>
-        <div class="flex flex-col ml-4 mt-2 border-t">
-            @for (library of getCategoryItems(category); track $index) {
-            <button class="text-md text-start py-2 font-normal hover:cursor-pointer hover:font-semibold"
-                [routerLink]="['../reader']"
-                [queryParams]="{ pdfName: library.pdfName, category: library.category, storageKey: library.storageKey }">
-                <span>{{ library.name | titlecase }}</span>
-            </button>
-            }
-        </div>
-    </details>
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 overflow-hidden">
+        <details class="group" (toggle)="onToggle($event, $index)">
+            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" (click)="toggleCategory($index, $event)">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full border-2 border-emerald-200 dark:border-emerald-800">
+                        <svg class="size-6 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-stone-800 dark:text-stone-200">
+                        {{ category | replaceUnderline | titlecase }}
+                    </h3>
+                </div>
+                <svg class="size-5 text-stone-400 dark:text-stone-500 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </summary>
+            <div class="border-t border-stone-200 dark:border-slate-600 bg-stone-50 dark:bg-slate-700/50">
+                <div class="p-4 space-y-2">
+                    @for (library of getCategoryItems(category); track $index) {
+                    <button class="w-full text-left p-3 rounded-lg hover:bg-white dark:hover:bg-slate-600 transition-colors group/item border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800 hover:shadow-sm"
+                        [routerLink]="['../reader']"
+                        [queryParams]="{ pdfName: library.pdfName, category: library.category, storageKey: library.storageKey }">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg group-hover/item:bg-emerald-200 dark:group-hover/item:bg-emerald-900/50 transition-colors">
+                                <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-stone-700 dark:text-stone-200 group-hover/item:text-emerald-700 dark:group-hover/item:text-emerald-300 transition-colors">{{ library.name | titlecase }}</span>
+                        </div>
+                    </button>
+                    }
+                </div>
+            </div>
+        </details>
+    </div>
     }
 </div>
