@@ -1,8 +1,8 @@
-# Taqwa Tracker: Islamic Prayer and Hadith Companion
+# Taqwa Tracker: Comprehensive Islamic Companion App
 
-The Taqwa Tracker is a comprehensive Islamic application that provides prayer times, Qibla direction, Quran translations, Hadith search, Islamic chatbot, and more. This Angular 19-based Progressive Web App (PWA) offers a rich set of features for Muslims to enhance their daily religious practices.
+Taqwa Tracker is a feature-rich Islamic Progressive Web App (PWA) built with Angular 20 that serves as a complete digital companion for Muslims. The application seamlessly integrates essential Islamic tools including prayer times, Qibla direction, Quran reader, Hadith search, AI-powered Islamic chatbot, reading streak tracking, and Islamic calendar features.
 
-The Taqwa Tracker combines modern web technologies with traditional Islamic resources to create a user-friendly and informative platform. It utilizes geolocation for accurate prayer times, integrates with Supabase for data management, implements AI-powered Islamic chatbot, and provides offline functionality through service workers.
+This modern web application combines cutting-edge technologies with authentic Islamic resources to provide an intuitive and comprehensive platform. It leverages geolocation services for precise prayer calculations, integrates with Supabase for robust data management and authentication, implements AI-driven Islamic guidance through edge functions, and ensures offline accessibility through advanced service worker implementation.
 
 ## Repository Structure
 
