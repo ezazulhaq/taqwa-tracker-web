@@ -1,3 +1,5 @@
+import { environment } from "../../environments/environment";
+
 export const SECURITY_CONFIG = {
   // Rate limiting
   MAX_LOGIN_ATTEMPTS: 5,
@@ -23,7 +25,7 @@ export const SECURITY_CONFIG = {
     'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
     'font-src': ["'self'", "https://fonts.gstatic.com", "data:"],
     'img-src': ["'self'", "data:", "https:", "blob:"],
-    'connect-src': ["'self'", "https://*.supabase.co", "https://*.openstreetmap.org", "https://raw.githubusercontent.com"],
+    'connect-src': ["'self'", "https://*.supabase.co", "https://*.openstreetmap.org", "https://raw.githubusercontent.com", `${environment.apiBaseUrl}`],
     'worker-src': ["'self'", "blob:"],
     'child-src': ["'self'", "blob:"],
     'frame-src': ["'none'"],
