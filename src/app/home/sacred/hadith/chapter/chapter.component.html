@@ -3,7 +3,8 @@
 </div>
 <div #hadithContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
     @for (hadith of hadiths(); track $index) {
-    <div class="relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8" [id]="'hadith-' + hadith.hadith_no">
+    <div class="relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8"
+        [id]="'hadith-' + hadith.hadith_no">
         @if(isAuthenticated()){
         <!-- Action buttons container -->
         <div class="absolute top-4 right-4 flex items-center space-x-2">
@@ -11,31 +12,34 @@
             <button (click)="copyHadith(hadith)"
                 class="p-2 bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 rounded-lg transition-colors group"
                 title="Copy Hadith">
-                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z" />
+                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path
+                        d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z" />
                 </svg>
             </button>
 
             <!-- Bookmark Button -->
-            <button (click)="toggleBookmark(hadith)"
-                class="p-2 rounded-lg transition-colors group"
+            <button (click)="toggleBookmark(hadith)" class="p-2 rounded-lg transition-colors group"
                 [class.bg-emerald-100]="isBookmarked(hadith.id)"
                 [class.dark:bg-emerald-900/30]="isBookmarked(hadith.id)"
                 [class.hover:bg-emerald-200]="isBookmarked(hadith.id)"
                 [class.dark:hover:bg-emerald-900/50]="isBookmarked(hadith.id)"
-                [class.bg-stone-100]="!isBookmarked(hadith.id)"
-                [class.dark:bg-slate-700]="!isBookmarked(hadith.id)"
+                [class.bg-stone-100]="!isBookmarked(hadith.id)" [class.dark:bg-slate-700]="!isBookmarked(hadith.id)"
                 [class.hover:bg-stone-200]="!isBookmarked(hadith.id)"
-                [class.dark:hover:bg-slate-600]="!isBookmarked(hadith.id)"
-                title="Bookmark Hadith">
+                [class.dark:hover:bg-slate-600]="!isBookmarked(hadith.id)" title="Bookmark Hadith">
                 @if(isBookmarked(hadith.id)){
-                <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
+                <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    <path
+                        d="M0 48V487.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400 345.7 507.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z" />
                 </svg>
                 }
                 @else{
-                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path d="M0 48C0 21.5 21.5 0 48 0l0 48 0 393.4 130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4 336 48 48 48 48 0 336 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488L0 48z" />
+                <svg class="size-4 text-stone-600 dark:text-stone-300 group-hover:text-stone-800 dark:group-hover:text-stone-100"
+                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    <path
+                        d="M0 48C0 21.5 21.5 0 48 0l0 48 0 393.4 130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4 336 48 48 48 48 0 336 0c26.5 0 48 21.5 48 48l0 440c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488L0 48z" />
                 </svg>
                 }
             </button>
@@ -44,13 +48,14 @@
 
         <!-- Hadith Number -->
         <div class="mb-6">
-            <div class="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full border-2 border-emerald-200 dark:border-emerald-800">
+            <div
+                class="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full border-2 border-emerald-200 dark:border-emerald-800">
                 <span class="text-emerald-700 dark:text-emerald-300 font-bold text-sm">{{hadith.hadith_no}}</span>
             </div>
         </div>
 
         <!-- Hadith Text -->
-        <div class="font-app-serif text-lg text-stone-700 dark:text-stone-300 leading-relaxed">
+        <div class="font-app-serif text-lg text-start text-stone-700 dark:text-stone-300 leading-relaxed">
             {{hadith.text_en}}
         </div>
     </div>
