@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
-import { BookMarkedSurah } from '../model/surah.model';
 import { Hadiths } from '../home/sacred/hadith/hadith.model';
+import { BookMarkedSurah } from '../home/sacred/quran/quran.model';
 
 @Injectable({
   providedIn: 'root'
@@ -141,7 +141,7 @@ export class BookmarkService {
     }
   }
 
-  removeHadithBookmark(hadith: Hadiths){
+  removeHadithBookmark(hadith: Hadiths) {
     this.bookmarkedHadiths.update(bookmarked => {
       const newBookmarked = new Set(bookmarked);
       newBookmarked.delete(hadith.id);
@@ -150,7 +150,7 @@ export class BookmarkService {
     this.saveToStorageHadith();
   }
 
-  removeAyahBookmark(bookMarkedSurah: BookMarkedSurah){
+  removeAyahBookmark(bookMarkedSurah: BookMarkedSurah) {
     this.bookmarkedAyahs.update(bookmarked => {
       const newBookmarked = new Set(bookmarked);
       Array.from(newBookmarked).forEach(item => {

@@ -1,9 +1,10 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ThemeSelectorService } from '../../service/theme.service';
 import { SupabaseService } from '../../service/supabase.service';
-import { Translator } from '../../model/translation.model';
 import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
+import { QuranService } from '../../home/sacred/quran/quran.service';
+import { Translator } from '../../home/sacred/quran/quran.model';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +19,7 @@ export class SettingsComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   private readonly themeSelector = inject(ThemeSelectorService);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly quranService = inject(QuranService);
 
   // UI state
   protected localMenuVisible = signal(false);
@@ -85,18 +87,18 @@ export class SettingsComponent implements OnInit {
     const savedTranslator = localStorage.getItem('quranTranslator');
     if (savedTranslator) {
       this.selectedTranslator.set(savedTranslator);
-      this.supabaseService.quranTranslator.set(savedTranslator);
+      this.quranService.quranTranslator.set(savedTranslator);
     } else {
-      const defaultTranslator = this.supabaseService.quranTranslator();
+      const defaultTranslator = this.quranService.quranTranslator();
       localStorage.setItem('quranTranslator', defaultTranslator);
       this.selectedTranslator.set(defaultTranslator);
     }
   }
 
   private loadQuranTranslators(): void {
-    this.supabaseService.getQuranTranslators().subscribe({
-      next: (data: { data: Translator[] }) => {
-        this.quranTranslators.set(data.data);
+    this.quranService.getQuranTranslators().subscribe({
+      next: (data: Translator[]) => {
+        this.quranTranslators.set(data);
       }
     });
   }
@@ -126,7 +128,7 @@ export class SettingsComponent implements OnInit {
   onQuranTranslatorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedTranslator.set(select.value);
-    this.supabaseService.quranTranslator.set(select.value);
+    this.quranService.quranTranslator.set(select.value);
   }
 
   onHadithSourceChange(event: Event): void {

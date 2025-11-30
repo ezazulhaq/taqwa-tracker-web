@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { SupabaseService } from '../../../service/supabase.service';
+import { Component, computed, inject, linkedSignal, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { BookMarkedSurah, Surah } from '../../../model/surah.model';
 import { ListHomeComponent } from '../../../shared/skeleton/list-home/list-home.component';
 import { BookmarkService } from '../../../service/bookmark.service';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { AuthService } from '../../../service/auth.service';
+import { QuranService } from './quran.service';
+import { BookMarkedSurah, Surah } from './quran.model';
 
 @Component({
     selector: 'app-quran',
@@ -25,6 +25,7 @@ import { AuthService } from '../../../service/auth.service';
 export class QuranComponent implements OnInit {
 
     private readonly authService = inject(AuthService);
+    private readonly quranService = inject(QuranService);
 
     surahList = signal<Surah[]>([]);
 
@@ -36,7 +37,6 @@ export class QuranComponent implements OnInit {
 
     constructor(
         private readonly router: Router,
-        private readonly supabaseService: SupabaseService,
         private readonly bookmarkService: BookmarkService
     ) { }
 
@@ -48,12 +48,12 @@ export class QuranComponent implements OnInit {
         this.router.navigate(['/home']);
     }
 
-    getSurahList = computed(() => {
-        this.supabaseService.getSurahList()
+    getSurahList = linkedSignal(() => {
+        this.quranService.getAllSurahs()
             .subscribe(
                 {
                     next: (data: any) => {
-                        this.surahList.set(data.data);
+                        this.surahList.set(data);
                     },
                     error: (error: any) => console.log(error.error),
                     complete: () => {
