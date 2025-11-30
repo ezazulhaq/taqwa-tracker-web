@@ -59,44 +59,40 @@ export class ChapterComponent implements OnInit, AfterViewInit {
         next: (data: any) => {
           this.hadiths.set(data.data);
           this.chapterName.set(data.data[0].chapter_name);
+          this.handleScrollAfterDataLoad();
         },
-        complete: () => {
-          // Track page view for streak (user opened Hadith)
-          //if (this.isAuthenticated()) {
-          this.trackReading();
-          //}
-
-          // Setup reading tracker
-          this.setupReadingTracker();
-        }
+        error: (error: any) => console.error('Failed to load hadiths:', error)
       }
     );
   }
 
   ngAfterViewInit() {
     this.originalOffset = this.stickyTitle.nativeElement.offsetTop;
+    this.trackReading();
+  }
 
-    if (this.hadithIdToScrollTo() !== null) {
+  private handleScrollAfterDataLoad() {
+    if (this.hadithIdToScrollTo() !== null && this.hadiths().length > 0) {
       setTimeout(() => {
         this.scrollToHadith(this.hadithIdToScrollTo());
-      }, 1000);
+      }, 100);
     }
+    this.setupReadingTracker();
   }
 
   /**
- * Setup Intersection Observer to track when hadiths are read
- */
+   * Setup Intersection Observer to track when hadiths are read
+   */
   private setupReadingTracker(): void {
-    if (!this.isAuthenticated()) return;
+    if (!this.isAuthenticated() || this.hadiths().length === 0) return;
 
-    // Wait longer to avoid tracking during initial scroll navigation
-    const delay = this.hadithIdToScrollTo() !== null ? 3000 : 1000;
-
+    const delay = this.hadithIdToScrollTo() !== null ? 500 : 100;
+    
     setTimeout(() => {
       const options = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.7 // 70% of hadith must be visible
+        threshold: 0.7
       };
 
       const observer = new IntersectionObserver((entries) => {
@@ -106,7 +102,6 @@ export class ChapterComponent implements OnInit, AfterViewInit {
             const hadithId = hadithElement.id.replace('hadith-', '');
             const hadithNo = parseInt(hadithId);
 
-            // Only track if not already tracked in this session
             if (!this.readHadithsSet.has(hadithId)) {
               this.readHadithsSet.add(hadithId);
               this.lastReadHadithNo.update((value) => hadithNo > (value || 0) ? hadithNo : value);
@@ -116,7 +111,6 @@ export class ChapterComponent implements OnInit, AfterViewInit {
         });
       }, options);
 
-      // Observe all hadith elements
       const hadithElements = this.hadithContainer.nativeElement.querySelectorAll('[id^="hadith-"]');
       hadithElements.forEach((element: Element) => observer.observe(element));
     }, delay);
