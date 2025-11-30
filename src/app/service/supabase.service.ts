@@ -1,7 +1,6 @@
 import { effect, Injectable, signal, inject } from '@angular/core';
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Observable, from, map, tap } from 'rxjs';
-import { IslamicLibrary } from '../model/islamic-library.model';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -11,58 +10,12 @@ export class SupabaseService {
 
     private authService = inject(AuthService);
 
-    quranTranslator = signal<string>(localStorage.getItem('quranTranslator') || 'ahmedraza');
-
     hadithSource = signal<string>(localStorage.getItem('hadithSource') || 'Sahih Bukhari');
 
     constructor() {
         effect(() => {
-            localStorage.setItem('quranTranslator', this.quranTranslator());
             localStorage.setItem('hadithSource', this.hadithSource());
         });
-    }
-
-    getQuranTranslators(): Observable<any> {
-        return from(
-            this.getClient()
-                .from('translators')
-                .select('name, full_name')
-                .eq('is_active', true)
-                .order('name', { ascending: true })
-        );
-    }
-
-    /**
-     * Method to call the 'get_surah_translation' stored procedure and return an Observable
-     */
-    getSurahTranslation(
-        p_language_code: string,
-        p_surah_id: number,
-        p_translator_name: string
-    ): Observable<any> {
-        return from(
-            this.getClient().rpc(
-                'get_surah_translation',
-                {
-                    p_language_code,
-                    p_surah_id,
-                    p_translator_name
-                }
-            )
-        );
-    }
-
-    /**
-     * Get List of all the Surah
-     * @returns Surah
-     */
-    getSurahList(): Observable<any> {
-        return from(
-            this.getClient()
-                .from('surahs')
-                .select('surah_id, name, name_transliteration, name_en, total_ayas')
-                .order('surah_id', { ascending: true })
-        );
     }
 
     /**
