@@ -1,10 +1,11 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ThemeSelectorService } from '../../service/theme.service';
-import { SupabaseService } from '../../service/supabase.service';
 import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
 import { QuranService } from '../../home/sacred/quran/quran.service';
 import { Translator } from '../../home/sacred/quran/quran.model';
+import { HadithService } from '../../home/sacred/hadith/hadith.service';
+import { HadithSource } from '../../home/sacred/hadith/hadith.model';
 
 @Component({
   selector: 'app-settings',
@@ -18,8 +19,8 @@ export class SettingsComponent implements OnInit {
   private readonly headerService = inject(HeaderService);
   protected readonly authService = inject(AuthService);
   private readonly themeSelector = inject(ThemeSelectorService);
-  private readonly supabaseService = inject(SupabaseService);
   private readonly quranService = inject(QuranService);
+  private readonly hadithService = inject(HadithService);
 
   // UI state
   protected localMenuVisible = signal(false);
@@ -75,9 +76,9 @@ export class SettingsComponent implements OnInit {
     const savedSource = localStorage.getItem('hadithSource');
     if (savedSource) {
       this.selectedSource.set(savedSource);
-      this.supabaseService.hadithSource.set(savedSource);
+      this.hadithService.hadithSource.set(savedSource);
     } else {
-      const defaultSource = this.supabaseService.hadithSource();
+      const defaultSource = this.hadithService.hadithSource();
       localStorage.setItem('hadithSource', defaultSource);
       this.selectedSource.set(defaultSource);
     }
@@ -104,9 +105,9 @@ export class SettingsComponent implements OnInit {
   }
 
   private loadHadithSources(): void {
-    this.supabaseService.findActiveHadithSources().subscribe({
-      next: (data: { data: { name: string }[] }) => {
-        this.hadithSources.set(data.data.map(item => item.name));
+    this.hadithService.findActiveHadithSources().subscribe({
+      next: (data: HadithSource[]) => {
+        this.hadithSources.set(data.map(item => item.name));
       }
     });
   }
@@ -134,6 +135,6 @@ export class SettingsComponent implements OnInit {
   onHadithSourceChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedSource.set(select.value);
-    this.supabaseService.hadithSource.set(select.value);
+    this.hadithService.hadithSource.set(select.value);
   }
 }
