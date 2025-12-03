@@ -30,12 +30,40 @@
   "dataGroups": [
     {
       "name": "location-api",
-      "urls": ["https://nominatim.openstreetmap.org/*"],
+      "urls": [
+        "https://nominatim.openstreetmap.org/*"
+      ],
       "version": 1,
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 50,
         "maxAge": "7d",
+        "timeout": "10s"
+      }
+    },
+    {
+      "name": "quran-api",
+      "urls": [
+        "https://api.thetaqwatracker.com/quran/*"
+      ],
+      "version": 1,
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 150,
+        "maxAge": "7d",
+        "timeout": "10s"
+      }
+    },
+    {
+      "name": "hadith-api",
+      "urls": [
+        "https://api.thetaqwatracker.com/hadith/*"
+      ],
+      "version": 1,
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "1d",
         "timeout": "10s"
       }
     }
