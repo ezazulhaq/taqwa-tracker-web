@@ -10,13 +10,7 @@ export class SupabaseService {
 
     private authService = inject(AuthService);
 
-    hadithSource = signal<string>(localStorage.getItem('hadithSource') || 'Sahih Bukhari');
-
-    constructor() {
-        effect(() => {
-            localStorage.setItem('hadithSource', this.hadithSource());
-        });
-    }
+    constructor() { }
 
     /**
      * Searches for hadiths based on a given query text.
@@ -51,78 +45,6 @@ export class SupabaseService {
                         body: JSON.stringify(body)
                     }
                 )
-        );
-    }
-
-    /**
-     * Retrieves a list of active hadith sources from the database.
-     * 
-     * @returns An Observable that emits the names of active hadith sources
-     * 
-     * @example
-     * this.supabaseService.findActiveHadithSources()
-     *   .subscribe(
-     *     sources => console.log(sources),
-     *     error => console.error('Failed to load sources:', error)
-     *   );
-     * 
-     * @remarks
-     * - Queries the 'sources' table and filters for records where 'is_active' is true
-     * - Only selects the 'name' field from each record
-     */
-    findActiveHadithSources(): Observable<any> {
-        return from(
-            this.getClient()
-                .from('sources')
-                .select('name')
-                .eq('is_active', true)
-        );
-
-    }
-
-    /**
-     * Method to call the 'get_chapter_info_by_source' stored procedure and return an Observable
-     */
-    getHadithChaptersFromSource(): Observable<any> {
-        return from(
-            this.getClient().rpc(
-                'get_chapter_info_by_source',
-                {
-                    source_name: this.hadithSource()
-                }
-            )
-        );
-    }
-
-    /**
-     * Method to call the 'get_hadiths_by_chapter_id' stored procedure and return an Observable
-     */
-    getHadithByChapterId(
-        input_chapter_id: string
-    ): Observable<any> {
-        return from(
-            this.getClient().rpc(
-                'get_hadiths_by_chapter_id',
-                {
-                    input_chapter_id
-                }
-            )
-        );
-    }
-
-    /**
-     * Method to call the 'get_hadith_details' stored procedure and return an Observable
-     */
-    getHadithDetailsFromId(
-        hadith_id: string[]
-    ): Observable<any> {
-        return from(
-            this.getClient().rpc(
-                'get_hadith_details',
-                {
-                    hadith_id
-                }
-            )
         );
     }
 
