@@ -1,14 +1,13 @@
 import { Component, computed, effect, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
-import { SupabaseService } from '../../../../service/supabase.service';
 import { ActivatedRoute } from '@angular/router';
-import { Translation } from '../../../../model/translation.model';
 import { FormsModule } from '@angular/forms';
 import { BookmarkService } from '../../../../service/bookmark.service';
-import { BookMarkedSurah } from '../../../../model/surah.model';
 import { TitleComponent } from '../../../../shared/title/title.component';
 import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
+import { Ayah, BookMarkedSurah } from '../quran.model';
+import { QuranService } from '../quran.service';
 
 @Component({
   selector: 'app-ayah',
@@ -26,6 +25,7 @@ export class AyahComponent {
 
   private readonly authService = inject(AuthService);
   private readonly readStreakService = inject(ReadStreakService);
+  private readonly quranService = inject(QuranService);
 
   @ViewChild('stickyCheckbox') stickyCheckbox!: ElementRef;
   private originalOffset: number = 0;
@@ -41,17 +41,16 @@ export class AyahComponent {
   surahName_ar!: string;
   ayahNoParam!: string;
 
-  ayahs = signal<Translation[]>([]);
+  ayahs = signal<Ayah[]>([]);
 
   isTranslationVisible = signal<boolean>(true);
   selectedAyahNumber = signal<string>(''); // For dropdown selection
 
-  translator = computed(() => this.supabaseService.quranTranslator());
+  translator = computed(() => this.quranService.quranTranslator());
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
   constructor(
-    private readonly supabaseService: SupabaseService,
     private readonly bookmarkService: BookmarkService,
     private readonly route: ActivatedRoute) {
     this.route.queryParams.subscribe(params => {
@@ -70,43 +69,34 @@ export class AyahComponent {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   ngAfterViewInit() {
     this.originalOffset = this.stickyCheckbox.nativeElement.offsetTop;
+    this.trackReading();
+  }
 
-    if (this.ayahIdToScrollTo() !== null) {
+  private handleScrollAfterDataLoad() {
+    if (this.ayahIdToScrollTo() !== null && this.ayahs().length > 0) {
       setTimeout(() => {
         this.scrollToAyah(this.ayahIdToScrollTo());
-        // Set the dropdown to the scrolled ayah
         this.selectedAyahNumber.set(this.ayahIdToScrollTo()?.toString() || '');
-      }, 1000);
+      }, 100);
     }
-
-    // Track page view for streak (user opened Quran)
-    //if (this.isAuthenticated()) {
-    this.trackReading();
-    //}
-
-    // Setup Intersection Observer for tracking visible ayahs
     this.setupReadingTracker();
   }
 
   /**
- * Setup Intersection Observer to track when ayahs are read
- */
+   * Setup Intersection Observer to track when ayahs are read
+   */
   private setupReadingTracker(): void {
-    if (!this.isAuthenticated()) return;
+    if (!this.isAuthenticated() || this.ayahs().length === 0) return;
 
-    // Wait longer to avoid tracking during initial scroll navigation
-    const delay = this.ayahIdToScrollTo() !== null ? 3000 : 1000;
+    const delay = this.ayahIdToScrollTo() !== null ? 500 : 100;
 
     setTimeout(() => {
       const options = {
         root: null,
         rootMargin: '0px',
-        threshold: 0.8 // 80% of ayah must be visible
+        threshold: 0.8
       };
 
       const observer = new IntersectionObserver((entries) => {
@@ -116,7 +106,6 @@ export class AyahComponent {
             const ayahId = ayahElement.id.replace('ayah-', '');
             const ayahNumber = parseInt(ayahId);
 
-            // Only track if not already tracked in this session
             if (!this.readAyahsSet.has(ayahNumber)) {
               this.readAyahsSet.add(ayahNumber);
               this.lastReadAyahNo.set(ayahNumber);
@@ -126,7 +115,6 @@ export class AyahComponent {
         });
       }, options);
 
-      // Observe all ayah elements
       const ayahElements = this.ayahContainer.nativeElement.querySelectorAll('[id^="ayah-"]');
       ayahElements.forEach((element: Element) => observer.observe(element));
     }, delay);
@@ -178,23 +166,23 @@ export class AyahComponent {
     this.bookmarkService.toggleBookmarkAyah(bookMarkedSurah);
   }
 
-  async copyAyah(ayah: Translation) {
+  async copyAyah(ayah: Ayah) {
     try {
       let textToCopy = '';
 
       // Add surah and ayah information
-      textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_number}\n\n`;
+      textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_no}\n\n`;
 
       // Add Arabic text
-      textToCopy += `${ayah.arabic_text_original}\n\n`;
+      textToCopy += `${ayah.arabic_text}\n\n`;
 
       // Add translation if visible
       if (this.isTranslationVisible()) {
-        textToCopy += `Translation: ${ayah.translation}\n\n`;
+        textToCopy += `Translation: ${ayah.translation_text}\n\n`;
       }
 
       // Add source attribution
-      textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_number}`;
+      textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_no}`;
 
       await navigator.clipboard.writeText(textToCopy);
 
@@ -226,18 +214,18 @@ export class AyahComponent {
     }, 2000);
   }
 
-  private fallbackCopyToClipboard(ayah: Translation) {
+  private fallbackCopyToClipboard(ayah: Ayah) {
     const textArea = document.createElement('textarea');
 
     let textToCopy = '';
-    textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_number}\n\n`;
-    textToCopy += `${ayah.arabic_text_original}\n\n`;
+    textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_no}\n\n`;
+    textToCopy += `${ayah.arabic_text}\n\n`;
 
     if (this.isTranslationVisible()) {
-      textToCopy += `Translation: ${ayah.translation}\n\n`;
+      textToCopy += `Translation: ${ayah.translation_text}\n\n`;
     }
 
-    textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_number}`;
+    textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_no}`;
 
     textArea.value = textToCopy;
     textArea.style.position = 'fixed';
@@ -284,10 +272,11 @@ export class AyahComponent {
 
   private getTranslatedAayahs() {
     console.log("getTranslatedAayahs function called");
-    this.supabaseService.getSurahTranslation("en", +this.surahNumber, this.translator()).subscribe(
+    this.quranService.getAllAyahs(+this.surahNumber, this.translator()).subscribe(
       {
         next: (data: any) => {
-          this.ayahs.set(data.data);
+          this.ayahs.set(data);
+          this.handleScrollAfterDataLoad();
         },
         error: (error: any) => console.log(error.error),
         complete: () => console.log(`Aayahs set this translator: ${this.translator()}`)

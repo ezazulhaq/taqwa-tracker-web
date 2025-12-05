@@ -16,5 +16,6 @@ export const environment = {
     supabase: {
         url: supabaseUrl,
         anonKey: supabaseAnonKey
-    }
+    },
+    apiBaseUrl: 'https://api.thetaqwatracker.com'
 };

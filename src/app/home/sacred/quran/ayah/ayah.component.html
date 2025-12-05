@@ -24,9 +24,9 @@
                 <select id="ayahSelect" [(ngModel)]="selectedAyahNumber" (ngModelChange)="onAyahSelect($event)"
                     class="w-32 px-3 py-1 text-sm border border-stone-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-stone-800 dark:text-stone-200 focus:border-emerald-500 focus:outline-none appearance-none">
                     <option value="">Go to Ayah</option>
-                    @for (ayah of ayahs(); track ayah.ayah_number) {
-                    <option [value]="ayah.ayah_number">
-                        {{ ayah.ayah_number }}
+                    @for (ayah of ayahs(); track ayah.ayah_no) {
+                    <option [value]="ayah.ayah_no">
+                        {{ ayah.ayah_no }}
                     </option>
                     }
                 </select>
@@ -42,7 +42,7 @@
 <div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
     @for (ayah of ayahs(); track $index) {
     <div class="relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8"
-        [id]="'ayah-' + ayah.ayah_number">
+        [id]="'ayah-' + ayah.ayah_no">
         @if(isAuthenticated()){
         <!-- Action buttons container -->
         <div class="absolute top-4 right-4 flex items-center space-x-2">
@@ -58,18 +58,18 @@
             </button>
 
             <!-- Bookmark Button -->
-            <button (click)="toggleBookmark({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+            <button (click)="toggleBookmark({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
                 class="p-2 rounded-lg transition-colors group"
-                [class.bg-emerald-100]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.dark:bg-emerald-900/30]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.hover:bg-emerald-200]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.dark:hover:bg-emerald-900/50]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.bg-stone-100]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.dark:bg-slate-700]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.hover:bg-stone-200]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
-                [class.dark:hover:bg-slate-600]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})"
+                [class.bg-emerald-100]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.dark:bg-emerald-900/30]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.hover:bg-emerald-200]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.dark:hover:bg-emerald-900/50]="isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.bg-stone-100]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.dark:bg-slate-700]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.hover:bg-stone-200]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
+                [class.dark:hover:bg-slate-600]="!isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})"
                 title="Bookmark Ayah">
-                @if(isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_number})){
+                @if(isBookmarked({surah_id: +surahNumber, ayah_id: ayah.ayah_no})){
                 <svg class="size-4 text-emerald-600 dark:text-emerald-400" fill="currentColor"
                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path
@@ -91,20 +91,20 @@
         <div class="mb-6">
             <div
                 class="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full border-2 border-emerald-200 dark:border-emerald-800">
-                <span class="text-emerald-700 dark:text-emerald-300 font-bold text-sm">{{ayah.ayah_number}}</span>
+                <span class="text-emerald-700 dark:text-emerald-300 font-bold text-sm">{{ayah.ayah_no}}</span>
             </div>
         </div>
 
         <!-- Arabic Text -->
         <div
-            class="text-right text-4xl md:text-5xl font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200 mb-6">
-            {{ayah.arabic_text_original}} ۝
+            class="text-right text-3xl md:text-4xl font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200 mb-6">
+            {{ayah.arabic_text}} ۝
         </div>
 
         <!-- Translation -->
         @if(isTranslationVisible()){
         <div class="border-t border-stone-200 dark:border-slate-600 pt-6">
-            <div class="flex items-start space-x-3">
+            <div class="flex items-start text-start space-x-3">
                 <div class="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-1">
                     <svg class="size-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                         <path
@@ -112,7 +112,7 @@
                     </svg>
                 </div>
                 <p class="font-app-serif text-lg text-stone-700 dark:text-stone-300 leading-relaxed italic">
-                    {{ayah.translation}}</p>
+                    {{ayah.translation_text}}</p>
             </div>
         </div>
         }

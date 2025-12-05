@@ -1,9 +1,11 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ThemeSelectorService } from '../../service/theme.service';
-import { SupabaseService } from '../../service/supabase.service';
-import { Translator } from '../../model/translation.model';
 import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
+import { QuranService } from '../../home/sacred/quran/quran.service';
+import { Translator } from '../../home/sacred/quran/quran.model';
+import { HadithService } from '../../home/sacred/hadith/hadith.service';
+import { HadithSource } from '../../home/sacred/hadith/hadith.model';
 
 @Component({
   selector: 'app-settings',
@@ -17,7 +19,8 @@ export class SettingsComponent implements OnInit {
   private readonly headerService = inject(HeaderService);
   protected readonly authService = inject(AuthService);
   private readonly themeSelector = inject(ThemeSelectorService);
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly quranService = inject(QuranService);
+  private readonly hadithService = inject(HadithService);
 
   // UI state
   protected localMenuVisible = signal(false);
@@ -73,9 +76,9 @@ export class SettingsComponent implements OnInit {
     const savedSource = localStorage.getItem('hadithSource');
     if (savedSource) {
       this.selectedSource.set(savedSource);
-      this.supabaseService.hadithSource.set(savedSource);
+      this.hadithService.hadithSource.set(savedSource);
     } else {
-      const defaultSource = this.supabaseService.hadithSource();
+      const defaultSource = this.hadithService.hadithSource();
       localStorage.setItem('hadithSource', defaultSource);
       this.selectedSource.set(defaultSource);
     }
@@ -85,26 +88,26 @@ export class SettingsComponent implements OnInit {
     const savedTranslator = localStorage.getItem('quranTranslator');
     if (savedTranslator) {
       this.selectedTranslator.set(savedTranslator);
-      this.supabaseService.quranTranslator.set(savedTranslator);
+      this.quranService.quranTranslator.set(savedTranslator);
     } else {
-      const defaultTranslator = this.supabaseService.quranTranslator();
+      const defaultTranslator = this.quranService.quranTranslator();
       localStorage.setItem('quranTranslator', defaultTranslator);
       this.selectedTranslator.set(defaultTranslator);
     }
   }
 
   private loadQuranTranslators(): void {
-    this.supabaseService.getQuranTranslators().subscribe({
-      next: (data: { data: Translator[] }) => {
-        this.quranTranslators.set(data.data);
+    this.quranService.getQuranTranslators().subscribe({
+      next: (data: Translator[]) => {
+        this.quranTranslators.set(data);
       }
     });
   }
 
   private loadHadithSources(): void {
-    this.supabaseService.findActiveHadithSources().subscribe({
-      next: (data: { data: { name: string }[] }) => {
-        this.hadithSources.set(data.data.map(item => item.name));
+    this.hadithService.findActiveHadithSources().subscribe({
+      next: (data: HadithSource[]) => {
+        this.hadithSources.set(data.map(item => item.name));
       }
     });
   }
@@ -126,12 +129,12 @@ export class SettingsComponent implements OnInit {
   onQuranTranslatorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedTranslator.set(select.value);
-    this.supabaseService.quranTranslator.set(select.value);
+    this.quranService.quranTranslator.set(select.value);
   }
 
   onHadithSourceChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     this.selectedSource.set(select.value);
-    this.supabaseService.hadithSource.set(select.value);
+    this.hadithService.hadithSource.set(select.value);
   }
 }

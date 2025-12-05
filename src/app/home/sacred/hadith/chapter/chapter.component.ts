@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, computed, effect, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { SupabaseService } from '../../../../service/supabase.service';
+import { AfterViewInit, Component, computed, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Hadiths } from '../hadith.model';
+import { HadithDetail, Hadiths } from '../hadith.model';
 import { BookmarkService } from '../../../../service/bookmark.service';
 import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
+import { HadithService } from '../hadith.service';
 
 @Component({
   selector: 'app-chapter',
@@ -20,6 +20,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
 
   private readonly authService = inject(AuthService);
   private readonly readStreakService = inject(ReadStreakService);
+  private readonly hadithService = inject(HadithService);
 
   @ViewChild('stickyTitle') stickyTitle!: ElementRef;
   private originalOffset: number = 0;
@@ -40,7 +41,6 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
   constructor(
-    private readonly supabaseService: SupabaseService,
     private readonly bookmarkService: BookmarkService,
     private readonly route: ActivatedRoute) {
     this.route.queryParams.subscribe(params => {
@@ -54,11 +54,11 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.supabaseService.getHadithByChapterId(this.chapterId).subscribe(
+    this.hadithService.getHadithByChapterId(this.chapterId).subscribe(
       {
-        next: (data: any) => {
-          this.hadiths.set(data.data);
-          this.chapterName.set(data.data[0].chapter_name);
+        next: (data: HadithDetail[]) => {
+          this.hadiths.set(data);
+          this.chapterName.set(data[0].chapter_name);
           this.handleScrollAfterDataLoad();
         },
         error: (error: any) => console.error('Failed to load hadiths:', error)
@@ -87,7 +87,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
     if (!this.isAuthenticated() || this.hadiths().length === 0) return;
 
     const delay = this.hadithIdToScrollTo() !== null ? 500 : 100;
-    
+
     setTimeout(() => {
       const options = {
         root: null,

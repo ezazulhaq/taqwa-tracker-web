@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { SupabaseService } from '../../../service/supabase.service';
-import { HadithChapters, HadithDetails } from './hadith.model';
+import { HadithChapters, HadithDetail } from './hadith.model';
 import { ListHomeComponent } from '../../../shared/skeleton/list-home/list-home.component';
 import { BookmarkService } from '../../../service/bookmark.service';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { AuthService } from '../../../service/auth.service';
+import { HadithService } from './hadith.service';
 
 @Component({
   selector: 'app-hadith',
@@ -25,18 +25,18 @@ import { AuthService } from '../../../service/auth.service';
 export class HadithComponent {
 
   private readonly authService = inject(AuthService);
+  private readonly hadithService = inject(HadithService);
 
   chapterList = signal<HadithChapters[]>([]);
 
-  hadithSource = computed(() => this.supabaseService.hadithSource());
+  hadithSource = computed(() => this.hadithService.hadithSource());
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
-  bookMarkDetails = signal<HadithDetails[]>([]);
+  bookMarkDetails = signal<HadithDetail[]>([]);
 
   constructor(
     private readonly router: Router,
-    private readonly supabaseService: SupabaseService,
     private readonly bookMarkService: BookmarkService
   ) {
     effect(() => {
@@ -56,11 +56,11 @@ export class HadithComponent {
 
   private getChaptersFromSource() {
     console.log("getChaptersFromSource function called");
-    this.supabaseService.getHadithChaptersFromSource()
+    this.hadithService.getHadithChaptersFromSource(this.hadithSource())
       .subscribe(
         {
-          next: (data: any) => {
-            this.chapterList.set(data.data);
+          next: (data: HadithChapters[]) => {
+            this.chapterList.set(data);
           },
           error: (error: any) => console.log(error.error),
           complete: () => console.log("hadith chapters loaded")
@@ -72,12 +72,12 @@ export class HadithComponent {
     console.log("getBookmarkedHadiths function called");
     const hadith_ids: string[] = this.bookMarkService.getBookmarkedHadiths();
 
-    this.supabaseService.getHadithDetailsFromId(hadith_ids)
+    this.hadithService.getHadithDetailsByIds(hadith_ids)
       .subscribe(
         {
-          next: (data: any) => {
-            const hadithDetails = data.data
-              .filter((hadith: HadithDetails) => hadith.source_name === this.hadithSource())
+          next: (data: HadithDetail[]) => {
+            const hadithDetails = data
+              .filter((hadith: HadithDetail) => hadith.source_name === this.hadithSource())
               .sort((a: any, b: any) => {
                 return b.hadith_no - a.hadith_no;
               });
@@ -88,11 +88,11 @@ export class HadithComponent {
         });
   };
 
-  removeBookmark(bookmark: HadithDetails) {
-    this.supabaseService.getHadithByChapterId(bookmark.chapter_id).subscribe(
+  removeBookmark(bookmark: HadithDetail) {
+    this.hadithService.getHadithByChapterId(bookmark.chapter_id).subscribe(
       {
         next: (data: any) => {
-          const hadith = data.data.find((hadith: HadithDetails) => hadith.hadith_no === bookmark.hadith_no);
+          const hadith = data.data.find((hadith: HadithDetail) => hadith.hadith_no === bookmark.hadith_no);
           this.bookMarkService.removeHadithBookmark(hadith);
         },
         complete: () => this.getBookmarkedHadiths()
