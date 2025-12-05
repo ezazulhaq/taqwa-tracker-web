@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { HadithDetail, Hadiths } from '../hadith.model';
 import { BookmarkService } from '../../../../service/bookmark.service';
 import { AuthService } from '../../../../service/auth.service';
@@ -9,9 +9,7 @@ import { HadithService } from '../hadith.service';
 
 @Component({
   selector: 'app-chapter',
-  imports: [
-    RouterLink
-  ],
+  imports: [],
   templateUrl: './chapter.component.html',
   styleUrl: './chapter.component.css',
   host: {
