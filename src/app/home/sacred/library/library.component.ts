@@ -3,8 +3,8 @@ import { IslamicLibrary } from '../../../model/islamic-library.model';
 import { RouterLink } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { ReplaceUnderlinePipe } from '../../../pipes/replace-underline.pipe';
-import { LibraryService } from '../../../service/library.service';
 import { TitleComponent } from '../../../shared/title/title.component';
+import { LibraryService } from './library.service';
 
 @Component({
   selector: 'app-library',
@@ -53,7 +53,7 @@ export class LibraryComponent {
   toggleCategory(index: number, event: Event) {
     event.preventDefault();
     const detailsElements = document.querySelectorAll('details');
-    
+
     if (this.openCategoryIndex() === index) {
       detailsElements[index].removeAttribute('open');
       this.openCategoryIndex.set(null);
