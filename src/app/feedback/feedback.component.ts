@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { FeedbackService } from '../service/feedback.service';
+import { FeedbackService } from './feedback.service';
 import { SuccessComponent } from './success/success.component';
 import { Router } from '@angular/router';
 import { TitleComponent } from '../shared/title/title.component';
 import { AuthService } from '../service/auth.service';
 import { CaptchaComponent } from '../shared/captcha/captcha.component';
+import { FeedbackResponse } from './feedback.model';
 
 @Component({
   selector: 'app-feedback',
@@ -72,25 +73,24 @@ export class FeedbackComponent {
     this.isSubmitting.set(true);
     this.submitError = null;
 
-    this.feedbackService.processFeedback({
+    this.feedbackService.submitFeedback({
       content: this.feedbackForm.value.content,
       email: this.feedbackForm.value.email,
       category: this.feedbackForm.value.category
     }).subscribe({
-      next: (result) => {
-        if (result.success) {
-          this.submitSuccess.set(true);
-          this.feedbackForm.reset({ category: 'General' });
-        } else {
-          this.submitError = 'Failed to submit feedback. Please try again.';
-        }
+      next: (response: FeedbackResponse) => {
+        this.submitSuccess.set(response.email_sent);
+        this.feedbackForm.reset({ 
+          category: 'General',
+          email: this.authService.currentUser()?.email || ''
+        });
         this.isSubmitting.set(false);
       },
       error: () => {
         this.submitError = 'An unexpected error occurred.';
         this.isSubmitting.set(false);
 
-        // Show CAPTCHA after failed login attempt
+        // Show CAPTCHA after failed submission
         this.showCaptcha = true;
         this.captchaVerified = false;
         this.feedbackForm.patchValue({ captcha: false });
