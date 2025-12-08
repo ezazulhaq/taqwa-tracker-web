@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SafeHtml } from '@angular/platform-browser';
 import { TitleComponent } from '../../../shared/title/title.component';
 
 // Extended DeviceOrientationEvent interface to include webkitCompassHeading
@@ -32,8 +32,7 @@ export class KaabaComponent implements OnInit, OnDestroy {
   private isIOS: boolean;
 
   constructor(
-    private kaabaService: SalahAppService,
-    private sanitizer: DomSanitizer) {
+    private kaabaService: SalahAppService) {
     this.heading$ = new BehaviorSubject<number>(0);
     this.kaabaDirection$ = this.kaabaService.getKaabaDirection();
     this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
