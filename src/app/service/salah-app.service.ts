@@ -49,6 +49,11 @@ export class SalahAppService {
               break;
           }
           this.errorSubject.next(errorMsg);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       );
     } else {
@@ -67,7 +72,7 @@ export class SalahAppService {
         // Hanafi: Later Asr time (shadow length = 2x object height + Zuhr shadow)
         // Shafi: Earlier Asr time (shadow length = 1x object height + Zuhr shadow)
         params.madhab = isHanafi ? Madhab.Hanafi : Madhab.Shafi;
-        
+
         const prayerTimes = new PrayerTimes(coordinates, date, params);
         return {
           fajr: prayerTimes.fajr,
