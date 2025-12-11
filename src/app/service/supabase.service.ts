@@ -1,16 +1,21 @@
 import { effect, Injectable, signal, inject } from '@angular/core';
-import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient, createClient } from '@supabase/supabase-js'
 import { Observable, from, map, tap } from 'rxjs';
-import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SupabaseService {
 
-    private authService = inject(AuthService);
+    private supabase: SupabaseClient;
 
-    constructor() { }
+    constructor() {
+        this.supabase = createClient(
+            environment.supabase.url,
+            environment.supabase.anonKey
+        );
+    }
 
     /**
      * Searches for hadiths based on a given query text.
@@ -48,9 +53,10 @@ export class SupabaseService {
         );
     }
 
-    // Get client from AuthService
+    // Get client - note: this will use Supabase's own auth, not our custom auth
+    // If you want to completely remove Supabase, you'll need to migrate the chatbot functionality
     private getClient(): SupabaseClient {
-        return this.authService.getAuthenticatedClient();
+        return this.supabase;
     }
 
     // Call authenticated functions
