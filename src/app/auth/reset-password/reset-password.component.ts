@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, linkedSignal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RegisterCredentials } from '../../model/auth.model';
@@ -19,8 +19,19 @@ import { AuthService } from '../../service/auth.service';
 })
 export class ResetPasswordComponent {
   resetPasswordForm: FormGroup;
-  error = '';
-  loading = false;
+  error = signal<string>('');
+  loading = signal<boolean>(false);
+
+  token = linkedSignal(
+    () => {
+      const urlParams = new URLSearchParams(window.location.hash.substring(1));
+      const token = urlParams.get('token');
+      if (!token) {
+        this.error.set('Invalid or expired reset link');
+      }
+      return token || '';
+    }
+  );
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -34,24 +45,16 @@ export class ResetPasswordComponent {
     }, { validators: this.passwordMatchValidator });
   }
 
-  ngOnInit() {
-    // Check if we have the necessary URL parameters for password reset
-    const urlParams = new URLSearchParams(window.location.hash.substring(1));
-    if (!urlParams.get('access_token')) {
-      this.error = 'Invalid or expired reset link';
-    }
-  }
-
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-    
+
     if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ mismatch: true });
     } else {
       confirmPassword?.setErrors(null);
     }
-    
+
     return null;
   }
 
@@ -60,18 +63,18 @@ export class ResetPasswordComponent {
       return;
     }
 
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     const newPassword = this.resetPasswordForm.controls['password'].value;
 
-    this.authService.updatePassword(newPassword).subscribe({
+    this.authService.resetPassword(this.token(), newPassword).subscribe({
       next: () => {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.error = err.message || 'Failed to update password';
-        this.loading = false;
+        this.error.set(err.message || 'Failed to update password');
+        this.loading.set(false);
       }
     });
   }
