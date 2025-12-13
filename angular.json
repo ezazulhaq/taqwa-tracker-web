@@ -11,7 +11,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/taqwa-tracker",
             "index": "src/index.html",
@@ -29,10 +29,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "ngxEnv": {
-              "prefix": ""
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -71,7 +68,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ngx-env/builder:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "taqwa-tracker:build:production"
@@ -83,10 +80,10 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@ngx-env/builder:extract-i18n"
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@ngx-env/builder:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "polyfills": [
               "zone.js",
