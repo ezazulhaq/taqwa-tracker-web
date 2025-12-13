@@ -30,14 +30,10 @@ export class ChatbotComponent {
   constructor(private chatbotService: ChatbotService) { }
 
   ngOnInit() {
-
     // AutoClose Dialoge after 10 secs
     setInterval(() => {
       this.isChatbotDialogeVisible.set(false);
     }, 10000);
-
-    // Add initial assistant message
-    this.addAssistantMessage("I am an Islamic scholar. Please ask me only questions regarding the Islam and its teachings.");
   }
 
   sendMessage() {
@@ -72,7 +68,6 @@ export class ChatbotComponent {
   protected clearChat() {
     this.messages.set([]);
     this.chatbotService.clearConversation();
-    this.addAssistantMessage("I am an Islamic scholar. Please ask me only questions regarding the Islam and its teachings.");
   }
 
   private addUserMessage(content: string) {
