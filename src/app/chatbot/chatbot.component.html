@@ -1,17 +1,19 @@
 @if (isChatbotVisible()) {
 <div class="flex flex-col h-screen">
     <div class="flex-grow overflow-hidden flex flex-col-reverse pt-8">
-        <div class="flex flex-col justify-between rounded-2xl w-full max-w-lg mx-auto h-full max-h-[calc(100vh-2rem)] bg-white dark:bg-slate-800 shadow-2xl border border-emerald-100 dark:border-slate-600">
+        <div
+            class="flex flex-col justify-between rounded-2xl w-full max-w-lg mx-auto h-full max-h-[calc(100vh-2rem)] bg-white dark:bg-slate-800 shadow-2xl border border-emerald-100 dark:border-slate-600">
             <!-- Header -->
             <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 rounded-t-2xl">
                 <div class="flex flex-row justify-between items-center">
                     <div class="flex flex-row space-x-3 items-center">
                         <div class="p-2 bg-white/20 rounded-full">
                             <svg class="size-5 text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="currentColor" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
-                                <circle cx="8" cy="12" r="1" fill="#1f2937"/>
-                                <circle cx="12" cy="12" r="1" fill="#1f2937"/>
-                                <circle cx="16" cy="12" r="1" fill="#1f2937"/>
+                                <path fill="currentColor"
+                                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z" />
+                                <circle cx="8" cy="12" r="1" fill="#1f2937" />
+                                <circle cx="12" cy="12" r="1" fill="#1f2937" />
+                                <circle cx="16" cy="12" r="1" fill="#1f2937" />
                             </svg>
                         </div>
                         <div>
@@ -20,31 +22,44 @@
                         </div>
                     </div>
                     <div class="flex flex-row space-x-2 items-center">
-                        <button (click)="clearChat()" class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors" title="Clear chat">
-                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-                                <path d="M386.3 160L336 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 51.2L414.4 97.6c-87.5-87.5-229.3-87.5-316.8 0s-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3s163.8-62.5 226.3 0L386.3 160z"/>
+                        <button (click)="clearChat()"
+                            class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+                            title="Clear chat">
+                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                fill="currentColor">
+                                <path
+                                    d="M386.3 160L336 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l128 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 51.2L414.4 97.6c-87.5-87.5-229.3-87.5-316.8 0s-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3s163.8-62.5 226.3 0L386.3 160z" />
                             </svg>
                         </button>
-                        <button (click)="isChatbotVisible.set(false)" class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors" title="Close chat">
-                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
-                                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                        <button (click)="isChatbotVisible.set(false)"
+                            class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+                            title="Close chat">
+                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
+                                fill="currentColor">
+                                <path
+                                    d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
                             </svg>
                         </button>
                     </div>
                 </div>
             </div>
             <!-- Chat Messages -->
-            <div #chatContainer class="flex-grow overflow-y-auto p-4 bg-stone-50 dark:bg-slate-900 flex flex-col-reverse">
+            <div #chatContainer
+                class="flex-grow overflow-y-auto p-4 bg-stone-50 dark:bg-slate-900 flex flex-col-reverse">
                 <div class="flex flex-col space-y-4">
                     @for (message of messages(); track $index) {
                     @if (message.content) {
                     <div class="flex" [class]="message.role === 'assistant' ? 'justify-start' : 'justify-end'">
-                        <div class="max-w-[80%] rounded-2xl px-4 py-3" [class]="message.role === 'assistant' ? 'bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-600 shadow-sm' : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white'">
+                        <div class="max-w-[80%] rounded-2xl px-4 py-3"
+                            [class]="message.role === 'assistant' ? 'bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-600 shadow-sm' : 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white'">
                             @if (message.role === 'assistant') {
                             <div class="flex flex-row items-start space-x-2">
                                 <div class="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-1">
-                                    <svg class="size-3 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                                    <svg class="size-3 text-emerald-600 dark:text-emerald-400" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                            clip-rule="evenodd" />
                                     </svg>
                                 </div>
                                 <div class="flex-1 text-start text-stone-700 dark:text-stone-300">
@@ -52,12 +67,7 @@
                                 </div>
                             </div>
                             } @else {
-                            <div class="text-white">{{message.content}}</div>
-                            }
-                            @if(message.links) {
-                            <div class="mt-3 pt-3">
-                                <app-hadith-links [hadithLinks]="message.links"></app-hadith-links>
-                            </div>
+                            <div class="text-white text-start">{{message.content}}</div>
                             }
                         </div>
                     </div>
@@ -71,17 +81,24 @@
                     AI can make mistakes. Please verify Islamic guidance with scholars.
                 </div>
                 <div class="flex items-center space-x-3">
-                    <input class="flex-grow px-4 py-3 rounded-xl border border-stone-300 dark:border-slate-600 bg-stone-50 dark:bg-slate-700 text-stone-900 dark:text-stone-100 placeholder-stone-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" type="text" placeholder="Ask your Islamic question..." [(ngModel)]="userMessage">
+                    <input
+                        class="flex-grow px-4 py-3 rounded-xl border border-stone-300 dark:border-slate-600 bg-stone-50 dark:bg-slate-700 text-stone-900 dark:text-stone-100 placeholder-stone-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                        type="text" placeholder="Ask your Islamic question..." [(ngModel)]="userMessage">
                     @if(isChatRequested()) {
                     <button class="p-3 rounded-xl bg-emerald-600 text-white" disabled>
-                        <svg class="size-5 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-                            <path d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z"/>
+                        <svg class="size-5 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                            fill="currentColor">
+                            <path
+                                d="M222.7 32.1c5 16.9-4.6 34.8-21.5 39.8C121.8 95.6 64 169.1 64 256c0 106 86 192 192 192s192-86 192-192c0-86.9-57.8-160.4-137.1-184.1c-16.9-5-26.6-22.9-21.5-39.8s22.9-26.6 39.8-21.5C434.9 42.1 512 140 512 256c0 141.4-114.6 256-256 256S0 397.4 0 256C0 140 77.1 42.1 182.9 10.6c16.9-5 34.8 4.6 39.8 21.5z" />
                         </svg>
                     </button>
                     } @else {
-                    <button (click)="sendMessage()" class="p-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl">
-                        <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-                            <path d="M16.1 260.2c-22.6 12.9-20.5 47.3 3.6 57.3L160 376l0 103.3c0 18.1 14.6 32.7 32.7 32.7c9.7 0 18.9-4.3 25.1-11.8l62-74.3 123.9 51.6c18.9 7.9 40.8-4.5 43.9-24.7l64-416c1.9-12.1-3.4-24.3-13.5-31.2s-23.3-7.5-34-1.4l-448 256zm52.1 25.5L409.7 90.6 190.1 336l1.2 1L68.2 285.7zM403.3 425.4L236.7 355.9 450.8 116.6 403.3 425.4z"/>
+                    <button (click)="sendMessage()"
+                        class="p-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 transition-all shadow-lg hover:shadow-xl">
+                        <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                            fill="currentColor">
+                            <path
+                                d="M16.1 260.2c-22.6 12.9-20.5 47.3 3.6 57.3L160 376l0 103.3c0 18.1 14.6 32.7 32.7 32.7c9.7 0 18.9-4.3 25.1-11.8l62-74.3 123.9 51.6c18.9 7.9 40.8-4.5 43.9-24.7l64-416c1.9-12.1-3.4-24.3-13.5-31.2s-23.3-7.5-34-1.4l-448 256zm52.1 25.5L409.7 90.6 190.1 336l1.2 1L68.2 285.7zM403.3 425.4L236.7 355.9 450.8 116.6 403.3 425.4z" />
                         </svg>
                     </button>
                     }
@@ -94,21 +111,27 @@
 @else {
 <div class="flex flex-col items-end space-y-3 fixed bottom-4 right-4 z-50">
     @if (isChatbotDialogeVisible()) {
-    <div class="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl rounded-br-sm px-4 py-2 shadow-lg animate-in slide-in-from-right-2">
+    <div
+        class="relative bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl rounded-br-sm px-4 py-2 shadow-lg animate-in slide-in-from-right-2">
         <span class="text-sm font-medium">Islamic Guidance</span>
-        <button (click)="isChatbotDialogeVisible.set(false)" class="absolute -top-2 -right-2 rounded-full bg-white text-emerald-600 p-1 shadow-md hover:shadow-lg transition-shadow">
+        <button (click)="isChatbotDialogeVisible.set(false)"
+            class="absolute -top-2 -right-2 rounded-full bg-white text-emerald-600 p-1 shadow-md hover:shadow-lg transition-shadow">
             <svg class="size-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
-                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                <path
+                    d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
             </svg>
         </button>
     </div>
     }
-    <button (click)="isChatbotVisible.set(true)" class="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full shadow-2xl hover:shadow-emerald-500/25 hover:scale-110 transition-all duration-300 group">
-        <svg class="size-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
-            <circle cx="8" cy="12" r="1" fill="#1f2937"/>
-            <circle cx="12" cy="12" r="1" fill="#1f2937"/>
-            <circle cx="16" cy="12" r="1" fill="#1f2937"/>
+    <button (click)="isChatbotVisible.set(true)"
+        class="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full shadow-2xl hover:shadow-emerald-500/25 hover:scale-110 transition-all duration-300 group">
+        <svg class="size-6 group-hover:scale-110 transition-transform" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path
+                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z" />
+            <circle cx="8" cy="12" r="1" fill="#1f2937" />
+            <circle cx="12" cy="12" r="1" fill="#1f2937" />
+            <circle cx="16" cy="12" r="1" fill="#1f2937" />
         </svg>
     </button>
 </div>
