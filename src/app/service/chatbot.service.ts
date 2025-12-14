@@ -14,6 +14,30 @@ export class ChatbotService {
   private readonly API_BASE_URL = environment.apiBaseUrl;
   private conversationId: string | null = null;
 
+  convertToHtml(markdown: string): string {
+    let html = markdown;
+
+    // Convert bold text
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 hover:underline">$1</a>');
+
+    // Convert bullet points
+    html = html.replace(/^\* (.+)$/gm, '<li class="ml-4">• $1</li>');
+
+    // Wrap consecutive list items in ul tags
+    html = html.replace(/(<li[^>]*>.*<\/li>\s*)+/gs, '<ul class="space-y-1">$&</ul>');
+
+    // Convert line breaks to <br>
+    html = html.replace(/\n/g, '<br>');
+
+    // Clean up extra spaces
+    html = html.replace(/\s+/g, ' ').trim();
+
+    return html;
+  }
+
   queryIslam(message: string): Observable<ChatResponse> {
     const user = this.authService.currentUser();
     if (!user) {
@@ -32,6 +56,7 @@ export class ChatbotService {
         if (!this.conversationId) {
           this.conversationId = response.conversation_id;
         }
+        response.content = this.convertToHtml(response.content);
         return response;
       }),
       catchError(error => {

@@ -3,13 +3,11 @@ import { ChatbotService } from '../service/chatbot.service';
 import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
 import { ChatbotMessage } from './chatbot.model';
-import { MarkdownModule } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chatbot',
   imports: [
-    FormsModule,
-    MarkdownModule
+    FormsModule
   ],
   templateUrl: './chatbot.component.html',
   styleUrl: './chatbot.component.css'

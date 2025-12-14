@@ -75,8 +75,8 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <div class="flex-1 text-start text-stone-700 dark:text-stone-300">
-                                    <markdown [data]="message.content"></markdown>
+                                <div class="flex-1 text-start text-stone-700 dark:text-stone-300"
+                                    [innerHTML]="message.content">
                                 </div>
                             </div>
                             } @else {
