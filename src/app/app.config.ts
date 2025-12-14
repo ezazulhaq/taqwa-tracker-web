@@ -4,7 +4,6 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
-import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 import { authInterceptor } from './interceptor/auth.interceptor';
 
 // Define the marked options factory
@@ -29,14 +28,6 @@ export const appConfig: ApplicationConfig = {
         enabled: !isDevMode(),
         registrationStrategy: 'registerWhenStable:30000'
       }
-    ),
-    importProvidersFrom(
-      MarkdownModule.forRoot({
-        markedOptions: {
-          provide: MARKED_OPTIONS,
-          useFactory: markedOptionsFactory
-        }
-      })
     )
   ]
 };
