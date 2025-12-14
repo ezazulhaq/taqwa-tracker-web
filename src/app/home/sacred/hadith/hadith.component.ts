@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HadithChapters, HadithDetail } from './hadith.model';
@@ -11,11 +11,10 @@ import { HadithService } from './hadith.service';
 @Component({
   selector: 'app-hadith',
   imports: [
-    CommonModule,
     RouterLink,
     ListHomeComponent,
-    TitleComponent,
-  ],
+    TitleComponent
+],
   templateUrl: './hadith.component.html',
   styleUrl: './hadith.component.css',
   host: {

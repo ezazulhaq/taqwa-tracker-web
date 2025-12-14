@@ -3,14 +3,13 @@ import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModu
 import { Subscription } from 'rxjs';
 import { CaptchaChallenge } from '../../model/captcha.model';
 import { CaptchaService } from '../../service/captcha.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-captcha',
   imports: [
-    CommonModule,
     ReactiveFormsModule
-  ],
+],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

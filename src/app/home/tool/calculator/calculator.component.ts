@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AssetCategory, Currency } from './calculator.model';
@@ -7,10 +7,9 @@ import { TitleComponent } from '../../../shared/title/title.component';
 @Component({
   selector: 'app-calculator',
   imports: [
-    CommonModule,
     TitleComponent,
     FormsModule
-  ],
+],
   templateUrl: './calculator.component.html',
   styleUrl: './calculator.component.css',
   host: {

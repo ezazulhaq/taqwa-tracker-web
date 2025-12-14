@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, linkedSignal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,9 +8,8 @@ import { AuthService } from '../../service/auth.service';
 @Component({
   selector: 'app-reset-password',
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.css',
   host: {

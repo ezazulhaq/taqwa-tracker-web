@@ -3,15 +3,14 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { LoginCredentials } from '../../model/auth.model';
 import { AuthService } from '../../service/auth.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink
-  ],
+],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   host: {

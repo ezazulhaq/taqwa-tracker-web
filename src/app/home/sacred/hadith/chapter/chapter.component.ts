@@ -152,7 +152,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
       };
     });
 
-  @HostListener('window:scroll', ['$event'])
+  @HostListener('window:scroll')
   handleTitleScroll() {
     const element = this.stickyTitle.nativeElement;
     if (window.scrollY >= this.originalOffset + 300) {

@@ -2,16 +2,15 @@ import { Component, inject, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../service/auth.service';
 import { UserMetaData, User } from '../model/auth.model';
-import { CommonModule } from '@angular/common';
+
 import { TitleComponent } from '../shared/title/title.component';
 
 @Component({
   selector: 'app-profile',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    TitleComponent,
-  ],
+    TitleComponent
+],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   host: {

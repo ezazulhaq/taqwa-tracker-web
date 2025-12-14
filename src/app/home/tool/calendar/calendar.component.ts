@@ -1,15 +1,14 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { CalendarDay, IslamicEvent } from './calendar.model';
 import moment from 'moment-hijri';
-import { CommonModule } from '@angular/common';
+
 import { TitleComponent } from '../../../shared/title/title.component';
 
 @Component({
   selector: 'app-islamic-calendar',
   imports: [
-    CommonModule,
     TitleComponent
-  ],
+],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
   host: {

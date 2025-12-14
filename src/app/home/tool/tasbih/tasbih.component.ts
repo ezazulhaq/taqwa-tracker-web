@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, linkedSignal, OnInit, signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
@@ -11,10 +11,9 @@ import { TitleComponent } from '../../../shared/title/title.component';
 @Component({
   selector: 'app-tasbih',
   imports: [
-    CommonModule,
     FormsModule,
-    TitleComponent,
-  ],
+    TitleComponent
+],
   templateUrl: './tasbih.component.html',
   styleUrl: './tasbih.component.css',
   host: {

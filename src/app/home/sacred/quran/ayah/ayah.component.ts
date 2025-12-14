@@ -139,7 +139,7 @@ export class AyahComponent {
     this.readStreakService.trackRead(1, readItem);
   }
 
-  @HostListener('window:scroll', ['$event'])
+  @HostListener('window:scroll')
   handleCheckBoxScroll() {
     const element = this.stickyCheckbox.nativeElement;
     if (window.scrollY >= this.originalOffset) {
