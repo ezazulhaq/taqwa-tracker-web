@@ -1,8 +1,6 @@
-
-import { Component, inject, linkedSignal, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RegisterCredentials } from '../../model/auth.model';
 import { AuthService } from '../../service/auth.service';
 
 @Component({
@@ -16,21 +14,13 @@ import { AuthService } from '../../service/auth.service';
     class: "app-bg"
   }
 })
-export class ResetPasswordComponent {
+export class ResetPasswordComponent implements OnInit {
+
   resetPasswordForm: FormGroup;
   error = signal<string>('');
   loading = signal<boolean>(false);
 
-  token = linkedSignal(
-    () => {
-      const urlParams = new URLSearchParams(window.location.hash.substring(1));
-      const token = urlParams.get('token');
-      if (!token) {
-        this.error.set('Invalid or expired reset link');
-      }
-      return token || '';
-    }
-  );
+  token = signal<string>('');
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -42,6 +32,15 @@ export class ResetPasswordComponent {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.token.set(params['token'] || '');
+      if (!this.token()) {
+        this.error.set('Invalid or expired reset link');
+      }
+    });
   }
 
   passwordMatchValidator(form: FormGroup) {
