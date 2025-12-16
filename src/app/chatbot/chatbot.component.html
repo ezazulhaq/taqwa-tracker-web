@@ -5,20 +5,69 @@
             class="flex flex-col justify-between rounded-2xl w-full max-w-lg mx-auto h-full max-h-[calc(100vh-2rem)] bg-white dark:bg-slate-800 shadow-2xl border border-emerald-100 dark:border-slate-600">
             <!-- Header -->
             <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 rounded-t-2xl">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="flex flex-row space-x-3 items-center text-start">
-                        <div class="p-2 bg-white/20 rounded-full">
-                            <svg class="size-5 text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="currentColor"
-                                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z" />
-                                <circle cx="8" cy="12" r="1" fill="#1f2937" />
-                                <circle cx="12" cy="12" r="1" fill="#1f2937" />
-                                <circle cx="16" cy="12" r="1" fill="#1f2937" />
+                <div class="flex flex-row justify-between items-center space-x-2">
+                    @if (isAuthenticated()) {
+                    <div class="relative conversation-menu">
+                        <button (click)="toggleConversationMenu()"
+                            class="p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+                            title="Conversation history">
+                            <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                fill="currentColor">
+                                <path
+                                    d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z" />
                             </svg>
+                        </button>
+                        @if (isConversationMenuVisible()) {
+                        <div
+                            class="absolute left-0 top-12 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-emerald-100 dark:border-slate-600 z-50">
+                            <div class="p-3 border-b border-emerald-100 dark:border-slate-600">
+                                <h4 class="font-semibold text-emerald-800 dark:text-emerald-200">Conversation History
+                                </h4>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto">
+                                @if (conversations().length === 0) {
+                                <div class="p-4 text-center text-stone-500 dark:text-slate-400">
+                                    <p class="text-sm">No conversations yet</p>
+                                </div>
+                                } @else {
+                                @for (conversation of conversations(); track conversation.id) {
+                                <div (click)="loadConversationMessages(conversation.id)"
+                                    class="p-3 hover:bg-emerald-50 dark:hover:bg-slate-700 border-b border-stone-100 dark:border-slate-600 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <h5 class="font-medium text-stone-800 dark:text-stone-200 text-sm truncate">
+                                                {{conversation.title}}</h5>
+                                            <p class="text-xs text-stone-500 dark:text-slate-400 mt-1">
+                                                {{conversation.message_count}}
+                                                messages</p>
+                                        </div>
+                                        <span
+                                            class="text-xs text-stone-400 dark:text-slate-500">{{conversation.last_message_at
+                                            | date:'MMM d'}}</span>
+                                    </div>
+                                </div>
+                                }
+                                }
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-semibold text-white">Islamic Guidance</h3>
-                            <p class="text-xs text-emerald-100">AI-powered spiritual assistant</p>
+                        }
+                    </div>
+                    }
+                    <div class="flex-1">
+                        <div class="flex flex-row space-x-3 items-center text-start">
+                            <div class="p-2 bg-white/20 rounded-full">
+                                <svg class="size-5 text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor"
+                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z" />
+                                    <circle cx="8" cy="12" r="1" fill="#1f2937" />
+                                    <circle cx="12" cy="12" r="1" fill="#1f2937" />
+                                    <circle cx="16" cy="12" r="1" fill="#1f2937" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white">Islamic Guidance</h3>
+                                <p class="text-xs text-emerald-100">AI-powered spiritual assistant</p>
+                            </div>
                         </div>
                     </div>
                     <div class="flex flex-row space-x-2 items-center">

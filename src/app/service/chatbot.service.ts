@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
-import { ChatRequest, ChatResponse } from '../chatbot/chatbot.model';
+import { ChatRequest, ChatResponse, Conversation } from '../chatbot/chatbot.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +66,35 @@ export class ChatbotService {
     );
   }
 
+  getConversations(): Observable<Conversation[]> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return throwError(() => new Error('User must be authenticated'));
+    }
+
+    return this.http.get<Conversation[]>(`${this.API_BASE_URL}/chat/conversations/${user.id}`).pipe(
+      catchError(error => {
+        console.error('Failed to fetch conversations:', error);
+        return throwError(() => new Error('Failed to fetch conversation history'));
+      })
+    );
+  }
+
+  getConversationMessages(conversationId: string): Observable<ChatResponse[]> {
+    return this.http.get<ChatResponse[]>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/messages`).pipe(
+      catchError(error => {
+        console.error('Failed to fetch conversation messages:', error);
+        return throwError(() => new Error('Failed to fetch conversation messages'));
+      })
+    );
+  }
+
   clearConversation(): void {
     this.conversationId = null;
   }
+
+  setConversationId(conversationId: string): void {
+    this.conversationId = conversationId;
+  }
+
 }

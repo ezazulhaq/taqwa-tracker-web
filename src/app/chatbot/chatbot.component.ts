@@ -1,13 +1,15 @@
-import { Component, ElementRef, ViewChild, signal, inject, computed } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal, inject, computed, HostListener } from '@angular/core';
 import { ChatbotService } from '../service/chatbot.service';
+import { Conversation, ChatbotMessage } from './chatbot.model';
 import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
-import { ChatbotMessage } from './chatbot.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-chatbot',
   imports: [
-    FormsModule
+    FormsModule,
+    DatePipe
   ],
   templateUrl: './chatbot.component.html',
   styleUrl: './chatbot.component.css'
@@ -19,15 +21,19 @@ export class ChatbotComponent {
 
   isChatbotVisible = signal<boolean>(false);
   isChatbotDialogeVisible = signal<boolean>(true);
+  isConversationMenuVisible = signal<boolean>(false);
 
   messages = signal<ChatbotMessage[]>([]);
+  conversations = signal<Conversation[]>([]);
   userMessage = '';
 
   isChatRequested = signal<boolean>(false);
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
   
-  constructor(private chatbotService: ChatbotService) { }
+  constructor(
+    private chatbotService: ChatbotService
+  ) { }
 
   ngOnInit() {
     // AutoClose Dialoge after 10 secs
@@ -68,6 +74,50 @@ export class ChatbotComponent {
   protected clearChat() {
     this.messages.set([]);
     this.chatbotService.clearConversation();
+  }
+
+  protected toggleConversationMenu() {
+    this.isConversationMenuVisible.update(visible => !visible);
+    if (this.isConversationMenuVisible() && this.isAuthenticated()) {
+      this.loadConversations();
+    }
+  }
+
+  private loadConversations() {
+    this.chatbotService.getConversations().subscribe({
+      next: (conversations) => {
+        this.conversations.set(conversations);
+      },
+      error: (error) => {
+        console.error('Failed to load conversations:', error);
+      }
+    });
+  }
+
+  protected loadConversationMessages(conversationId: string) {
+    this.chatbotService.getConversationMessages(conversationId).subscribe({
+      next: (messages) => {
+        const chatMessages: ChatbotMessage[] = messages.map(msg => ({
+          role: msg.role,
+          content: msg.role === 'assistant' ? this.chatbotService.convertToHtml(msg.content) : msg.content
+        }));
+        this.messages.set(chatMessages);
+        this.chatbotService.setConversationId(conversationId);
+        this.isConversationMenuVisible.set(false);
+        this.scrollToBottom();
+      },
+      error: (error) => {
+        console.error('Failed to load conversation messages:', error);
+      }
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.conversation-menu') && this.isConversationMenuVisible()) {
+      this.isConversationMenuVisible.set(false);
+    }
   }
 
   private addUserMessage(content: string) {
