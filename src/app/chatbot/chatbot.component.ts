@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, signal, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal, inject, computed } from '@angular/core';
 import { ChatbotService } from '../service/chatbot.service';
 import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +25,8 @@ export class ChatbotComponent {
 
   isChatRequested = signal<boolean>(false);
 
+  isAuthenticated = computed(() => this.authService.isAuthenticated());
+  
   constructor(private chatbotService: ChatbotService) { }
 
   ngOnInit() {
@@ -38,7 +40,7 @@ export class ChatbotComponent {
     if (this.userMessage.trim() === '') return;
 
     // Check authentication
-    if (!this.authService.isAuthenticated()) {
+    if (!this.isAuthenticated()) {
       this.addAssistantMessage('Please log in to use the Islamic chatbot.');
       return;
     }
