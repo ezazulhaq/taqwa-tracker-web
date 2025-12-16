@@ -1,4 +1,4 @@
-<app-title [title]="'Taqwa Tracker'"></app-title>
+<app-title [title]="'The Taqwa Tracker'"></app-title>
 
 <!-- App Introduction -->
 <app-welcome></app-welcome>
@@ -12,9 +12,7 @@
 </div>
 
 <!-- Islamic Chatbot -->
-@if (isAuthenticated()) {
 <app-chatbot class="fixed bottom-0 right-0 m-5 z-20"></app-chatbot>
-}
 
 <!-- Reading Streak Dashboard -->
 <app-streak-dashboard></app-streak-dashboard>
