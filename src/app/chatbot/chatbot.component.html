@@ -25,21 +25,14 @@
                                 </h4>
                             </div>
                             <div class="max-h-64 overflow-y-auto">
-                                @if (conversations().length === 0) {
-                                <div class="p-4 text-center text-stone-500 dark:text-slate-400">
-                                    <p class="text-sm">No conversations yet</p>
-                                </div>
-                                } @else {
+                                @defer (when conversations().length > 0) {
                                 @for (conversation of conversations(); track conversation.id) {
                                 <div (click)="loadConversationMessages(conversation.id)"
                                     class="p-3 hover:bg-emerald-50 dark:hover:bg-slate-700 border-b border-stone-100 dark:border-slate-600 cursor-pointer">
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
-                                            <h5 class="font-medium text-stone-800 dark:text-stone-200 text-sm truncate">
+                                            <h5 class="font-medium text-start text-stone-800 dark:text-stone-200 text-sm truncate">
                                                 {{conversation.title}}</h5>
-                                            <p class="text-xs text-stone-500 dark:text-slate-400 mt-1">
-                                                {{conversation.message_count}}
-                                                messages</p>
                                         </div>
                                         <span
                                             class="text-xs text-stone-400 dark:text-slate-500">{{conversation.last_message_at
@@ -47,6 +40,10 @@
                                     </div>
                                 </div>
                                 }
+                                } @placeholder {
+                                <div class="p-4 text-center text-stone-500 dark:text-slate-400">
+                                    <p class="text-sm">No conversations yet</p>
+                                </div>
                                 }
                             </div>
                         </div>
