@@ -111,4 +111,18 @@ export class ChatbotService {
     );
   }
 
+  renameConversation(conversationId: string, title: string): Observable<{status: string, message: string}> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return throwError(() => new Error('User must be authenticated'));
+    }
+
+    return this.http.put<{status: string, message: string}>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename?user_id=${user.id}`, { title }).pipe(
+      catchError(error => {
+        console.error('Failed to rename conversation:', error);
+        return throwError(() => new Error('Failed to rename conversation'));
+      })
+    );
+  }
+
 }

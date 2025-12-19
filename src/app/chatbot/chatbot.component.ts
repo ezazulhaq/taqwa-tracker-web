@@ -29,6 +29,8 @@ export class ChatbotComponent {
 
   isChatRequested = signal<boolean>(false);
   deletingConversationId = signal<string | null>(null);
+  editingConversationId = signal<string | null>(null);
+  editingTitle = signal<string>('');
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
   
@@ -128,10 +130,36 @@ export class ChatbotComponent {
     });
   }
 
+  protected startEditingTitle(conversationId: string, currentTitle: string, event: Event) {
+    event.stopPropagation();
+    this.editingConversationId.set(conversationId);
+    this.editingTitle.set(currentTitle);
+  }
+
+  protected saveTitle(conversationId: string, event: Event) {
+    if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
+    event.stopPropagation();
+    
+    this.chatbotService.renameConversation(conversationId, this.editingTitle()).subscribe({
+      next: () => {
+        this.loadConversations();
+        this.editingConversationId.set(null);
+      },
+      error: (error) => {
+        console.error('Failed to rename conversation:', error);
+        this.editingConversationId.set(null);
+      }
+    });
+  }
+
+  protected cancelEdit() {
+    this.editingConversationId.set(null);
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.conversation-menu') && this.isConversationMenuVisible()) {
+    if (!target.closest('.conversation-menu') && this.isConversationMenuVisible() && !this.editingConversationId()) {
       this.isConversationMenuVisible.set(false);
     }
   }
