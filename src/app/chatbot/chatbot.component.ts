@@ -112,6 +112,18 @@ export class ChatbotComponent {
     });
   }
 
+  protected deleteConversation(conversationId: string, event: Event) {
+    event.stopPropagation();
+    this.chatbotService.deleteConversation(conversationId).subscribe({
+      next: () => {
+        this.loadConversations();
+      },
+      error: (error) => {
+        console.error('Failed to delete conversation:', error);
+      }
+    });
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
