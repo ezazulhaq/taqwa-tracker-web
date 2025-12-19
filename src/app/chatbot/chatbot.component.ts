@@ -28,6 +28,7 @@ export class ChatbotComponent {
   userMessage = '';
 
   isChatRequested = signal<boolean>(false);
+  deletingConversationId = signal<string | null>(null);
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
   
@@ -114,12 +115,15 @@ export class ChatbotComponent {
 
   protected deleteConversation(conversationId: string, event: Event) {
     event.stopPropagation();
+    this.deletingConversationId.set(conversationId);
     this.chatbotService.deleteConversation(conversationId).subscribe({
       next: () => {
         this.loadConversations();
+        this.deletingConversationId.set(null);
       },
       error: (error) => {
         console.error('Failed to delete conversation:', error);
+        this.deletingConversationId.set(null);
       }
     });
   }
