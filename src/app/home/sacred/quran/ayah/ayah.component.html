@@ -15,7 +15,8 @@
                         <div class="absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition-transform"
                             [class.translate-x-4]="isTranslationVisible()"></div>
                     </div>
-                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">Translation</span>
+                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">{{ isTranslationVisible() ?
+                        'Translation' : 'Reading' }}</span>
                 </label>
             </div>
 
@@ -42,7 +43,7 @@
 <div class="flex justify-center items-center px-2 py-4 font-indopak text-2xl md:text-4xl">
     سْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
 </div>
-@if (isTranslationVisible()) {
+@if (!isTranslationVisible()) {
 <!-- Reader Mode: Arabic Only -->
 <div #ayahContainer class="pb-6 px-4">
     <div

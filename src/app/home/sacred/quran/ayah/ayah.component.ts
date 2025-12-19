@@ -43,7 +43,7 @@ export class AyahComponent {
 
   ayahs = signal<Ayah[]>([]);
 
-  isTranslationVisible = signal<boolean>(false);
+  isTranslationVisible = signal<boolean>(true);
   selectedAyahNumber = signal<string>(''); // For dropdown selection
 
   translator = computed(() => this.quranService.quranTranslator());
@@ -162,7 +162,7 @@ export class AyahComponent {
    * Navigate to translation mode and scroll to specific ayah
    */
   navigateToTranslation(ayahNumber: number): void {
-    this.isTranslationVisible.set(false);
+    this.isTranslationVisible.set(true);
     setTimeout(() => {
       this.scrollToAyah(ayahNumber);
     }, 100);
