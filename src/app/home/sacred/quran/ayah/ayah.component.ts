@@ -43,7 +43,7 @@ export class AyahComponent {
 
   ayahs = signal<Ayah[]>([]);
 
-  isTranslationVisible = signal<boolean>(true);
+  isTranslationVisible = signal<boolean>(false);
   selectedAyahNumber = signal<string>(''); // For dropdown selection
 
   translator = computed(() => this.quranService.quranTranslator());
@@ -156,6 +156,16 @@ export class AyahComponent {
     if (ayahNumber && ayahNumber !== '') {
       this.scrollToAyah(+ayahNumber);
     }
+  }
+
+  /**
+   * Navigate to translation mode and scroll to specific ayah
+   */
+  navigateToTranslation(ayahNumber: number): void {
+    this.isTranslationVisible.set(false);
+    setTimeout(() => {
+      this.scrollToAyah(ayahNumber);
+    }, 100);
   }
 
   isBookmarked(bookMarkedSurah: BookMarkedSurah): boolean {
