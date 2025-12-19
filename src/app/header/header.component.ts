@@ -1,6 +1,7 @@
-import { Component, effect, HostListener, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, HostListener, inject, OnInit } from '@angular/core';
 import { HeaderService } from './header.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,10 +12,13 @@ import { RouterLink } from '@angular/router';
 export class HeaderComponent implements OnInit {
 
   headerService = inject(HeaderService);
+  private authService = inject(AuthService);
 
   private lastScrollTop = 0;
   private scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
   isHeaderVisible = true;
+
+  isAuthenticated = computed(() => this.authService.isAuthenticated());
 
   ngOnInit() {
     this.lastScrollTop = window.scrollY || document.documentElement.scrollTop;
