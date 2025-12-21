@@ -15,7 +15,8 @@
                         <div class="absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition-transform"
                             [class.translate-x-4]="isTranslationVisible()"></div>
                     </div>
-                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">Translation</span>
+                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">{{ isTranslationVisible() ?
+                        'Translation' : 'Reading' }}</span>
                 </label>
             </div>
 
@@ -39,6 +40,30 @@
         </div>
     </div>
 </div>
+<div class="flex justify-center items-center px-2 py-4 font-indopak text-2xl md:text-4xl">
+    سْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+</div>
+@if (!isTranslationVisible()) {
+<!-- Reader Mode: Arabic Only -->
+<div #ayahContainer class="pb-6 px-4">
+    <div
+        class="w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8">
+        <div
+            class="text-right text-3xl md:text-4xl font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200">
+            @for (ayah of ayahs(); track $index) {
+            <span class="cursor-pointer" [id]="'ayah-' + ayah.ayah_no" (click)="navigateToTranslation(ayah.ayah_no)">
+                {{ayah.arabic_text}}
+            </span>
+            <span
+                class="inline-flex items-center justify-center w-8 h-8 mx-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full border border-emerald-200 dark:border-emerald-800 text-sm font-bold hover:bg-emerald-200 dark:hover:bg-emerald-800/50 transition-colors">
+                {{ayah.ayah_no}}
+            </span>
+            }
+        </div>
+    </div>
+</div>
+} @else {
+<!-- Card Mode: Full Layout -->
 <div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
     @for (ayah of ayahs(); track $index) {
     <div class="relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8"
@@ -102,7 +127,6 @@
         </div>
 
         <!-- Translation -->
-        @if(isTranslationVisible()){
         <div class="border-t border-stone-200 dark:border-slate-600 pt-6">
             <div class="flex items-start text-start space-x-3">
                 <div class="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-1">
@@ -115,7 +139,7 @@
                     {{ayah.translation_text}}</p>
             </div>
         </div>
-        }
     </div>
     }
 </div>
+}

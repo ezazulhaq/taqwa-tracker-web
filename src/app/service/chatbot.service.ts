@@ -97,4 +97,32 @@ export class ChatbotService {
     this.conversationId = conversationId;
   }
 
+  deleteConversation(conversationId: string): Observable<{status: string, message: string}> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return throwError(() => new Error('User must be authenticated'));
+    }
+
+    return this.http.delete<{status: string, message: string}>(`${this.API_BASE_URL}/chat/conversations/${conversationId}?user_id=${user.id}`).pipe(
+      catchError(error => {
+        console.error('Failed to delete conversation:', error);
+        return throwError(() => new Error('Failed to delete conversation'));
+      })
+    );
+  }
+
+  renameConversation(conversationId: string, title: string): Observable<{status: string, message: string}> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return throwError(() => new Error('User must be authenticated'));
+    }
+
+    return this.http.put<{status: string, message: string}>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename?user_id=${user.id}`, { title }).pipe(
+      catchError(error => {
+        console.error('Failed to rename conversation:', error);
+        return throwError(() => new Error('Failed to rename conversation'));
+      })
+    );
+  }
+
 }

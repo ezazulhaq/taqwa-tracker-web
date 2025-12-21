@@ -158,6 +158,16 @@ export class AyahComponent {
     }
   }
 
+  /**
+   * Navigate to translation mode and scroll to specific ayah
+   */
+  navigateToTranslation(ayahNumber: number): void {
+    this.isTranslationVisible.set(true);
+    setTimeout(() => {
+      this.scrollToAyah(ayahNumber);
+    }, 100);
+  }
+
   isBookmarked(bookMarkedSurah: BookMarkedSurah): boolean {
     return this.bookmarkService.isBookmarkedAyah(bookMarkedSurah);
   }
