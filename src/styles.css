@@ -88,3 +88,37 @@ ul {
   margin-left: 2rem;
   margin-right: 2rem;
 }
+/* Mobile browser compatibility fixes */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+
+/* Safe area insets for mobile devices */
+.pt-safe-top {
+  padding-top: max(2rem, env(safe-area-inset-top));
+}
+
+/* Ensure chatbot is above mobile browser UI */
+.chatbot-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.chatbot-overlay > * {
+  pointer-events: auto;
+}
+
+/* Mobile viewport height fix */
+@media screen and (max-width: 768px) {
+  .mobile-vh-fix {
+    height: calc(100vh - env(keyboard-inset-height, 0px));
+    min-height: calc(100vh - env(keyboard-inset-height, 0px));
+  }
+}
