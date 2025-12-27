@@ -1,13 +1,13 @@
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { AuthService } from "../service/auth.service";
+import { AuthTokenService } from "../service/auth-token.service";
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-    const authService = inject(AuthService);
-    
+    const authTokenService = inject(AuthTokenService);
+
     // Check if the user is authenticated
-    if (authService.isAuthenticated()) {
-        const token = authService.getValidAccessToken();
+    if (authTokenService.isAuthenticated()) {
+        const token = authTokenService.getValidAccessToken();
 
         if (token) {
             req = req.clone({

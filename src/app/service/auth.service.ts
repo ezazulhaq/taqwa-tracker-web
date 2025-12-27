@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -11,6 +11,7 @@ import { tap } from 'rxjs/internal/operators/tap';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import { RateLimitService } from './rate-limit.service';
 import { SanitizationService } from './sanitization.service';
+import { AuthTokenService } from './auth-token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,13 +22,14 @@ export class AuthService {
   private router = inject(Router);
   private rateLimitService = inject(RateLimitService);
   private sanitizationService = inject(SanitizationService);
+  private authTokenService = inject(AuthTokenService);
   private initializationPromise: Promise<void>;
   private readonly API_BASE_URL = environment.apiBaseUrl;
 
-  // Use signals for reactive state management (Angular v14+)
-  currentUser = signal<User | null>(null);
-  userMetaData = signal<UserMetaData | null>(null);
-  isAuthenticated = signal<boolean>(false);
+  // Delegate signals to authTokenService
+  currentUser = this.authTokenService.currentUser;
+  userMetaData = this.authTokenService.userMetaData;
+  isAuthenticated = this.authTokenService.isAuthenticated;
 
   constructor() {
     // Initialize and wait for session load
@@ -36,35 +38,17 @@ export class AuthService {
 
   private async loadUser(): Promise<void> {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = this.authTokenService.getAccessToken();
       if (token) {
         const user = await this.getCurrentUser().toPromise();
         if (user) {
-          this.setUserFromApiResponse(user);
+          this.authTokenService.setUserFromApiResponse(user);
         }
       }
     } catch (error) {
       console.error('Failed to load user session:', error);
-      this.clearAuthState();
+      this.authTokenService.clearAuthState();
     }
-  }
-
-  private setUserFromApiResponse(user: ApiUser): void {
-    this.currentUser.set({
-      id: user.id,
-      email: user.email || '',
-      createdAt: user.created_at,
-      displayName: user.full_name
-    });
-    this.userMetaData.set({
-      sub: user.id,
-      email: user.email,
-      username: user.full_name,
-      full_name: user.full_name,
-      email_verified: user.is_verified,
-      phone_verified: false
-    });
-    this.isAuthenticated.set(true);
   }
 
   private handleAuthError(error: any): Observable<never> {
@@ -104,16 +88,11 @@ export class AuthService {
 
   private createAuthSession(tokenResponse: LoginResponse, user: ApiUser): AuthSession {
     if (user) {
-      this.setUserFromApiResponse(user);
+      this.authTokenService.setUserFromApiResponse(user);
     }
 
-    // Store tokens in localStorage
-    if (tokenResponse.access_token) {
-      localStorage.setItem('access_token', tokenResponse.access_token);
-    }
-    if (tokenResponse.refresh_token) {
-      localStorage.setItem('refresh_token', tokenResponse.refresh_token);
-    }
+    // Store tokens
+    this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
 
     return {
       user: this.currentUser(),
@@ -145,11 +124,7 @@ export class AuthService {
       tap(tokenResponse => {
         this.rateLimitService.recordAttempt(email, true);
         // Store tokens immediately
-        localStorage.setItem('access_token', tokenResponse.access_token);
-        if (tokenResponse.refresh_token) {
-          localStorage.setItem('refresh_token', tokenResponse.refresh_token);
-        }
-        this.isAuthenticated.set(true)
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
       }),
       // Switch to get user data
       map(tokenResponse => this.getCurrentUser().pipe(
@@ -235,7 +210,7 @@ export class AuthService {
     return this.http.put<ApiUser>(`${this.API_BASE_URL}/user/me`, null, { params }).pipe(
       map(user => {
         // Update local state with new user data
-        this.setUserFromApiResponse(user);
+        this.authTokenService.setUserFromApiResponse(user);
         return this.userMetaData()!;
       }),
       catchError(error => {
@@ -253,16 +228,12 @@ export class AuthService {
   logout(): Observable<void> {
     return this.http.post<void>(`${this.API_BASE_URL}/auth/logout`, {}).pipe(
       tap(() => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        this.clearAuthState();
+        this.authTokenService.clearAuthState();
         this.router.navigate(['/home']);
       }),
       catchError(error => {
         // Clear local state even if API call fails
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        this.clearAuthState();
+        this.authTokenService.clearAuthState();
         this.router.navigate(['/home']);
         return throwError(() => new Error(error.message || 'Failed to logout'));
       })
@@ -270,19 +241,16 @@ export class AuthService {
   }
 
   refreshSession(): Observable<AuthSession> {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken = this.authTokenService.getRefreshToken();
     if (!refreshToken) {
-      this.clearAuthState();
+      this.authTokenService.clearAuthState();
       return throwError(() => new Error('No refresh token available'));
     }
 
     return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
       map(tokenResponse => {
         // Store new tokens
-        localStorage.setItem('access_token', tokenResponse.access_token);
-        if (tokenResponse.refresh_token) {
-          localStorage.setItem('refresh_token', tokenResponse.refresh_token);
-        }
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
 
         return {
           user: this.currentUser(),
@@ -293,9 +261,7 @@ export class AuthService {
       }),
       catchError(error => {
         // Clear user state on refresh failure
-        this.clearAuthState();
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        this.authTokenService.clearAuthState();
         return throwError(() => new Error(error.message || 'Failed to refresh session'));
       })
     );
@@ -307,9 +273,9 @@ export class AuthService {
     await this.initializationPromise;
 
     try {
-      const token = localStorage.getItem('access_token');
+      const token = this.authTokenService.getAccessToken();
       if (!token) {
-        this.clearAuthState();
+        this.authTokenService.clearAuthState();
         return false;
       }
 
@@ -317,7 +283,7 @@ export class AuthService {
       const user = await this.getCurrentUser().toPromise();
       return !!user;
     } catch {
-      this.clearAuthState();
+      this.authTokenService.clearAuthState();
       return false;
     }
   }
@@ -328,21 +294,16 @@ export class AuthService {
   }
 
   clearAuthState(): void {
-    this.currentUser.set(null);
-    this.userMetaData.set(null);
-    this.isAuthenticated.set(false);
+    this.authTokenService.clearAuthState();
   }
 
   getValidAccessToken(): string | null {
-    if (!this.isAuthenticated()) {
-      return null;
-    }
-    return localStorage.getItem('access_token');
+    return this.authTokenService.getValidAccessToken();
   }
 
   // Get current access token
   getAccessToken(): string | null {
-    return localStorage.getItem('access_token');
+    return this.authTokenService.getAccessToken();
   }
 
   // Get current user from API
