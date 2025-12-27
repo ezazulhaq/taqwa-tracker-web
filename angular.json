@@ -74,7 +74,8 @@
               "buildTarget": "taqwa-tracker:build:production"
             },
             "development": {
-              "buildTarget": "taqwa-tracker:build:development"
+              "buildTarget": "taqwa-tracker:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"

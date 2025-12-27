@@ -21,13 +21,13 @@ export const SECURITY_CONFIG = {
   // Content Security Policy
   CSP_DIRECTIVES: {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+    'script-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
     'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
     'font-src': ["'self'", "https://fonts.gstatic.com", "data:"],
     'img-src': ["'self'", "data:", "https:", "blob:"],
     'connect-src': ["'self'", "https://*.supabase.co", "https://*.openstreetmap.org", "https://raw.githubusercontent.com", `${environment.apiBaseUrl}`],
-    'worker-src': ["'self'", "blob:"],
-    'child-src': ["'self'", "blob:"],
+    'worker-src': ["'self'", "blob:", "https://cdn.jsdelivr.net"],
+    'child-src': ["'self'", "blob:", "https://cdn.jsdelivr.net"],
     'frame-src': ["'none'"],
     'object-src': ["'none'"],
     'base-uri': ["'self'"],

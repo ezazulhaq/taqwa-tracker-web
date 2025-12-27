@@ -4,6 +4,8 @@ import { Observable, map, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
 import { ChatRequest, ChatResponse, Conversation } from '../chatbot/chatbot.model';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 @Injectable({
   providedIn: 'root'
@@ -15,27 +17,20 @@ export class ChatbotService {
   private conversationId: string | null = null;
 
   convertToHtml(markdown: string): string {
-    let html = markdown;
+    if (!markdown) return '';
 
-    // Convert bold text
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Convert links
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 hover:underline">$1</a>');
-
-    // Convert bullet points
-    html = html.replace(/^\* (.+)$/gm, '<li class="ml-4">• $1</li>');
-
-    // Wrap consecutive list items in ul tags
-    html = html.replace(/(<li[^>]*>.*<\/li>\s*)+/gs, '<ul class="space-y-1">$&</ul>');
-
-    // Convert line breaks to <br>
-    html = html.replace(/\n/g, '<br>');
-
-    // Clean up extra spaces
-    html = html.replace(/\s+/g, ' ').trim();
-
-    return html;
+    try {
+      // Import marked and DOMPurify
+      // NOTE: Using import inside method if they are not already imported at top level
+      // but for better performance and clarity, they should be imported at top level.
+      // I will add them to the top of the file in the next step or alongside this.
+      const rawHtml = marked.parse(markdown) as string;
+      return DOMPurify.sanitize(rawHtml);
+    } catch (error) {
+      console.error('Error parsing markdown:', error);
+      // Fallback to basic text if parsing fails
+      return markdown;
+    }
   }
 
   queryIslam(message: string): Observable<ChatResponse> {
@@ -97,13 +92,13 @@ export class ChatbotService {
     this.conversationId = conversationId;
   }
 
-  deleteConversation(conversationId: string): Observable<{status: string, message: string}> {
+  deleteConversation(conversationId: string): Observable<{ status: string, message: string }> {
     const user = this.authService.currentUser();
     if (!user) {
       return throwError(() => new Error('User must be authenticated'));
     }
 
-    return this.http.delete<{status: string, message: string}>(`${this.API_BASE_URL}/chat/conversations/${conversationId}?user_id=${user.id}`).pipe(
+    return this.http.delete<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}?user_id=${user.id}`).pipe(
       catchError(error => {
         console.error('Failed to delete conversation:', error);
         return throwError(() => new Error('Failed to delete conversation'));
@@ -111,13 +106,13 @@ export class ChatbotService {
     );
   }
 
-  renameConversation(conversationId: string, title: string): Observable<{status: string, message: string}> {
+  renameConversation(conversationId: string, title: string): Observable<{ status: string, message: string }> {
     const user = this.authService.currentUser();
     if (!user) {
       return throwError(() => new Error('User must be authenticated'));
     }
 
-    return this.http.put<{status: string, message: string}>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename?user_id=${user.id}`, { title }).pipe(
+    return this.http.put<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename?user_id=${user.id}`, { title }).pipe(
       catchError(error => {
         console.error('Failed to rename conversation:', error);
         return throwError(() => new Error('Failed to rename conversation'));
