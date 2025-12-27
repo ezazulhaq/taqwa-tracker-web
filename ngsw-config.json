@@ -63,8 +63,33 @@
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,
-        "maxAge": "1d",
+        "maxAge": "7d",
         "timeout": "10s"
+      }
+    },
+    {
+      "name": "google-fonts",
+      "urls": [
+        "https://fonts.googleapis.com/**",
+        "https://fonts.gstatic.com/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 20,
+        "maxAge": "365d",
+        "timeout": "10s"
+      }
+    },
+    {
+      "name": "library-pdfs",
+      "urls": [
+        "https://raw.githubusercontent.com/ezazulhaq/library/master/taqwa_tracker/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "30d",
+        "timeout": "20s"
       }
     }
   ]
