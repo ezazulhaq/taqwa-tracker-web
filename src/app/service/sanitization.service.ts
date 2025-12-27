@@ -1,21 +1,23 @@
 import { Injectable } from '@angular/core';
+import DOMPurify from 'dompurify';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SanitizationService {
-  
+
+  private readonly purify = DOMPurify;
+
   sanitizeEmail(email: string): string {
     return email.trim().toLowerCase().replace(/[^\w@.-]/g, '');
   }
 
   sanitizeText(text: string): string {
-    return text
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<[^>]*>/g, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '')
-      .trim();
+    if (!text) return '';
+    return this.purify.sanitize(text, {
+      ALLOWED_TAGS: [], // Strip all tags for simple text sanitization
+      ALLOWED_ATTR: []
+    }).trim();
   }
 
   validateEmail(email: string): boolean {
@@ -25,7 +27,7 @@ export class SanitizationService {
 
   validatePassword(password: string): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     if (password.length < 8) {
       errors.push('Password must be at least 8 characters long');
     }
@@ -55,11 +57,11 @@ export class SanitizationService {
     try {
       const urlObj = new URL(url);
       const allowedProtocols = ['http:', 'https:'];
-      
+
       if (!allowedProtocols.includes(urlObj.protocol)) {
         return null;
       }
-      
+
       return urlObj.toString();
     } catch {
       return null;
@@ -67,8 +69,6 @@ export class SanitizationService {
   }
 
   escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    return this.purify.sanitize(text);
   }
 }
