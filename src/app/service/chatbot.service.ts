@@ -62,12 +62,7 @@ export class ChatbotService {
   }
 
   getConversations(): Observable<Conversation[]> {
-    const user = this.authService.currentUser();
-    if (!user) {
-      return throwError(() => new Error('User must be authenticated'));
-    }
-
-    return this.http.get<Conversation[]>(`${this.API_BASE_URL}/chat/conversations/${user.id}`).pipe(
+    return this.http.get<Conversation[]>(`${this.API_BASE_URL}/chat/conversations`).pipe(
       catchError(error => {
         console.error('Failed to fetch conversations:', error);
         return throwError(() => new Error('Failed to fetch conversation history'));
@@ -93,12 +88,7 @@ export class ChatbotService {
   }
 
   deleteConversation(conversationId: string): Observable<{ status: string, message: string }> {
-    const user = this.authService.currentUser();
-    if (!user) {
-      return throwError(() => new Error('User must be authenticated'));
-    }
-
-    return this.http.delete<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}?user_id=${user.id}`).pipe(
+    return this.http.delete<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}`).pipe(
       catchError(error => {
         console.error('Failed to delete conversation:', error);
         return throwError(() => new Error('Failed to delete conversation'));
@@ -107,12 +97,7 @@ export class ChatbotService {
   }
 
   renameConversation(conversationId: string, title: string): Observable<{ status: string, message: string }> {
-    const user = this.authService.currentUser();
-    if (!user) {
-      return throwError(() => new Error('User must be authenticated'));
-    }
-
-    return this.http.put<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename?user_id=${user.id}`, { title }).pipe(
+    return this.http.put<{ status: string, message: string }>(`${this.API_BASE_URL}/chat/conversations/${conversationId}/rename`, { title }).pipe(
       catchError(error => {
         console.error('Failed to rename conversation:', error);
         return throwError(() => new Error('Failed to rename conversation'));
