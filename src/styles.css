@@ -60,6 +60,7 @@ ul {
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-200%);
   }
@@ -69,6 +70,7 @@ ul {
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -88,6 +90,7 @@ ul {
   margin-left: 2rem;
   margin-right: 2rem;
 }
+
 /* Mobile browser compatibility fixes */
 @supports (height: 100dvh) {
   .min-h-screen {
@@ -97,7 +100,11 @@ ul {
 
 /* Safe area insets for mobile devices */
 .pt-safe-top {
-  padding-top: max(2rem, env(safe-area-inset-top));
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.pb-safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
 /* Ensure chatbot is above mobile browser UI */
@@ -111,14 +118,14 @@ ul {
   pointer-events: none;
 }
 
-.chatbot-overlay > * {
+.chatbot-overlay>* {
   pointer-events: auto;
 }
 
 /* Mobile viewport height fix */
 @media screen and (max-width: 768px) {
   .mobile-vh-fix {
-    height: calc(100vh - env(keyboard-inset-height, 0px));
-    min-height: calc(100vh - env(keyboard-inset-height, 0px));
+    height: 100dvh;
+    min-height: 100dvh;
   }
 }
