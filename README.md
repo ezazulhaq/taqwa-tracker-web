@@ -1,30 +1,17 @@
 # Taqwa Tracker: Comprehensive Islamic Companion App
 
-Taqwa Tracker is a feature-rich Islamic Progressive Web App (PWA) built with Angular 20 that serves as a complete digital companion for Muslims. The application seamlessly integrates essential Islamic tools including prayer times, Qibla direction, Quran reader, Hadith search, AI-powered Islamic chatbot, reading streak tracking, and Islamic calendar features.
+Taqwa Tracker is a feature-rich Islamic Progressive Web App (PWA) built with Angular 21 that serves as a complete digital companion for Muslims. The application seamlessly integrates essential Islamic tools including prayer times, Qibla direction, Quran reader, Hadith search, AI-powered Islamic chatbot, reading streak tracking, and Islamic calendar features.
 
-This modern web application combines cutting-edge technologies with authentic Islamic resources to provide an intuitive and comprehensive platform. It leverages geolocation services for precise prayer calculations, integrates with Supabase for robust data management and authentication, implements AI-driven Islamic guidance through edge functions, and ensures offline accessibility through advanced service worker implementation.
+This modern web application combines cutting-edge technologies with authentic Islamic resources to provide an intuitive and comprehensive platform. It leverages geolocation services for precise prayer calculations, integrates with a centralized backend for robust data management and authentication, implements AI-driven Islamic guidance through agentic workflows, and ensures offline accessibility through advanced service worker implementation.
 
 ## Repository Structure
 
 ```
 taqwa-tracker-web/
 ├── docs/
-│   └── edge_functions/
-│       └── islamic_chatbot.md
 ├── public/
 │   ├── fonts/
-│   │   ├── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.ttf
-│   │   ├── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff
-│   │   └── AlQuran-IndoPak-by-QuranWBW.v.4.2.2.woff2
 │   ├── icons/
-│   │   ├── icon-128x128.png
-│   │   ├── icon-144x144.png
-│   │   ├── icon-152x152.png
-│   │   ├── icon-192x192.png
-│   │   ├── icon-384x384.png
-│   │   ├── icon-512x512.png
-│   │   ├── icon-72x72.png
-│   │   └── icon-96x96.png
 │   ├── favicon.ico
 │   ├── icon.png
 │   └── manifest.webmanifest
@@ -34,32 +21,25 @@ taqwa-tracker-web/
 │   │   │   ├── forgot-password/
 │   │   │   ├── login/
 │   │   │   ├── register/
-│   │   │   ├── reset-password/
-│   │   │   └── auth.component.*
+│   │   │   └── reset-password/
 │   │   ├── chatbot/
-│   │   │   ├── hadith-links/
-│   │   │   ├── chatbot.component.*
-│   │   │   └── chatbot.model.ts
-│   │   ├── config/
-│   │   │   └── security.config.ts
+│   │   │   └── hadith-links/
 │   │   ├── feedback/
-│   │   │   ├── success/
-│   │   │   └── feedback.component.*
 │   │   ├── guard/
-│   │   │   └── auth.gaurd.ts
 │   │   ├── header/
 │   │   │   ├── menu/
-│   │   │   ├── settings/
-│   │   │   ├── header.component.*
-│   │   │   └── header.service.ts
+│   │   │   └── settings/
 │   │   ├── home/
 │   │   │   ├── sacred/
 │   │   │   │   ├── hadith/
-│   │   │   │   │   └── chapter/
+│   │   │   │   │   ├── chapter/
+│   │   │   │   │   └── hadith.service.ts
 │   │   │   │   ├── library/
-│   │   │   │   │   └── reader/
+│   │   │   │   │   ├── reader/
+│   │   │   │   │   └── library.service.ts
 │   │   │   │   └── quran/
-│   │   │   │       └── ayah/
+│   │   │   │       ├── ayah/
+│   │   │   │       └── quran.service.ts
 │   │   │   ├── streak-dashboard/
 │   │   │   ├── tool/
 │   │   │   │   ├── calculator/
@@ -67,109 +47,77 @@ taqwa-tracker-web/
 │   │   │   │   ├── kaaba/
 │   │   │   │   ├── prayer-times/
 │   │   │   │   │   └── rakat/
-│   │   │   │   │       └── rakat-detail/
 │   │   │   │   └── tasbih/
-│   │   │   ├── welcome/
-│   │   │   └── home.component.*
+│   │   │   └── welcome/
 │   │   ├── interceptor/
 │   │   │   └── auth.interceptor.ts
 │   │   ├── mobile/
-│   │   │   └── menu/
 │   │   ├── model/
-│   │   │   ├── auth.model.ts
-│   │   │   ├── captcha.model.ts
-│   │   │   ├── feedback.model.ts
-│   │   │   ├── home.model.ts
-│   │   │   ├── islamic-library.model.ts
-│   │   │   ├── namaz-time.model.ts
-│   │   │   ├── open-stream-map.model.ts
-│   │   │   ├── search-hadith.model.ts
-│   │   │   ├── supabase.model.ts
-│   │   │   ├── surah.model.ts
-│   │   │   ├── tasbih.model.ts
-│   │   │   └── translation.model.ts
 │   │   ├── pipes/
-│   │   │   └── replace-underline.pipe.ts
 │   │   ├── profile/
-│   │   │   └── profile.component.*
 │   │   ├── service/
+│   │   │   ├── auth-token.service.ts
 │   │   │   ├── auth.service.ts
 │   │   │   ├── auto-update.service.ts
 │   │   │   ├── bookmark.service.ts
 │   │   │   ├── captcha.service.ts
 │   │   │   ├── chatbot.service.ts
-│   │   │   ├── feedback.service.ts
 │   │   │   ├── https-redirect.service.ts
-│   │   │   ├── library.service.ts
 │   │   │   ├── rate-limit.service.ts
 │   │   │   ├── read-streak.service.ts
 │   │   │   ├── salah-app.service.ts
 │   │   │   ├── sanitization.service.ts
 │   │   │   ├── security-headers.service.ts
-│   │   │   ├── supabase.service.ts
 │   │   │   ├── tasbih.service.ts
 │   │   │   └── theme.service.ts
 │   │   ├── shared/
-│   │   │   ├── calendar/
-│   │   │   ├── captcha/
-│   │   │   ├── icon/
-│   │   │   ├── module/
-│   │   │   ├── pdf-viewer/
-│   │   │   ├── scroll-top/
-│   │   │   ├── skeleton/
-│   │   │   │   └── list-home/
-│   │   │   └── title/
 │   │   ├── app.component.*
 │   │   ├── app.config.ts
 │   │   └── app.routes.ts
 │   ├── environments/
 │   │   ├── environment.prod.ts
 │   │   └── environment.ts
-│   ├── env.d.ts
 │   ├── index.html
 │   ├── main.ts
 │   └── styles.css
-├── .env
 ├── angular.json
 ├── ngsw-config.json
 ├── package.json
 ├── tailwind.config.js
-├── tsconfig.json
-├── tsconfig.app.json
-└── tsconfig.spec.json
+└── tsconfig.json
 ```
 
 ### Key Files:
 - `src/main.ts`: Entry point of the application
 - `src/app/app.config.ts`: Application configuration with providers
 - `src/app/app.routes.ts`: Application routing configuration
-- `src/environments/environment.ts`: Environment-specific configuration with ngx-env
-- `angular.json`: Angular CLI configuration (project name: taqwa-tracker)
+- `src/environments/environment.ts`: Environment-specific configuration
+- `angular.json`: Angular CLI configuration
 - `ngsw-config.json`: Service Worker configuration for PWA features
 - `public/manifest.webmanifest`: PWA manifest configuration
 
 ### Important Integration Points:
-- **Supabase**: Authentication, data storage, and edge functions (`src/app/service/supabase.service.ts`, `src/app/service/auth.service.ts`)
-- **OpenStreetMap API**: Location services and address resolution (`src/app/service/salah-app.service.ts`)
-- **Adhan.js**: Prayer time calculations and Qibla direction (`src/app/service/salah-app.service.ts`)
-- **AI Chatbot**: Islamic chatbot using Supabase Edge Functions with Pinecone and Groq AI
-- **ngx-markdown**: Markdown rendering for chatbot responses
-- **ng2-pdf-viewer**: PDF viewing for Islamic library documents
+- **Centralized API**: Core backend service providing authentication, data storage, and AI agent endpoints (`https://api.thetaqwatracker.com`).
+- **OpenStreetMap API**: Location services and address resolution.
+- **Adhan.js**: Prayer time calculations and Qibla direction.
+- **AI Chatbot**: Intelligent chatbot powered by agentic workflows on the backend.
+- **marked & DOMPurify**: Markdown rendering and sanitization for chatbot responses.
+- **ng2-pdf-viewer**: PDF viewing for Islamic library documents.
 
 ## Usage Instructions
 
 ### Installation
 
 Prerequisites:
-- Node.js (v18 or later)
-- npm (v8 or later)
-- Angular CLI (v19 or later)
+- Node.js (v20 or later)
+- npm (v10 or later)
+- Angular CLI (v21 or later)
 
 Steps:
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd salah-app
+   cd taqwa-tracker-web
    ```
 2. Install dependencies:
    ```bash
@@ -177,15 +125,24 @@ Steps:
    ```
 3. Set up environment variables:
    ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
+   # Create src/environments/environment.ts and add the following:
+   # export const environment = {
+   #     production: false,
+   #     github: {
+   #         pdfUri: 'raw.githubusercontent.com/ezazulhaq/library/master/taqwa_tracker',
+   #     },
+   #     api: {
+   #         map: 'https://nominatim.openstreetmap.org/reverse'
+   #     },
+   #     apiBaseUrl: 'https://api.thetaqwatracker.com'
+   # };
    ```
 
 ### Getting Started
 
 To run the application in development mode:
 
-```
+```bash
 npm start
 ```
 
@@ -193,21 +150,11 @@ This will start the development server, typically at `http://localhost:4200`.
 
 ### Configuration
 
-The application uses `@ngx-env/core` for environment variable management. Create a `.env` file in the root directory:
-
-```bash
-# Required Environment Variables
-NG_APP_S3_BUCKET=your-s3-bucket-name
-NG_APP_OPEN_STREET_URL=https://nominatim.openstreetmap.org
-SUPABASE_URL=your-supabase-project-url
-SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
-Environment files structure:
+The application uses environment files for configuration:
 - `src/environments/environment.ts`: Development configuration
 - `src/environments/environment.prod.ts`: Production configuration
 
-Both files use `import.meta.env` to access environment variables at build time.
+Both files define the `apiBaseUrl` used to communicate with the Taqw Tracker API.
 
 ### Building for Production
 
@@ -220,133 +167,71 @@ npm run build
 This will generate a production-ready build in the `dist/taqwa-tracker` directory with:
 - Service Worker enabled for offline functionality
 - Optimized bundles with tree-shaking
-- Environment variables injected at build time
 
 ### Testing
 
 To run the unit tests:
 
-```
+```bash
 npm test
 ```
 
 ### Troubleshooting
 
 1. **Location Services Not Working**
-   - Problem: Prayer times or Qibla direction not displaying correctly
-   - Solution: 
-     - Check if location permissions are enabled in your browser
-     - Ensure you're connected to the internet
-     - Check the browser console for specific error messages
-
+   - Solution: Check browser permissions and internet connectivity.
 2. **Authentication Issues**
-   - Problem: Unable to login or access protected features
-   - Solution:
-     - Verify Supabase configuration in environment variables
-     - Check if email confirmation is required
-     - Clear browser storage and try again
-
+   - Solution: Verify API connectivity and clear browser storage if needed.
 3. **Chatbot Not Responding**
-   - Problem: Islamic chatbot not providing responses
-   - Solution:
-     - Ensure Supabase Edge Functions are deployed
-     - Check if required API keys (Pinecone, Google AI, Groq) are configured
-     - Verify network connectivity
-
+   - Solution: Ensure you are authenticated and the backend API is reachable.
 4. **Offline Mode Issues**
-   - Problem: App not working properly when offline
-   - Solution:
-     - Visit the app while online first to cache resources
-     - Check if your browser supports Service Workers
-     - Clear app cache if experiencing stale data
-
-5. **Build Errors**
-   - Problem: Application fails to build
-   - Solution:
-     - Ensure all environment variables are set
-     - Check Angular and Node.js versions compatibility
-     - Clear node_modules and reinstall dependencies
-
-For persistent issues, check the browser's developer console for detailed error messages.
+   - Solution: Visit the app while online first to cache resources properly.
 
 ## Features
 
 ### Core Features
-- **Prayer Times**: Accurate prayer times based on user location using Adhan.js
-- **Qibla Direction**: Real-time Kaaba direction with compass visualization
-- **Quran Reader**: Complete Quran with multiple translations and audio
-- **Hadith Search**: Searchable hadith database with chapter navigation
-- **Islamic Library**: PDF reader for Islamic books and resources
-- **Tasbih Counter**: Digital prayer counter with customizable dhikr
+- **Prayer Times**: Accurate prayer times based on user location using Adhan.js.
+- **Qibla Direction**: Real-time Kaaba direction with compass visualization.
+- **Quran Reader**: Complete Quran with translations and interactive ayah tools.
+- **Hadith Search**: Searchable hadith database with chapter navigation.
+- **Islamic Library**: Integrated PDF reader for Islamic books.
+- **Tasbih Counter**: Digital prayer counter with custom dhiks.
 
 ### Advanced Features
-- **AI Islamic Chatbot**: Intelligent chatbot powered by Supabase Edge Functions
-  - Vector-based hadith search using Pinecone
-  - AI-generated responses using Groq (Llama 3.1)
-  - Source attribution with hadith references
-- **User Authentication**: Complete auth system with Supabase
-  - Registration, login, password reset
-  - Protected routes with auth guards
-  - User profiles and preferences
-- **Progressive Web App**: Full PWA capabilities
-  - Offline functionality with service workers
-  - Install on mobile devices
-  - Push notifications support
+- **AI Islamic Chatbot**: Intelligent chatbot for Islamic questions and guidance.
+- **User Authentication**: Secure login, registration, and profile management via the central API.
+- **Progressive Web App**: Full PWA support with offline caching and mobile installation.
 
 ### Technical Features
-- **Responsive Design**: Tailwind CSS for mobile-first design
-- **Real-time Updates**: RxJS observables for reactive programming
-- **State Management**: Angular signals for efficient state updates
-- **Security**: HTTP interceptors, auth guards, and input sanitization
-- **Performance**: Lazy loading, code splitting, and optimized bundles
+- **Responsive Design**: Mobile-first design using Tailwind CSS.
+- **Modern State Management**: Uses Angular signals for efficient UI updates.
+- **Security**: Centralized token management, route guards, and input sanitization.
 
 ## Deployment
 
 ### Prerequisites
-- A web server capable of serving static files (e.g., Nginx, Apache)
-- SSL certificate for HTTPS (required for PWA features)
+- SSH access to a web server or a static hosting service.
+- SSL certificate (required for PWA features).
 
 ### Deployment Steps
-1. Build the application for production:
-   ```
-   npm run build
-   ```
-2. Copy the contents of the `dist/salah-app` directory to your web server's public directory.
-3. Configure your web server to redirect all requests to `index.html` for proper routing.
-4. Ensure your server is set up to serve the application over HTTPS.
-
-### Environment Configurations
-Update the `src/environments/environment.prod.ts` file with production-specific values before building.
-
-### Monitoring Setup
-- Use Angular's built-in error handling to log errors to a monitoring service.
-- Implement application performance monitoring (APM) tools to track user interactions and app performance.
+1. Build the production bundle: `npm run build`.
+2. Deploy the contents of `dist/taqwa-tracker` to your hosting provider.
+3. Configure the server to fallback to `index.html` for single-page application routing.
 
 ## Architecture
 
 ### Frontend Architecture
-- **Framework**: Angular 19 with standalone components
-- **Styling**: Tailwind CSS with custom themes
-- **State Management**: Angular signals and RxJS observables
-- **Routing**: Angular Router with lazy loading and guards
-- **PWA**: Angular Service Worker with custom caching strategies
+- **Framework**: Angular 21 with Standalone Components.
+- **Styling**: Tailwind CSS.
+- **State Management**: Angular Signals and RxJS.
+- **PWA**: Angular Service Worker.
 
-### Backend Services
-- **Database**: Supabase (PostgreSQL) for user data and Islamic content
-- **Authentication**: Supabase Auth with JWT tokens
-- **Edge Functions**: Supabase Edge Functions for AI chatbot
-- **Vector Database**: Pinecone for semantic hadith search
-- **AI Services**: Google Text Embedding API and Groq AI
-
-### External APIs
-- **Location**: OpenStreetMap Nominatim API for address resolution
-- **Prayer Times**: Adhan.js library for Islamic prayer calculations
-- **Content Delivery**: GitHub raw content for PDF documents
+### Backend Infrastructure
+- **API Gateway**: Centralized API at `https://api.thetaqwatracker.com`.
+- **Database**: Managed PostgreSQL for user data and Islamic content.
+- **AI Engine**: Backend workflows for agentic Islamic guidance.
 
 ### Security Features
-- **Authentication**: JWT-based auth with Supabase
-- **Route Protection**: Auth guards for protected routes
-- **Input Sanitization**: Custom sanitization service
-- **HTTPS Redirect**: Automatic HTTPS enforcement
-- **Rate Limiting**: Client-side rate limiting for API calls
-- **CORS**: Proper CORS configuration for edge functions
+- **Token-based Auth**: Secure JWT handling with `AuthTokenService`.
+- **Interceptors**: Automatic injection of auth headers.
+- **Sanitization**: Client-side content sanitization using DOMPurify.
