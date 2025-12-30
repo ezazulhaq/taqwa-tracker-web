@@ -8,12 +8,14 @@ import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 import { Ayah, BookMarkedSurah } from '../quran.model';
 import { QuranService } from '../quran.service';
+import { AyahSkeletonComponent } from '../../../../shared/skeleton/ayah-skeleton/ayah-skeleton.component';
 
 @Component({
   selector: 'app-ayah',
   imports: [
     FormsModule,
-    TitleComponent
+    TitleComponent,
+    AyahSkeletonComponent
   ],
   templateUrl: './ayah.component.html',
   styleUrl: './ayah.component.css',
