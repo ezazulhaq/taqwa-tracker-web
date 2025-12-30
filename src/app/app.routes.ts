@@ -100,6 +100,11 @@ export const routes: Routes = [
         loadComponent: () => import('./home/tool/calculator/calculator.component').then(m => m.CalculatorComponent)
     },
     {
+        path: 'privacy-policy',
+        title: 'Privacy Policy',
+        loadComponent: () => import('./shared/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
+    },
+    {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
