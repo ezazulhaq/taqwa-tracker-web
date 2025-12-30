@@ -28,18 +28,19 @@ export class KaabaComponent implements OnInit, OnDestroy {
   private compassSubscription: Subscription | null = null;
   compassDeg = signal<number>(0);
 
-  compassSvg: SafeHtml = '';
-  private isIOS: boolean;
+  isIOS = signal<boolean>(false);
+  isPermissionRequired = signal<boolean>(false);
+  isPermissionGranted = signal<boolean>(false);
 
   constructor(
     private kaabaService: SalahAppService) {
     this.heading$ = new BehaviorSubject<number>(0);
     this.kaabaDirection$ = this.kaabaService.getKaabaDirection();
-    this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    this.isIOS.set(/iPad|iPhone|iPod/.test(navigator.userAgent));
   }
 
   ngOnInit() {
-    this.requestOrientationPermission();
+    this.checkOrientationPermission();
   }
 
   ngOnDestroy() {
@@ -48,33 +49,47 @@ export class KaabaComponent implements OnInit, OnDestroy {
     }
   }
 
-  requestOrientationPermission() {
-    if (this.isIOS) {
+  checkOrientationPermission() {
+    if (this.isIOS()) {
       if (typeof (window as any).DeviceOrientationEvent !== 'undefined' &&
         typeof (window as any).DeviceOrientationEvent.requestPermission === 'function') {
-        (window as any).DeviceOrientationEvent.requestPermission()
-          .then((permissionState: string) => {
-            if (permissionState === 'granted') {
-              this.setupDeviceOrientation();
-            } else {
-              console.error('Permission to access device orientation was denied');
-            }
-          })
-          .catch(console.error);
+        // Permission is required on iOS 13+
+        this.isPermissionRequired.set(true);
       } else {
-        console.error('DeviceOrientationEvent.requestPermission is not available');
+        // Fallback for older iOS or non-standard browsers
+        console.warn('DeviceOrientationEvent.requestPermission is not available on this iOS device.');
+        this.setupDeviceOrientation();
       }
     } else {
+      // Android or Desktop
+      this.isPermissionGranted.set(true);
       this.setupDeviceOrientation();
+    }
+  }
+
+  onEnableCompass() {
+    if (typeof (window as any).DeviceOrientationEvent !== 'undefined' &&
+      typeof (window as any).DeviceOrientationEvent.requestPermission === 'function') {
+      (window as any).DeviceOrientationEvent.requestPermission()
+        .then((permissionState: string) => {
+          if (permissionState === 'granted') {
+            this.isPermissionGranted.set(true);
+            this.isPermissionRequired.set(false);
+            this.setupDeviceOrientation();
+          } else {
+            console.error('Permission to access device orientation was denied');
+          }
+        })
+        .catch(console.error);
     }
   }
 
   setupDeviceOrientation() {
     const win = window as any;
-    if (typeof win !== 'undefined' && 'DeviceOrientationEvent' in win) {
+    if (typeof win !== 'undefined' && ('DeviceOrientationEvent' in win || 'ondeviceorientationabsolute' in win)) {
       const handleOrientation = (event: ExtendedDeviceOrientationEvent) => {
         let heading: number | null = null;
-        if (this.isIOS) {
+        if (this.isIOS()) {
           // For iOS devices
           heading = event.webkitCompassHeading ?? null;
         } else if (event.alpha !== null) {
@@ -87,7 +102,7 @@ export class KaabaComponent implements OnInit, OnDestroy {
         }
       };
 
-      if (this.isIOS) {
+      if (this.isIOS()) {
         win.addEventListener('deviceorientation', handleOrientation as EventListener, true);
       } else if ('ondeviceorientationabsolute' in win) {
         win.addEventListener('deviceorientationabsolute', handleOrientation as EventListener, true);
