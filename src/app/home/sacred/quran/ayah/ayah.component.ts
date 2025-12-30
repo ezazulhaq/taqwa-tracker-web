@@ -42,6 +42,7 @@ export class AyahComponent {
   ayahNoParam!: string;
 
   ayahs = signal<Ayah[]>([]);
+  isLoading = signal<boolean>(false);
 
   isTranslationVisible = signal<boolean>(true);
   selectedAyahNumber = signal<string>(''); // For dropdown selection
@@ -282,13 +283,18 @@ export class AyahComponent {
 
   private getTranslatedAayahs() {
     console.log("getTranslatedAayahs function called");
+    this.isLoading.set(true);
     this.quranService.getAllAyahs(+this.surahNumber, this.translator()).subscribe(
       {
         next: (data: any) => {
           this.ayahs.set(data);
           this.handleScrollAfterDataLoad();
+          this.isLoading.set(false);
         },
-        error: (error: any) => console.log(error.error),
+        error: (error: any) => {
+          console.log(error.error);
+          this.isLoading.set(false);
+        },
         complete: () => console.log(`Aayahs set this translator: ${this.translator()}`)
       }
     );
