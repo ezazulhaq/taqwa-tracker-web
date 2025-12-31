@@ -71,6 +71,7 @@ taqwa-tracker-web/
 │   │   │   ├── tasbih.service.ts
 │   │   │   └── theme.service.ts
 │   │   ├── shared/
+│   │   │   ├── install-pwa/
 │   │   │   └── privacy-policy/
 │   │   ├── app.component.*
 │   │   ├── app.config.ts

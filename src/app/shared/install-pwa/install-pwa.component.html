@@ -1,0 +1,50 @@
+@if (showInstallBanner()) {
+<div class="fixed bottom-4 left-4 right-4 z-[100] animate-in slide-in-from-bottom-full duration-500 transition-all">
+    <div
+        class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-emerald-100 dark:border-slate-700 p-4 pt-6 sm:p-4 flex flex-col sm:flex-row items-center gap-4 max-w-2xl mx-auto">
+
+        <!-- Close Button (Top Right) -->
+        <button (click)="dismiss()"
+            class="absolute top-1 right-1 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors z-10">
+            <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd" />
+            </svg>
+        </button>
+
+        <!-- App Icon/Brand -->
+        <div
+            class="flex-shrink-0 size-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center p-2">
+            <img src="icon.png" alt="Taqwa Tracker" class="rounded-lg">
+        </div>
+
+        <!-- Content -->
+        <div class="flex-grow text-center sm:text-left">
+            <h3 class="text-slate-900 dark:text-white font-bold leading-tight">Install The Taqwa Tracker</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                @if (platform() === 'ios') {
+                Tap <span class="inline-block px-1 bg-gray-100 dark:bg-slate-700 rounded decoration-0">
+                    <svg class="size-4 inline-block -mt-1" viewBox="0 0 50 50" fill="currentColor">
+                        <path
+                            d="M30.3,10.6l-5.3-5.3l-5.3,5.3l1.4,1.4l2.9-2.9V26h2V9.1l2.9,2.9L30.3,10.6z M14,30v10h22V30h2v12H12V30H14z" />
+                    </svg>
+                </span> then "Add to Home Screen"
+                } @else {
+                Add to your home screen for a fast, offline experience.
+                }
+            </p>
+        </div>
+
+        <!-- Actions -->
+        @if (platform() !== 'ios') {
+        <div class="flex items-center gap-2">
+            <button (click)="installPwa()"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-full text-sm shadow-lg shadow-emerald-500/20 transition-all active:scale-95 whitespace-nowrap">
+                Install
+            </button>
+        </div>
+        }
+    </div>
+</div>
+}

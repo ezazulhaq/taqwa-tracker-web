@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
@@ -22,6 +23,8 @@ interface ExtendedDeviceOrientationEvent extends DeviceOrientationEvent {
   }
 })
 export class KaabaComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   heading$: BehaviorSubject<number>;
   kaabaDirection$: Observable<number | null>;
@@ -36,11 +39,16 @@ export class KaabaComponent implements OnInit, OnDestroy {
     private kaabaService: SalahAppService) {
     this.heading$ = new BehaviorSubject<number>(0);
     this.kaabaDirection$ = this.kaabaService.getKaabaDirection();
-    this.isIOS.set(/iPad|iPhone|iPod/.test(navigator.userAgent));
+
+    if (this.isBrowser) {
+      this.isIOS.set(/iPad|iPhone|iPod/.test(navigator.userAgent));
+    }
   }
 
   ngOnInit() {
-    this.checkOrientationPermission();
+    if (this.isBrowser) {
+      this.checkOrientationPermission();
+    }
   }
 
   ngOnDestroy() {
@@ -50,6 +58,8 @@ export class KaabaComponent implements OnInit, OnDestroy {
   }
 
   checkOrientationPermission() {
+    if (!this.isBrowser) return;
+
     if (this.isIOS()) {
       if (typeof (window as any).DeviceOrientationEvent !== 'undefined' &&
         typeof (window as any).DeviceOrientationEvent.requestPermission === 'function') {
@@ -68,6 +78,8 @@ export class KaabaComponent implements OnInit, OnDestroy {
   }
 
   onEnableCompass() {
+    if (!this.isBrowser) return;
+
     if (typeof (window as any).DeviceOrientationEvent !== 'undefined' &&
       typeof (window as any).DeviceOrientationEvent.requestPermission === 'function') {
       (window as any).DeviceOrientationEvent.requestPermission()
@@ -85,6 +97,8 @@ export class KaabaComponent implements OnInit, OnDestroy {
   }
 
   setupDeviceOrientation() {
+    if (!this.isBrowser) return;
+
     const win = window as any;
     if (typeof win !== 'undefined' && ('DeviceOrientationEvent' in win || 'ondeviceorientationabsolute' in win)) {
       const handleOrientation = (event: ExtendedDeviceOrientationEvent) => {

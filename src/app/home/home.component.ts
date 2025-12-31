@@ -7,6 +7,7 @@ import { ModuleComponent } from '../shared/module/module.component';
 import { module_icons, tool_icons } from '../shared/module/module.contant';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { StreakDashboardComponent } from './streak-dashboard/streak-dashboard.component';
+import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { StreakDashboardComponent } from './streak-dashboard/streak-dashboard.co
     TitleComponent,
     WelcomeComponent,
     StreakDashboardComponent,
+    InstallPwaComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
