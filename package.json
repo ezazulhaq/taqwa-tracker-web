@@ -1,6 +1,6 @@
 {
   "name": "taqwa-tracker",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,6 +20,7 @@
     "@angular/router": "^21.0.5",
     "@angular/service-worker": "^21.0.5",
     "@types/dompurify": "^3.0.5",
+    "@vercel/analytics": "^1.6.1",
     "adhan": "^4.4.3",
     "dompurify": "^3.3.1",
     "marked": "^16.3.0",
