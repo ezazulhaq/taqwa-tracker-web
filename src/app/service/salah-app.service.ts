@@ -6,6 +6,7 @@ import { OpenStreetMapResponse } from '../model/open-stream-map.model';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,24 @@ export class SalahAppService {
   location$ = this.locationSubject.asObservable();
   error$ = this.errorSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) {
     this.getLocation();
+    this.setupDailyNotificationScheduling();
+  }
+
+  private setupDailyNotificationScheduling() {
+    this.location$.subscribe(location => {
+      if (location) {
+        this.getPrayerTimes(new Date()).subscribe(times => {
+          if (times) {
+            this.notificationService.schedulePrayerNotifications(times);
+          }
+        });
+      }
+    });
   }
 
   getLocation(): void {

@@ -9,6 +9,7 @@ import { PrayerTimeInfo } from './prayer-times.model';
 import { CalendarComponent } from "../../../shared/calendar/calendar.component";
 import { RakatComponent } from './rakat/rakat.component';
 import { TitleComponent } from '../../../shared/title/title.component';
+import { NotificationService } from '../../../service/notification.service';
 
 @Component({
   selector: 'app-prayer-times',
@@ -63,8 +64,9 @@ export class PrayerTimesComponent implements OnInit {
   });
 
   constructor(
-    private prayerService: SalahAppService
-  ) { 
+    private prayerService: SalahAppService,
+    protected notificationService: NotificationService
+  ) {
     // Load saved preference from localStorage
     const savedPreference = localStorage.getItem('hanafiPreference');
     if (savedPreference !== null) {
@@ -116,6 +118,21 @@ export class PrayerTimesComponent implements OnInit {
     this.isHanafi.set(newValue);
     // Save preference to localStorage
     localStorage.setItem('hanafiPreference', newValue.toString());
+  }
+
+  async toggleNotifications() {
+    if (this.notificationService.notificationsEnabled()) {
+      // Permission already granted
+    } else {
+      await this.notificationService.requestPermission();
+    }
+  }
+
+  sendTestNotification() {
+    this.notificationService.showNotification(
+      'Test Notification',
+      'If you see this, prayer alerts are working correctly!'
+    );
   }
 }
 
