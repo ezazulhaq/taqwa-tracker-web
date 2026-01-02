@@ -9,13 +9,15 @@ import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 import { Ayah, BookMarkedSurah } from '../quran.model';
 import { QuranService } from '../quran.service';
 import { AyahSkeletonComponent } from '../../../../shared/skeleton/ayah-skeleton/ayah-skeleton.component';
+import { AyahCardComponent } from './ayah-card/ayah-card.component';
 
 @Component({
   selector: 'app-ayah',
   imports: [
     FormsModule,
     TitleComponent,
-    AyahSkeletonComponent
+    AyahSkeletonComponent,
+    AyahCardComponent
   ],
   templateUrl: './ayah.component.html',
   styleUrl: './ayah.component.css',
@@ -162,6 +164,17 @@ export class AyahComponent {
   }
 
   /**
+   * Navigate to reading mode and scroll to specific ayah
+   */
+  navigateToReading(ayahNumber: number): void {
+    this.isTranslationVisible.set(false);
+    this.lastReadAyahNo.set(ayahNumber);
+    setTimeout(() => {
+      this.scrollToAyah(ayahNumber);
+    }, 100);
+  }
+
+  /**
    * Navigate to translation mode and scroll to specific ayah
    */
   navigateToTranslation(ayahNumber: number): void {
@@ -171,93 +184,11 @@ export class AyahComponent {
     }, 100);
   }
 
-  isBookmarked(bookMarkedSurah: BookMarkedSurah): boolean {
-    return this.bookmarkService.isBookmarkedAyah(bookMarkedSurah);
-  }
-
   toggleBookmark(bookMarkedSurah: BookMarkedSurah) {
     this.bookmarkService.toggleBookmarkAyah(bookMarkedSurah);
   }
 
-  async copyAyah(ayah: Ayah) {
-    try {
-      let textToCopy = '';
 
-      // Add surah and ayah information
-      textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_no}\n\n`;
-
-      // Add Arabic text
-      textToCopy += `${ayah.arabic_text}\n\n`;
-
-      // Add translation if visible
-      if (this.isTranslationVisible()) {
-        textToCopy += `Translation: ${ayah.translation_text}\n\n`;
-      }
-
-      // Add source attribution
-      textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_no}`;
-
-      await navigator.clipboard.writeText(textToCopy);
-
-      // Optional: Show a brief success message
-      this.showCopySuccessMessage();
-
-    } catch (error) {
-      console.error('Failed to copy ayah:', error);
-
-      // Fallback for older browsers
-      this.fallbackCopyToClipboard(ayah);
-    }
-  }
-
-  private showCopySuccessMessage() {
-    // Create a temporary success message
-    const message = document.createElement('div');
-    message.textContent = 'Ayah copied to clipboard!';
-    message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-opacity duration-300';
-
-    document.body.appendChild(message);
-
-    // Remove the message after 2 seconds
-    setTimeout(() => {
-      message.style.opacity = '0';
-      setTimeout(() => {
-        document.body.removeChild(message);
-      }, 300);
-    }, 2000);
-  }
-
-  private fallbackCopyToClipboard(ayah: Ayah) {
-    const textArea = document.createElement('textarea');
-
-    let textToCopy = '';
-    textToCopy += `${this.surahName} (${this.surahName_ar}) - Ayah ${ayah.ayah_no}\n\n`;
-    textToCopy += `${ayah.arabic_text}\n\n`;
-
-    if (this.isTranslationVisible()) {
-      textToCopy += `Translation: ${ayah.translation_text}\n\n`;
-    }
-
-    textToCopy += `Source: Quran ${this.surahNumber}:${ayah.ayah_no}`;
-
-    textArea.value = textToCopy;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-      this.showCopySuccessMessage();
-    } catch (err) {
-      console.error('Fallback copy failed:', err);
-    }
-
-    document.body.removeChild(textArea);
-  }
 
   /**
    * Scroll to specific ayah by number
