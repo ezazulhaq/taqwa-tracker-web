@@ -23,7 +23,7 @@ export const SECURITY_CONFIG = {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
     'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-    'font-src': ["'self'", "https://fonts.gstatic.com", "data:"],
+    'font-src': ["'self'", "https://fonts.gstatic.com", "https://static-cdn.tarteel.ai", "data:"],
     'img-src': ["'self'", "data:", "https:", "blob:"],
     'connect-src': ["'self'", "https://*.supabase.co", "https://*.openstreetmap.org", "https://raw.githubusercontent.com", `${environment.apiBaseUrl}`],
     'worker-src': ["'self'", "blob:", "https://cdn.jsdelivr.net"],
@@ -48,6 +48,7 @@ export const SECURITY_CONFIG = {
     'fonts.googleapis.com',
     'fonts.gstatic.com',
     'api.openstreetmap.org',
-    'raw.githubusercontent.com'
+    'raw.githubusercontent.com',
+    'static-cdn.tarteel.ai'
   ]
 } as const;
