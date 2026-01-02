@@ -30,10 +30,8 @@ export class PrayerTimesComponent implements OnInit {
 
   prayerName = signal<string>("");
 
-  isHanafi = signal<boolean>(false);
-
   getTimes = linkedSignal(() => {
-    return this.prayerService.getPrayerTimes(this.selectedDate(), this.isHanafi())
+    return this.prayerService.getPrayerTimes(this.selectedDate(), this.prayerService.isHanafi())
       .pipe(
         map((namazTimes: NamazTimes | null) => {
           if (!namazTimes) return [];
@@ -66,13 +64,7 @@ export class PrayerTimesComponent implements OnInit {
   constructor(
     private prayerService: SalahAppService,
     protected notificationService: NotificationService
-  ) {
-    // Load saved preference from localStorage
-    const savedPreference = localStorage.getItem('hanafiPreference');
-    if (savedPreference !== null) {
-      this.isHanafi.set(savedPreference === 'true');
-    }
-  }
+  ) { }
 
   ngOnInit(): void {
     // check if location access allowed
@@ -111,21 +103,6 @@ export class PrayerTimesComponent implements OnInit {
   onDateSelected(newDate: Date) {
     this.isCalendarVisible.set(false);
     this.selectedDate.set(newDate);
-  }
-
-  toggleHanafi() {
-    const newValue = !this.isHanafi();
-    this.isHanafi.set(newValue);
-    // Save preference to localStorage
-    localStorage.setItem('hanafiPreference', newValue.toString());
-  }
-
-  async toggleNotifications() {
-    if (this.notificationService.notificationsEnabled()) {
-      // Permission already granted
-    } else {
-      await this.notificationService.requestPermission();
-    }
   }
 
   sendTestNotification() {

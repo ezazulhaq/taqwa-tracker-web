@@ -7,10 +7,25 @@ import { NamazTimes } from '../model/namaz-time.model';
 export class NotificationService {
     private timers: any[] = [];
     notificationsEnabled = signal<boolean>(false);
+    userNotificationsEnabled = signal<boolean>(true);
     permissionStatus = signal<NotificationPermission>('default');
 
     constructor() {
         this.checkPermission();
+        this.loadUserPreference();
+    }
+
+    private loadUserPreference() {
+        const saved = localStorage.getItem('userNotificationsEnabled');
+        if (saved !== null) {
+            this.userNotificationsEnabled.set(saved === 'true');
+        }
+    }
+
+    toggleUserNotifications() {
+        const newValue = !this.userNotificationsEnabled();
+        this.userNotificationsEnabled.set(newValue);
+        localStorage.setItem('userNotificationsEnabled', newValue.toString());
     }
 
     private checkPermission() {
@@ -36,7 +51,7 @@ export class NotificationService {
     schedulePrayerNotifications(times: NamazTimes) {
         this.clearAllTimers();
 
-        if (!this.notificationsEnabled()) return;
+        if (!this.notificationsEnabled() || !this.userNotificationsEnabled()) return;
 
         const now = new Date();
 
@@ -60,7 +75,7 @@ export class NotificationService {
     }
 
     showNotification(title: string, body: string) {
-        if (this.notificationsEnabled()) {
+        if (this.notificationsEnabled() && this.userNotificationsEnabled()) {
             new Notification(title, {
                 body: body,
                 icon: '/assets/icons/icon-192x192.png' // Adjust icon path if needed

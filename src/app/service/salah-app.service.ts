@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Coordinates, PrayerTimes, CalculationMethod, Qibla, Madhab } from 'adhan';
 import { NamazTimes } from '../model/namaz-time.model';
 import { HttpClient } from '@angular/common/http';
@@ -17,6 +17,7 @@ export class SalahAppService {
 
   location$ = this.locationSubject.asObservable();
   error$ = this.errorSubject.asObservable();
+  isHanafi = signal<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -24,6 +25,20 @@ export class SalahAppService {
   ) {
     this.getLocation();
     this.setupDailyNotificationScheduling();
+    this.loadHanafiPreference();
+  }
+
+  private loadHanafiPreference() {
+    const savedPreference = localStorage.getItem('hanafiPreference');
+    if (savedPreference !== null) {
+      this.isHanafi.set(savedPreference === 'true');
+    }
+  }
+
+  toggleHanafi() {
+    const newValue = !this.isHanafi();
+    this.isHanafi.set(newValue);
+    localStorage.setItem('hanafiPreference', newValue.toString());
   }
 
   private setupDailyNotificationScheduling() {
@@ -78,7 +93,8 @@ export class SalahAppService {
     }
   }
 
-  getPrayerTimes(date: Date, isHanafi: boolean = false): Observable<NamazTimes | null> {
+  getPrayerTimes(date: Date, isHanafi?: boolean): Observable<NamazTimes | null> {
+    const hanafiVal = isHanafi !== undefined ? isHanafi : this.isHanafi();
     return this.location$.pipe(
       map(location => {
         if (!location) return null;
@@ -88,7 +104,7 @@ export class SalahAppService {
         // Set Madhab for Asr calculation
         // Hanafi: Later Asr time (shadow length = 2x object height + Zuhr shadow)
         // Shafi: Earlier Asr time (shadow length = 1x object height + Zuhr shadow)
-        params.madhab = isHanafi ? Madhab.Hanafi : Madhab.Shafi;
+        params.madhab = hanafiVal ? Madhab.Hanafi : Madhab.Shafi;
 
         const prayerTimes = new PrayerTimes(coordinates, date, params);
         return {
