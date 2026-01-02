@@ -29,7 +29,7 @@ export class AyahComponent {
 
   private readonly authService = inject(AuthService);
   private readonly readStreakService = inject(ReadStreakService);
-  private readonly quranService = inject(QuranService);
+  protected readonly quranService = inject(QuranService);
 
   @ViewChild('stickyCheckbox') stickyCheckbox!: ElementRef;
   private originalOffset: number = 0;

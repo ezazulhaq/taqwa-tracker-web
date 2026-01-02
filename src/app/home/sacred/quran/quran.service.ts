@@ -13,10 +13,14 @@ export class QuranService {
     private readonly API_BASE_URL = environment.apiBaseUrl;
 
     quranTranslator = signal<string>(localStorage.getItem('quranTranslator') || 'ahmedraza');
+    ayahFontSize = signal<number>(Number(localStorage.getItem('ayahFontSize')) || 36);
 
     constructor() {
         effect(() => {
             localStorage.setItem('quranTranslator', this.quranTranslator());
+        });
+        effect(() => {
+            localStorage.setItem('ayahFontSize', this.ayahFontSize().toString());
         });
     }
 
