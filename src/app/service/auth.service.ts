@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { AuthSession, LoginCredentials, UserMetaData, RegisterCredentials, User, ApiUser, LoginResponse } from '../model/auth.model';
+import { AuthSession, LoginCredentials, UserMetaData, RegisterCredentials, User, ApiUser, LoginResponse, SessionInfo } from '../model/auth.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
 import { catchError } from 'rxjs/internal/operators/catchError';
@@ -92,7 +92,7 @@ export class AuthService {
     }
 
     // Store tokens
-    this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+    this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
 
     return {
       user: this.currentUser(),
@@ -124,7 +124,7 @@ export class AuthService {
       tap(tokenResponse => {
         this.rateLimitService.recordAttempt(email, true);
         // Store tokens immediately
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
       }),
       // Switch to get user data
       map(tokenResponse => this.getCurrentUser().pipe(
@@ -250,7 +250,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
       map(tokenResponse => {
         // Store new tokens
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
 
         return {
           user: this.currentUser(),
@@ -306,9 +306,31 @@ export class AuthService {
     return this.authTokenService.getAccessToken();
   }
 
+  getSessionId(): string | null {
+    return this.authTokenService.getSessionId();
+  }
+
   // Get current user from API
   private getCurrentUser(): Observable<ApiUser> {
     return this.http.get<ApiUser>(`${this.API_BASE_URL}/user/me`);
+  }
+
+  getSessions(): Observable<SessionInfo[]> {
+    return this.http.get<SessionInfo[]>(`${this.API_BASE_URL}/user/me/sessions`).pipe(
+      catchError(error => this.handleAuthError(error))
+    );
+  }
+
+  revokeSession(sessionId: string): Observable<any> {
+    return this.http.delete(`${this.API_BASE_URL}/user/me/sessions/${sessionId}`).pipe(
+      catchError(error => this.handleAuthError(error))
+    );
+  }
+
+  revokeAllSessions(): Observable<any> {
+    return this.http.delete(`${this.API_BASE_URL}/user/me/sessions`).pipe(
+      catchError(error => this.handleAuthError(error))
+    );
   }
 
 }
