@@ -34,6 +34,7 @@ export class AuthTokenService {
         this.isAuthenticated.set(false);
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('session_id');
     }
 
     getValidAccessToken(): string | null {
@@ -51,11 +52,18 @@ export class AuthTokenService {
         return localStorage.getItem('refresh_token');
     }
 
-    setTokens(accessToken: string, refreshToken?: string): void {
+    setTokens(accessToken: string, refreshToken?: string, sessionId?: string): void {
         localStorage.setItem('access_token', accessToken);
         if (refreshToken) {
             localStorage.setItem('refresh_token', refreshToken);
         }
+        if (sessionId) {
+            localStorage.setItem('session_id', sessionId);
+        }
         this.isAuthenticated.set(true);
+    }
+
+    getSessionId(): string | null {
+        return localStorage.getItem('session_id');
     }
 }
