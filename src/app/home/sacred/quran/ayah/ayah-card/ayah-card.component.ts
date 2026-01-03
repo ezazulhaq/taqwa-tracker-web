@@ -2,6 +2,7 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { Ayah, BookMarkedSurah } from '../../quran.model';
 import { AuthService } from '../../../../../service/auth.service';
 import { BookmarkService } from '../../../../../service/bookmark.service';
+import { QuranService } from '../../quran.service';
 
 @Component({
     selector: 'app-ayah-card',
@@ -16,6 +17,7 @@ import { BookmarkService } from '../../../../../service/bookmark.service';
 export class AyahCardComponent {
     private readonly authService = inject(AuthService);
     private readonly bookmarkService = inject(BookmarkService);
+    protected readonly quranService = inject(QuranService);
 
     ayah = input.required<Ayah>();
     surahNumber = input.required<string>();

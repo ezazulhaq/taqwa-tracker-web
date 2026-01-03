@@ -88,4 +88,64 @@
     </div>
     }
 
+    <!-- Hanafi Switch -->
+    <div class="group app-settings-item">
+        <div
+            class="text-slate-700 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-gray-200 text-lg font-semibold">
+            Hanafi (Asr)
+        </div>
+        <button type="button" role="switch" [attr.aria-checked]="prayerService.isHanafi()" (click)="toggleHanafi()"
+            [ngClass]="prayerService.isHanafi() ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-stone-300 dark:bg-slate-600'"
+            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+            <span [ngClass]="prayerService.isHanafi() ? 'translate-x-5' : 'translate-x-0'"
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
+            </span>
+        </button>
+    </div>
+
+    <!-- Salah Alert Switch -->
+    <div class="group app-settings-item">
+        <div
+            class="text-slate-700 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-gray-200 text-lg font-semibold">
+            Salah Alert
+        </div>
+        <button type="button" role="switch"
+            [attr.aria-checked]="notificationService.notificationsEnabled() && notificationService.userNotificationsEnabled()"
+            (click)="toggleNotifications()"
+            [ngClass]="(notificationService.notificationsEnabled() && notificationService.userNotificationsEnabled()) ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-stone-300 dark:bg-slate-600'"
+            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+            <span
+                [ngClass]="(notificationService.notificationsEnabled() && notificationService.userNotificationsEnabled()) ? 'translate-x-5' : 'translate-x-0'"
+                class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out">
+            </span>
+        </button>
+    </div>
+    <!-- Ayah Font Size adjustment -->
+    <div class="group app-settings-item">
+        <div
+            class="text-slate-700 dark:text-gray-400 group-hover:text-slate-900 dark:group-hover:text-gray-200 text-lg font-semibold">
+            Ayah Font Size
+        </div>
+        <div class="flex items-center space-x-4">
+            <button (click)="decreaseFontSize()"
+                class="p-2 rounded-lg bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors">
+                <svg class="size-4 text-stone-600 dark:text-stone-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+            <span class="text-stone-800 dark:text-stone-200 font-medium min-w-[3ch] text-center text-lg">
+                {{ quranService.ayahFontSize() }}
+            </span>
+            <button (click)="increaseFontSize()"
+                class="p-2 rounded-lg bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors">
+                <svg class="size-4 text-stone-600 dark:text-stone-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
 </div>

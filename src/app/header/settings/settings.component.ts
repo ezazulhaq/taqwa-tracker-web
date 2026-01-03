@@ -6,10 +6,13 @@ import { QuranService } from '../../home/sacred/quran/quran.service';
 import { Translator } from '../../home/sacred/quran/quran.model';
 import { HadithService } from '../../home/sacred/hadith/hadith.service';
 import { HadithSource } from '../../home/sacred/hadith/hadith.model';
+import { SalahAppService } from '../../service/salah-app.service';
+import { NotificationService } from '../../service/notification.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-settings',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
@@ -19,8 +22,10 @@ export class SettingsComponent implements OnInit {
   private readonly headerService = inject(HeaderService);
   protected readonly authService = inject(AuthService);
   private readonly themeSelector = inject(ThemeSelectorService);
-  private readonly quranService = inject(QuranService);
+  protected readonly quranService = inject(QuranService);
   private readonly hadithService = inject(HadithService);
+  protected readonly prayerService = inject(SalahAppService);
+  protected readonly notificationService = inject(NotificationService);
 
   // UI state
   protected localMenuVisible = signal(false);
@@ -136,5 +141,25 @@ export class SettingsComponent implements OnInit {
     const select = event.target as HTMLSelectElement;
     this.selectedSource.set(select.value);
     this.hadithService.hadithSource.set(select.value);
+  }
+
+  toggleHanafi(): void {
+    this.prayerService.toggleHanafi();
+  }
+
+  toggleNotifications(): void {
+    if (this.notificationService.notificationsEnabled()) {
+      this.notificationService.toggleUserNotifications();
+    } else {
+      this.notificationService.requestPermission();
+    }
+  }
+
+  increaseFontSize(): void {
+    this.quranService.ayahFontSize.update(size => Math.min(size + 2, 64));
+  }
+
+  decreaseFontSize(): void {
+    this.quranService.ayahFontSize.update(size => Math.max(size - 2, 16));
   }
 }

@@ -9,6 +9,7 @@ import { PrayerTimeInfo } from './prayer-times.model';
 import { CalendarComponent } from "../../../shared/calendar/calendar.component";
 import { RakatComponent } from './rakat/rakat.component';
 import { TitleComponent } from '../../../shared/title/title.component';
+import { NotificationService } from '../../../service/notification.service';
 
 @Component({
   selector: 'app-prayer-times',
@@ -29,10 +30,8 @@ export class PrayerTimesComponent implements OnInit {
 
   prayerName = signal<string>("");
 
-  isHanafi = signal<boolean>(false);
-
   getTimes = linkedSignal(() => {
-    return this.prayerService.getPrayerTimes(this.selectedDate(), this.isHanafi())
+    return this.prayerService.getPrayerTimes(this.selectedDate(), this.prayerService.isHanafi())
       .pipe(
         map((namazTimes: NamazTimes | null) => {
           if (!namazTimes) return [];
@@ -63,14 +62,9 @@ export class PrayerTimesComponent implements OnInit {
   });
 
   constructor(
-    private prayerService: SalahAppService
-  ) { 
-    // Load saved preference from localStorage
-    const savedPreference = localStorage.getItem('hanafiPreference');
-    if (savedPreference !== null) {
-      this.isHanafi.set(savedPreference === 'true');
-    }
-  }
+    private prayerService: SalahAppService,
+    protected notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     // check if location access allowed
@@ -111,11 +105,11 @@ export class PrayerTimesComponent implements OnInit {
     this.selectedDate.set(newDate);
   }
 
-  toggleHanafi() {
-    const newValue = !this.isHanafi();
-    this.isHanafi.set(newValue);
-    // Save preference to localStorage
-    localStorage.setItem('hanafiPreference', newValue.toString());
+  sendTestNotification() {
+    this.notificationService.showNotification(
+      'Test Notification',
+      'If you see this, prayer alerts are working correctly!'
+    );
   }
 }
 
