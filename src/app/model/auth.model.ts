@@ -47,3 +47,10 @@ export interface LoginCredentials {
 export interface RegisterCredentials extends LoginCredentials {
     username?: string;
 }
+
+export interface SessionInfo {
+    id: string;
+    created_at: string;
+    ip_address: string;
+    user_agent: string;
+}

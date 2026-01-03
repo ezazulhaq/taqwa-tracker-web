@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../service/auth.service';
-import { UserMetaData, User } from '../model/auth.model';
+import { UserMetaData, User, SessionInfo } from '../model/auth.model';
+import { DatePipe } from '@angular/common';
 
 import { TitleComponent } from '../shared/title/title.component';
 
@@ -9,8 +10,9 @@ import { TitleComponent } from '../shared/title/title.component';
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
-    TitleComponent
-],
+    TitleComponent,
+    DatePipe
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
   host: {
@@ -24,6 +26,9 @@ export class ProfileComponent {
   updateSuccess = signal<boolean>(false);
   updateError = signal<string>('');
   loading = signal<boolean>(false);
+  sessions = signal<SessionInfo[]>([]);
+  sessionLoading = signal<boolean>(false);
+  sessionError = signal<string>('');
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -35,6 +40,66 @@ export class ProfileComponent {
       username: [this.user()?.username || '', [Validators.required, Validators.minLength(3)]],
       email: [{ value: this.user()?.email || '', disabled: true }]
     });
+  }
+
+  ngOnInit(): void {
+    this.loadSessions();
+  }
+
+  loadSessions(): void {
+    this.sessionLoading.set(true);
+    this.authService.getSessions().subscribe({
+      next: (sessions) => {
+        this.sessions.set(sessions);
+        this.sessionLoading.set(false);
+      },
+      error: (error) => {
+        this.sessionError.set(error.message || 'Failed to load sessions');
+        this.sessionLoading.set(false);
+      }
+    });
+  }
+
+  revokeSession(sessionId: string): void {
+    if (!confirm('Are you sure you want to revoke this session?')) return;
+
+    this.authService.revokeSession(sessionId).subscribe({
+      next: () => {
+        this.loadSessions();
+      },
+      error: (error) => {
+        this.sessionError.set(error.message || 'Failed to revoke session');
+      }
+    });
+  }
+
+  revokeAllSessions(): void {
+    if (!confirm('Are you sure you want to revoke all other sessions?')) return;
+
+    this.authService.revokeAllSessions().subscribe({
+      next: () => {
+        this.loadSessions();
+      },
+      error: (error) => {
+        this.sessionError.set(error.message || 'Failed to revoke all sessions');
+      }
+    });
+  }
+
+  getDeviceIcon(userAgent: string): string {
+    userAgent = userAgent.toLowerCase();
+    if (userAgent.includes('iphone') || userAgent.includes('android') && userAgent.includes('mobile')) return 'smartphone';
+    if (userAgent.includes('ipad') || userAgent.includes('tablet')) return 'tablet';
+    return 'desktop_windows';
+  }
+
+  getDeviceName(userAgent: string): string {
+    if (userAgent.includes('iPhone')) return 'iPhone';
+    if (userAgent.includes('Android')) return 'Android Device';
+    if (userAgent.includes('Windows')) return 'Windows PC';
+    if (userAgent.includes('Macintosh')) return 'Mac';
+    if (userAgent.includes('Linux')) return 'Linux PC';
+    return 'Unknown Device';
   }
 
   onSubmit(): void {
