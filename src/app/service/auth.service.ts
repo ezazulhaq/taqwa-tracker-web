@@ -92,7 +92,7 @@ export class AuthService {
     }
 
     // Store tokens
-    this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+    this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
 
     return {
       user: this.currentUser(),
@@ -124,7 +124,7 @@ export class AuthService {
       tap(tokenResponse => {
         this.rateLimitService.recordAttempt(email, true);
         // Store tokens immediately
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
       }),
       // Switch to get user data
       map(tokenResponse => this.getCurrentUser().pipe(
@@ -250,7 +250,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
       map(tokenResponse => {
         // Store new tokens
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token);
+        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
 
         return {
           user: this.currentUser(),
@@ -304,6 +304,10 @@ export class AuthService {
   // Get current access token
   getAccessToken(): string | null {
     return this.authTokenService.getAccessToken();
+  }
+
+  getSessionId(): string | null {
+    return this.authTokenService.getSessionId();
   }
 
   // Get current user from API

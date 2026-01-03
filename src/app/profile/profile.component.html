@@ -147,7 +147,7 @@
                         <div>
                             <div class="font-medium text-stone-900 dark:text-stone-100 flex items-center">
                                 {{ getDeviceName(session.user_agent) }}
-                                @if (session.ip_address === 'current') {
+                                @if (session.is_current) {
                                 <span
                                     class="ml-2 px-2 py-0.5 text-[10px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full font-bold uppercase tracking-wider">Current</span>
                                 }

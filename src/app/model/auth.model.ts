@@ -30,6 +30,7 @@ export interface LoginResponse {
     token_type: string;
     expires_in: number;
     refresh_token: string;
+    session_id?: string;
 }
 
 export interface AuthSession {
@@ -53,4 +54,5 @@ export interface SessionInfo {
     created_at: string;
     ip_address: string;
     user_agent: string;
+    is_current?: boolean;
 }

@@ -48,9 +48,15 @@ export class ProfileComponent {
 
   loadSessions(): void {
     this.sessionLoading.set(true);
+    const currentSessionId = this.authService.getSessionId();
+
     this.authService.getSessions().subscribe({
       next: (sessions) => {
-        this.sessions.set(sessions);
+        const updatedSessions = sessions.map(s => ({
+          ...s,
+          is_current: s.id === currentSessionId
+        }));
+        this.sessions.set(updatedSessions);
         this.sessionLoading.set(false);
       },
       error: (error) => {
@@ -63,9 +69,15 @@ export class ProfileComponent {
   revokeSession(sessionId: string): void {
     if (!confirm('Are you sure you want to revoke this session?')) return;
 
+    const isCurrent = sessionId === this.authService.getSessionId();
+
     this.authService.revokeSession(sessionId).subscribe({
       next: () => {
-        this.loadSessions();
+        if (isCurrent) {
+          this.authService.logout().subscribe();
+        } else {
+          this.loadSessions();
+        }
       },
       error: (error) => {
         this.sessionError.set(error.message || 'Failed to revoke session');
@@ -78,7 +90,10 @@ export class ProfileComponent {
 
     this.authService.revokeAllSessions().subscribe({
       next: () => {
-        this.loadSessions();
+        // After revoking all sessions, the current one might also be revoked 
+        // depending on backend implementation. In our case, backend revokes ALL.
+        // So we should logout.
+        this.authService.logout().subscribe();
       },
       error: (error) => {
         this.sessionError.set(error.message || 'Failed to revoke all sessions');
