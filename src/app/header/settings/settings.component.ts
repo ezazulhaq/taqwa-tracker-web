@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, computed } from '@angular/core';
 import { ThemeSelectorService } from '../../service/theme.service';
 import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
@@ -30,13 +30,14 @@ export class SettingsComponent implements OnInit {
 
   // UI state
   protected localMenuVisible = signal(false);
-  isThemeDark = signal<boolean>(false);
+
+  isThemeDark = computed(() => this.themeSelector.currentTheme() === 'dark');
 
   // Data state
   quranTranslators = signal<Translator[]>([]);
-  selectedTranslator = signal<string>('');
+  selectedTranslator = computed(() => this.quranService.quranTranslator());
   hadithSources = signal<string[]>([]);
-  selectedSource = signal<string>('');
+  selectedSource = computed(() => this.hadithService.hadithSource());
 
   constructor() {
     // Track settings menu visibility
@@ -44,61 +45,15 @@ export class SettingsComponent implements OnInit {
       this.localMenuVisible.set(this.headerService.isSettingsVisible());
     });
 
-    // Initialize theme
-    this.initializeTheme();
+    // Initialize theme has been replaced by computed signal
 
-    // Load saved preferences
-    this.loadSavedPreferences();
+    // Load saved preferences has been replaced by effects in Services and computed signals here
   }
 
   ngOnInit(): void {
-    this.isThemeDark.set(this.themeSelector.currentTheme() === 'dark');
-
     if (this.authService.isAuthenticated()) {
       this.loadQuranTranslators();
       this.loadHadithSources();
-    }
-  }
-
-  private initializeTheme(): void {
-    const theme = localStorage.getItem('theme');
-    if (theme) {
-      theme === 'dark' ? this.themeSelector.setDarkTheme() : this.themeSelector.setLightTheme();
-    } else {
-      this.themeSelector.setSystemTheme();
-    }
-  }
-
-  private loadSavedPreferences(): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
-
-    this.loadHadithSourcePreference();
-    this.loadQuranTranslatorPreference();
-  }
-
-  private loadHadithSourcePreference(): void {
-    const savedSource = localStorage.getItem('hadithSource');
-    if (savedSource) {
-      this.selectedSource.set(savedSource);
-      this.hadithService.hadithSource.set(savedSource);
-    } else {
-      const defaultSource = this.hadithService.hadithSource();
-      localStorage.setItem('hadithSource', defaultSource);
-      this.selectedSource.set(defaultSource);
-    }
-  }
-
-  private loadQuranTranslatorPreference(): void {
-    const savedTranslator = localStorage.getItem('quranTranslator');
-    if (savedTranslator) {
-      this.selectedTranslator.set(savedTranslator);
-      this.quranService.quranTranslator.set(savedTranslator);
-    } else {
-      const defaultTranslator = this.quranService.quranTranslator();
-      localStorage.setItem('quranTranslator', defaultTranslator);
-      this.selectedTranslator.set(defaultTranslator);
     }
   }
 
@@ -119,11 +74,10 @@ export class SettingsComponent implements OnInit {
   }
 
   switchTheme(): void {
-    this.isThemeDark.set(!this.isThemeDark());
     if (this.isThemeDark()) {
-      this.themeSelector.setDarkTheme();
-    } else {
       this.themeSelector.setLightTheme();
+    } else {
+      this.themeSelector.setDarkTheme();
     }
   }
 
@@ -134,13 +88,11 @@ export class SettingsComponent implements OnInit {
 
   onQuranTranslatorChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    this.selectedTranslator.set(select.value);
     this.quranService.quranTranslator.set(select.value);
   }
 
   onHadithSourceChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    this.selectedSource.set(select.value);
     this.hadithService.hadithSource.set(select.value);
   }
 

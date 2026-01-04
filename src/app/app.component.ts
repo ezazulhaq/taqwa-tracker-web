@@ -25,25 +25,16 @@ import { PreferenceSyncService } from './service/preference-sync.service';
 export class AppComponent implements OnInit {
 
   headerService = inject(HeaderService);
+  private prefSyncService = inject(PreferenceSyncService);
 
   constructor(
     private autoUpdateService: AutoUpdateService,
     protected themeSelector: ThemeSelectorService,
     private securityHeadersService: SecurityHeadersService
-  ) {
-    const theme = localStorage.getItem('theme');
-    if (theme) {
-      theme === 'dark' ? this.themeSelector.setDarkTheme() : this.themeSelector.setLightTheme();
-    }
-    else {
-      this.themeSelector.setSystemTheme();
-    }
-  }
+  ) { }
 
   ngOnInit(): void {
-    const prefSyncService = inject(PreferenceSyncService);
-    prefSyncService.init();
-
+    this.prefSyncService.init();
     this.autoUpdateService.checkForUpdate();
     this.securityHeadersService.initializeSecurityHeaders();
   }
