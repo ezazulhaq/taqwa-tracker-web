@@ -19,11 +19,20 @@ export class PreferenceSyncService {
     private notificationService = inject(NotificationService);
 
     constructor() {
+        console.log('PreferenceSyncService: Constructor running');
         // Watch for user changes and apply preferences
         effect(() => {
             const user = this.authService.currentUser();
-            if (user && user.preferences) {
-                this.applyPreferences(user.preferences);
+            console.log('PreferenceSyncService: Effect triggered. Current user:', user?.email);
+            if (user) {
+                if (user.preferences) {
+                    console.log('PreferenceSyncService: Applying preferences from backend:', user.preferences);
+                    this.applyPreferences(user.preferences);
+                } else {
+                    console.warn('PreferenceSyncService: User logged in but no preferences found in profile');
+                }
+            } else {
+                console.log('PreferenceSyncService: No user logged in, skipping sync');
             }
         });
     }
