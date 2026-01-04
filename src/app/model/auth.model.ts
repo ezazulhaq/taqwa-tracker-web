@@ -4,6 +4,7 @@ export interface User {
     displayName?: string;
     createdAt?: string;
     lastSignInAt?: string;
+    preferences?: any;
 }
 
 export interface UserMetaData {

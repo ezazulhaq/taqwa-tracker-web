@@ -8,6 +8,7 @@ import { SettingsComponent } from './header/settings/settings.component';
 import { HeaderComponent } from './header/header.component';
 import { HeaderService } from './header/header.service';
 import { SecurityHeadersService } from './service/security-headers.service';
+import { PreferenceSyncService } from './service/preference-sync.service';
 
 @Component({
   selector: 'app-root',
@@ -40,6 +41,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const prefSyncService = inject(PreferenceSyncService);
+    prefSyncService.init();
+
     this.autoUpdateService.checkForUpdate();
     this.securityHeadersService.initializeSecurityHeaders();
   }

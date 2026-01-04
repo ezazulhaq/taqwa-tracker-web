@@ -15,7 +15,8 @@ export class AuthTokenService {
             id: user.id,
             email: user.email || '',
             createdAt: user.created_at,
-            displayName: user.full_name
+            displayName: user.full_name,
+            preferences: user.preferences
         });
         this.userMetaData.set({
             sub: user.id,
