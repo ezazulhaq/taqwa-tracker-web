@@ -23,6 +23,16 @@ export interface ApiUser {
     is_verified: boolean;
     role: string;
     created_at: string;
+    preferences?: UserPreferences;
+}
+
+export interface UserPreferences {
+    theme?: string;
+    translator?: string;
+    hadith_source?: string;
+    hanafi?: boolean;
+    salah_alerts?: boolean;
+    font_size?: number;
 }
 
 export interface LoginResponse {

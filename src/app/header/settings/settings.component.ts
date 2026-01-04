@@ -4,6 +4,7 @@ import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
 import { QuranService } from '../../home/sacred/quran/quran.service';
 import { Translator } from '../../home/sacred/quran/quran.model';
+import { UserPreferences } from '../../model/auth.model';
 import { HadithService } from '../../home/sacred/hadith/hadith.service';
 import { HadithSource } from '../../home/sacred/hadith/hadith.model';
 import { SalahAppService } from '../../service/salah-app.service';
@@ -161,5 +162,38 @@ export class SettingsComponent implements OnInit {
 
   decreaseFontSize(): void {
     this.quranService.ayahFontSize.update(size => Math.max(size - 2, 16));
+  }
+
+  // Saving state
+  isSaving = signal(false);
+  saveMessage = signal('');
+
+  savePreferences(): void {
+    if (!this.authService.isAuthenticated()) return;
+
+    this.isSaving.set(true);
+    this.saveMessage.set('');
+
+    const preferences: UserPreferences = {
+      theme: this.themeSelector.currentTheme(),
+      translator: this.selectedTranslator(),
+      hadith_source: this.selectedSource(),
+      hanafi: this.prayerService.isHanafi(),
+      salah_alerts: this.notificationService.userNotificationsEnabled(),
+      font_size: this.quranService.ayahFontSize()
+    };
+
+    this.authService.savePreferences(preferences).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+        this.saveMessage.set('Preferences saved successfully!');
+        setTimeout(() => this.saveMessage.set(''), 3000);
+      },
+      error: (err) => {
+        this.isSaving.set(false);
+        this.saveMessage.set('Error saving preferences.');
+        console.error('Save preferences error:', err);
+      }
+    });
   }
 }
