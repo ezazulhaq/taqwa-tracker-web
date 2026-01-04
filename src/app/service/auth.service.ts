@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { AuthSession, LoginCredentials, UserMetaData, RegisterCredentials, User, ApiUser, LoginResponse, SessionInfo } from '../model/auth.model';
+import { AuthSession, LoginCredentials, UserMetaData, RegisterCredentials, User, ApiUser, LoginResponse, SessionInfo, UserPreferences } from '../model/auth.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
 import { catchError } from 'rxjs/internal/operators/catchError';
@@ -308,6 +308,10 @@ export class AuthService {
 
   getSessionId(): string | null {
     return this.authTokenService.getSessionId();
+  }
+
+  savePreferences(preferences: UserPreferences): Observable<any> {
+    return this.http.post(`${this.API_BASE_URL}/auth/save-preferences`, preferences);
   }
 
   // Get current user from API
