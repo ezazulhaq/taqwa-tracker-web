@@ -1,0 +1,97 @@
+.salah-container {
+    padding-top: 1rem;
+    min-height: calc(100vh - 80px);
+}
+
+/* Base Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slideUp {
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Card Styling */
+.prayer-card {
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.prayer-card:hover .icon-bg {
+    transform: scale(2) rotate(15deg);
+}
+
+/* Mode Switcher */
+.active-mode {
+    background: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    color: var(--primary-color, #1e293b) !important;
+}
+
+.dark .active-mode {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+}
+
+.font-indopak {
+    font-family: 'IndoPak', serif;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .arabic-display p.text-6xl {
+        font-size: 3rem;
+    }
+
+    .step-card {
+        border-radius: 1.5rem;
+        min-height: 450px;
+    }
+}
+
+/* Step Card Transitions */
+.step-card {
+    will-change: transform, opacity;
+}
+
+/* Progress Bar Smoothing */
+.progress-bar-fill {
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Gradients/Effects */
+.icon-bg {
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+}
+
+/* Glassmorphism utility if needed */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
