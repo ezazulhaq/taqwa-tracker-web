@@ -100,6 +100,31 @@ export const routes: Routes = [
         loadComponent: () => import('./home/tool/calculator/calculator.component').then(m => m.CalculatorComponent)
     },
     {
+        path: 'games/quiz',
+        title: 'Islamic Quiz Challenge',
+        loadComponent: () => import('./home/games/quiz/quiz.component').then(m => m.QuizComponent)
+    },
+    {
+        path: 'games/memory',
+        title: '99 Names Memory Match',
+        loadComponent: () => import('./home/games/memory/memory.component').then(m => m.MemoryComponent)
+    },
+    {
+        path: 'games/word-search',
+        title: 'Arabic Word Search',
+        loadComponent: () => import('./home/games/word-search/word-search.component').then(m => m.WordSearchComponent)
+    },
+    {
+        path: 'games/journey',
+        title: 'Prophet\'s Journey',
+        loadComponent: () => import('./home/games/journey/journey.component').then(m => m.JourneyComponent)
+    },
+    {
+        path: 'games/salah-master',
+        title: 'Salah Master',
+        loadComponent: () => import('./home/games/salah-master/salah-master.component').then(m => m.SalahMasterComponent)
+    },
+    {
         path: 'privacy-policy',
         title: 'Privacy Policy',
         loadComponent: () => import('./shared/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)
