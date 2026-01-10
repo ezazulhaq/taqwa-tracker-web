@@ -24,16 +24,28 @@ export class AyahCardComponent {
     surahName = input.required<string>();
     surahName_ar = input.required<string>();
     isTranslationVisible = input<boolean>(true);
-    onReadClick = output<number>();
+    bookmarkContext = input<'surah' | 'juz'>('surah'); // Default context
+    juzId = input<number | undefined>(undefined);
+    onReadClick = output<Ayah>();
 
     isAuthenticated = computed(() => this.authService.isAuthenticated());
 
     isBookmarked(bookMarkedSurah: BookMarkedSurah): boolean {
-        return this.bookmarkService.isBookmarkedAyah(bookMarkedSurah);
+        // Pass context if not present (though toggle creates it with context, check might need it if strict)
+        // With current service logic: if type is undefined in check object, it matches if item.type matches strictly (if item has type)
+        // We should construct check object with current context
+        const checkObject: BookMarkedSurah = { ...bookMarkedSurah, type: this.bookmarkContext() };
+        return this.bookmarkService.isBookmarkedAyah(checkObject);
     }
 
     toggleBookmark(bookMarkedSurah: BookMarkedSurah) {
-        this.bookmarkService.toggleBookmarkAyah(bookMarkedSurah);
+        // Add context type to bookmark
+        const bookmarkWithType: BookMarkedSurah = {
+            ...bookMarkedSurah,
+            type: this.bookmarkContext(),
+            juz_id: this.juzId()
+        };
+        this.bookmarkService.toggleBookmarkAyah(bookmarkWithType);
     }
 
     async copyAyah(ayah: Ayah) {

@@ -1,4 +1,5 @@
-<app-title [title]="surahName" [subTitle]="surahName_ar" [routerLink]="'/quran'"></app-title>
+<app-title [title]="juzName_en() || surahName()" [subTitle]="juzName() || surahName_ar()"
+    [routerLink]="juzName_en() ? '/quran/juz' : '/quran/surah'"></app-title>
 
 <div #stickyCheckbox class="w-full mb-6 px-4">
     <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-stone-200 dark:border-slate-600 p-3">
@@ -25,9 +26,13 @@
                 <select id="ayahSelect" [(ngModel)]="selectedAyahNumber" (ngModelChange)="onAyahSelect($event)"
                     class="w-32 px-3 py-1 text-sm border border-stone-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-stone-800 dark:text-stone-200 focus:border-emerald-500 focus:outline-none appearance-none">
                     <option value="">Go to Ayah</option>
-                    @for (ayah of ayahs(); track ayah.ayah_no) {
-                    <option [value]="ayah.ayah_no">
+                    @for (ayah of ayahs(); track ayah.surah_no + '-' + ayah.ayah_no) {
+                    <option [value]="ayah.surah_no + ':' + ayah.ayah_no">
+                        @if(juzNumber()){
+                        {{ ayah.surah_name }} : {{ ayah.ayah_no }}
+                        }@else{
                         {{ ayah.ayah_no }}
+                        }
                     </option>
                     }
                 </select>
@@ -54,7 +59,8 @@
         <div dir="rtl" [style.fontSize.px]="quranService.ayahFontSize()"
             class="text-right font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200">
             @for (ayah of ayahs(); track $index) {
-            <span class="cursor-pointer" [id]="'ayah-' + ayah.ayah_no" (click)="navigateToTranslation(ayah.ayah_no)">
+            <span class="cursor-pointer" [id]="'ayah-' + ayah.surah_no + '-' + ayah.ayah_no"
+                (click)="navigateToTranslation(ayah)">
                 {{ayah.arabic_text}}
             </span>
             <span
@@ -69,9 +75,12 @@
 <!-- Card Mode: Full Layout -->
 <div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
     @for (ayah of ayahs(); track $index) {
-    <app-ayah-card class="w-full" [ayah]="ayah" [surahNumber]="surahNumber" [surahName]="surahName"
-        [surahName_ar]="surahName_ar" [isTranslationVisible]="isTranslationVisible()"
-        (onReadClick)="navigateToReading($event)">
+    <app-ayah-card [id]="'ayah-' + ayah.surah_no + '-' + ayah.ayah_no" class="w-full" [ayah]="ayah"
+        [surahNumber]="juzNumber() ? (ayah.surah_no + '') : surahNumber()"
+        [surahName]="juzNumber() ? ayah.surah_name : surahName()"
+        [surahName_ar]="juzNumber() ? ayah.surah_name_ar : surahName_ar()"
+        [isTranslationVisible]="isTranslationVisible()" [bookmarkContext]="juzNumber() ? 'juz' : 'surah'"
+        [juzId]="juzNumber() ? +juzNumber() : undefined" (onReadClick)="navigateToReading(ayah)">
     </app-ayah-card>
     }
 </div>
