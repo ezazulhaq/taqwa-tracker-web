@@ -52,7 +52,24 @@ export const routes: Routes = [
     {
         path: 'quran',
         title: 'Quran',
-        loadComponent: () => import('./home/sacred/quran/quran.component').then(m => m.QuranComponent)
+        loadComponent: () => import('./home/sacred/quran/quran.component').then(m => m.QuranComponent),
+        children: [
+            {
+                path: 'surah',
+                title: 'Surah List',
+                loadComponent: () => import('./home/sacred/quran/surah-list/surah-list.component').then(m => m.SurahListComponent)
+            },
+            {
+                path: 'juz',
+                title: 'Juz List',
+                loadComponent: () => import('./home/sacred/quran/juz-list/juz-list.component').then(m => m.JuzListComponent)
+            },
+            {
+                path: '',
+                redirectTo: 'surah',
+                pathMatch: 'full'
+            }
+        ]
     },
     {
         path: 'quran/ayah',

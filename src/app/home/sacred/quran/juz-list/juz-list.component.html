@@ -1,0 +1,45 @@
+<!-- Sorting -->
+<div class="flex justify-end mb-6 px-4">
+    @defer(when juzList() && juzList().length > 0){
+    <app-sort-button [isAscending]="isAscending()" (toggle)="toggleSort()"></app-sort-button>
+    }
+    @placeholder{
+    <div class="animate-pulse h-10 w-32 bg-stone-200 dark:bg-slate-600 rounded-xl"></div>
+    }
+</div>
+
+
+<app-bookmark-list [type]="'juz'"></app-bookmark-list>
+
+<!-- List All Juz -->
+<div class="flex flex-col space-y-4 w-full px-4 mx-auto pb-20">
+    @defer(when juzList() && juzList().length > 0){
+    @for (juz of juzList(); track $index) {
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-6 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer"
+        [routerLink]="['../ayah']"
+        [queryParams]="{ juzNumber: juz.juz_id, juzName: juz.name, juzName_en: juz.name_en }">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex-shrink-0">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center border-2 border-emerald-200 dark:border-emerald-800">
+                        <span class="text-emerald-700 dark:text-emerald-300 font-bold text-lg">{{ juz.juz_id }}</span>
+                    </div>
+                </div>
+                <div class="flex-grow text-start">
+                    <h3 class="text-lg font-semibold text-stone-800 dark:text-stone-200 mb-1">{{ juz.name_en | titlecase
+                        }}</h3>
+                    <p class="text-sm text-stone-600 dark:text-stone-400">Juz {{ juz.juz_id }}</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-indopak text-emerald-700 dark:text-emerald-300 mb-1">{{ juz.name }}</div>
+            </div>
+        </div>
+    </div>
+    }
+    }
+    @placeholder {
+    <app-list-home></app-list-home>
+    }
+</div>
