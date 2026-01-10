@@ -1,0 +1,58 @@
+/* Base Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Typography */
+.font-indopak {
+    font-family: 'IndoPak', serif;
+    font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Level Cards */
+.level-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.level-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Grid & Cells */
+.grid-container {
+    aspect-ratio: 1;
+    max-width: 600px;
+    /* Constrain max size for playability */
+}
+
+.cell {
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+/* Ensure nice active state */
+.cell:active {
+    transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .grid-container {
+        width: 100%;
+        max-width: 100%;
+    }
+}

@@ -4,7 +4,7 @@ import { AuthService } from '../service/auth.service';
 import { TitleComponent } from '../shared/title/title.component';
 import { HomeIcons } from '../model/home.model';
 import { ModuleComponent } from '../shared/module/module.component';
-import { module_icons, tool_icons } from '../shared/module/module.contant';
+import { module_icons, tool_icons, game_icons } from '../shared/module/module.contant';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { StreakDashboardComponent } from './streak-dashboard/streak-dashboard.component';
 import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component';
@@ -31,6 +31,7 @@ export class HomeComponent {
 
   modules: HomeIcons[] = module_icons;
   tools: HomeIcons[] = tool_icons;
+  games: HomeIcons[] = game_icons;
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
