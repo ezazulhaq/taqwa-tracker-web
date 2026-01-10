@@ -74,7 +74,10 @@ export class BookmarkService {
     // Using Array.from() to convert Set to Array, then use some() to check existence
     return Array.from(this.bookmarkedAyahs()).some(item =>
       item.surah_id === bookmarked.surah_id &&
-      item.ayah_id === bookmarked.ayah_id
+      item.ayah_id === bookmarked.ayah_id &&
+      // If bookmarked.type is provided, check for match. If not provided (legacy), maybe match any?
+      // Strict matching: undefined/null type matches undefined/null type
+      (bookmarked.type ? item.type === bookmarked.type : true)
     );
   }
 
@@ -83,19 +86,15 @@ export class BookmarkService {
       const newBookmarked = new Set(bookmarked);
 
       // Find if an equivalent item exists
-      const exists = Array.from(newBookmarked).some(item =>
+      const existingItem = Array.from(newBookmarked).find(item =>
         item.surah_id === bookMarkedSurah.surah_id &&
-        item.ayah_id === bookMarkedSurah.ayah_id
+        item.ayah_id === bookMarkedSurah.ayah_id &&
+        item.type === bookMarkedSurah.type
       );
 
-      if (exists) {
+      if (existingItem) {
         // Remove the existing item
-        Array.from(newBookmarked).forEach(item => {
-          if (item.surah_id === bookMarkedSurah.surah_id &&
-            item.ayah_id === bookMarkedSurah.ayah_id) {
-            newBookmarked.delete(item);
-          }
-        });
+        newBookmarked.delete(existingItem);
       } else {
         newBookmarked.add(bookMarkedSurah);
       }
@@ -153,12 +152,16 @@ export class BookmarkService {
   removeAyahBookmark(bookMarkedSurah: BookMarkedSurah) {
     this.bookmarkedAyahs.update(bookmarked => {
       const newBookmarked = new Set(bookmarked);
-      Array.from(newBookmarked).forEach(item => {
-        if (item.surah_id === bookMarkedSurah.surah_id &&
-          item.ayah_id === bookMarkedSurah.ayah_id) {
-          newBookmarked.delete(item);
-        }
-      });
+      const itemToDelete = Array.from(newBookmarked).find(item =>
+        item.surah_id === bookMarkedSurah.surah_id &&
+        item.ayah_id === bookMarkedSurah.ayah_id &&
+        item.type === bookMarkedSurah.type
+      );
+
+      if (itemToDelete) {
+        newBookmarked.delete(itemToDelete);
+      }
+
       return newBookmarked;
     });
     this.saveToStorageAyah();

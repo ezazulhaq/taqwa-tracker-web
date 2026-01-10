@@ -9,6 +9,12 @@ export interface Surah {
     rukus: number;
 }
 
+export interface Juz {
+    juz_id: number;
+    name: string;
+    name_en: string;
+}
+
 export interface Ayah {
     surah_no: number;
     surah_name_ar: string;
@@ -28,4 +34,6 @@ export interface Translator {
 export interface BookMarkedSurah {
     surah_id: number;
     ayah_id: number;
+    type?: 'surah' | 'juz'; // Context where the bookmark was made
+    juz_id?: number; // Juz ID if type is 'juz'
 }
