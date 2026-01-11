@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { Meta } from '@angular/platform-browser';
 
 // Enum which contains only LIGHT and DARK themes, if DEVICE theme selected it means you don't need a value for this purpose. DEVICE theme means no user preferences in the app. That is why value should be undefined (removed from localStorage).
 export enum AppTheme {
@@ -21,7 +22,9 @@ if (CLIENT_RENDER) {
     providedIn: 'root'
 })
 export class ThemeSelectorService {
+    private meta = inject(Meta);
     currentTheme = signal<AppTheme | undefined>(selectedTheme);
+
     initTheme() {
         if (this.currentTheme()) {
             // Theme is already set (from localStorage), apply it
@@ -59,12 +62,16 @@ export class ThemeSelectorService {
     private addClassToHtml(className: string) {
         if (CLIENT_RENDER) {
             this.removeClassFromHtml(className);
-            document.documentElement.classList.add(className)
+            document.documentElement.classList.add(className);
+            // Set dark theme color
+            this.meta.updateTag({ name: 'theme-color', content: '#1e293b' });
         }
     }
     private removeClassFromHtml(className: string) {
         if (CLIENT_RENDER) {
-            document.documentElement.classList.remove(className)
+            document.documentElement.classList.remove(className);
+            // Set light theme color (default to white)
+            this.meta.updateTag({ name: 'theme-color', content: '#ffffff' });
         }
     }
     private setToLocalStorage(theme: AppTheme) {

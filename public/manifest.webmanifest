@@ -1,7 +1,7 @@
 {
   "name": "The Taqwa Tracker",
   "short_name": "Taqwa",
-  "theme_color": "#292524",
+  "theme_color": "#1e293b",
   "background_color": "#999999",
   "display": "standalone",
   "scope": "./",
