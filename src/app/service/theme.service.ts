@@ -22,6 +22,20 @@ if (CLIENT_RENDER) {
 })
 export class ThemeSelectorService {
     currentTheme = signal<AppTheme | undefined>(selectedTheme);
+    initTheme() {
+        if (this.currentTheme()) {
+            // Theme is already set (from localStorage), apply it
+            if (this.currentTheme() === AppTheme.DARK) {
+                this.addClassToHtml('dark');
+            } else {
+                this.removeClassFromHtml('dark');
+            }
+        } else {
+            // No theme set, default to system
+            this.setSystemTheme();
+        }
+    }
+
     setLightTheme() {
         this.currentTheme.set(AppTheme.LIGHT);
         this.setToLocalStorage(AppTheme.LIGHT);

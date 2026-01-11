@@ -34,6 +34,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.themeSelector.initTheme();
     this.prefSyncService.init();
     this.autoUpdateService.checkForUpdate();
     this.securityHeadersService.initializeSecurityHeaders();
