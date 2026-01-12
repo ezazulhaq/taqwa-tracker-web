@@ -35,6 +35,9 @@ export class MemoryComponent {
     flippedCards: []
   });
 
+  public readonly learningMode = signal<boolean>(false);
+  public readonly allNames = NAMES_OF_ALLAH;
+
   // Computed Values
   public readonly currentLevelData = computed(() => {
     const levelId = this.selectedLevel();
@@ -48,10 +51,15 @@ export class MemoryComponent {
   });
 
   // Methods
+  public toggleLearningMode() {
+    this.learningMode.update(v => !v);
+  }
+
   public selectLevel(levelId: number) {
     const levelData = this.levels.find(l => l.level === levelId);
     if (!levelData) return;
 
+    this.learningMode.set(false);
     this.selectedLevel.set(levelId);
     this.initGame(levelData);
   }
@@ -145,6 +153,7 @@ export class MemoryComponent {
 
   public restart() {
     this.selectedLevel.set(null);
+    this.learningMode.set(false);
     this.cards.set([]);
   }
 
