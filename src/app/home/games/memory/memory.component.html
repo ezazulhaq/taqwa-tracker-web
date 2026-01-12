@@ -1,15 +1,92 @@
-<app-title [title]="'99 Names: Seek & Match'" [routerLink]="'/home'"></app-title>
+<app-title [title]="'Seek & Match'" [subTitle]="'99 Names of Allah'" [routerLink]="'/home'"></app-title>
 
 <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- Learning Mode View -->
+    @if (learningMode()) {
+    <div class="animate-fadeIn">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">99 Names of Allah</h2>
+                <p class="text-slate-500 dark:text-white/60">Read, learn and memorize the beautiful names</p>
+            </div>
+            <button (click)="toggleLearningMode()"
+                class="px-4 py-2 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white hover:bg-slate-200 dark:hover:bg-white/20 transition-colors font-medium">
+                Back to Menu
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-20">
+            @for (name of allNames; track name.id) {
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-white/5 hover:border-emerald-500/30 transition-all hover:shadow-lg group">
+                <div class="flex justify-between items-start mb-2">
+                    <span
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-white/5 text-xs font-bold text-slate-400 dark:text-white/40">
+                        {{name.id}}
+                    </span>
+                    <button class="text-slate-300 hover:text-emerald-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="text-center space-y-2 mt-2">
+                    <h3 class="text-3xl font-indopak text-slate-800 dark:text-white">{{name.arabic}}</h3>
+                    <div>
+                        <p class="text-sm font-bold text-primary">{{name.transliteration}}</p>
+                        <p class="text-xs text-slate-500 dark:text-white/60">{{name.english}}</p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
     <!-- Level Selection Screening -->
-    @if (selectedLevel() === null) {
-    <div class="text-center mb-8 sm:mb-10">
+    @else if (selectedLevel() === null) {
+    <div class="text-center mb-8 sm:mb-10 animate-fadeIn">
         <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Select Your Level</h2>
         <p class="text-sm sm:text-base text-slate-500 dark:text-white/60">Pair the Arabic Names of Allah with their
             English meanings</p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <!-- Learning Card Banner -->
+    <div class="mb-8 animate-fadeIn">
+        <button (click)="toggleLearningMode()"
+            class="w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-500 rounded-3xl p-6 sm:p-8 text-left group shadow-lg shadow-emerald-500/20 transition-transform hover:scale-[1.01]">
+            <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <span
+                        class="inline-block px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold mb-2 backdrop-blur-sm">Learning
+                        Mode</span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-white mb-1">Learn the 99 Names</h3>
+                    <p class="text-emerald-50 text-sm sm:text-base max-w-md">Browse and memorize all names with their
+                        meanings before testing your knowledge.</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white group-hover:text-emerald-600 transition-all text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+            <!-- Background Pattern -->
+            <div class="absolute right-0 top-0 h-full w-1/2 opacity-10 pointer-events-none">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="h-full w-full">
+                    <path fill="#FFFFFF"
+                        d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-5.3C93.5,8.6,82.2,21.5,71.5,32.3C60.8,43.1,50.7,51.8,39.9,58.6C29.1,65.4,17.6,70.3,5.1,71.9C-7.4,73.5,-20.9,71.8,-32.8,66.1C-44.7,60.4,-55.1,50.7,-63.4,39.3C-71.7,27.9,-77.9,14.8,-79.1,0.9C-80.3,-13,-76.5,-27.7,-68.8,-40.3C-61.1,-52.9,-49.5,-63.4,-36.8,-71.3C-24.1,-79.2,-10.3,-84.5,2.1,-84.9C14.5,-85.3,29,-80.8,44.7,-76.4Z"
+                        transform="translate(100 100)" />
+                </svg>
+            </div>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-fadeIn">
         @for (lvl of levels; track lvl.level) {
         <button (click)="selectLevel(lvl.level)"
             class="group relative flex flex-col p-5 sm:p-6 bg-slate-50 dark:bg-white/10 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-white/20 hover:border-primary/50 transition-all duration-300 hover:scale-[1.01] hover:shadow-xl text-left">
