@@ -74,14 +74,15 @@
             </div>
 
             <!-- The Grid -->
-            <div class="grid-container relative p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-xl select-none touch-none"
+            <div class="grid-container relative p-2 md:p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-xl select-none overflow-x-auto w-full max-w-[90vw] md:max-w-full mx-auto"
                 (mouseleave)="onCellUp()" (mouseup)="onCellUp()" (touchend)="onCellUp()"
                 (touchmove)="handleTouchMove($event)" (mousemove)="handleMouseMove($event)">
 
-                <div class="grid gap-1" [style.grid-template-columns]="'repeat(' + currentLevel()?.gridSize + ', 1fr)'">
+                <div class="grid gap-1 w-full"
+                    [style.grid-template-columns]="'repeat(' + currentLevel()?.gridSize + ', minmax(35px, 1fr))'">
                     @for (row of state().grid; track $index) {
                     @for (cell of row; track cell.col) {
-                    <div class="cell w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-xl md:text-2xl font-indopak cursor-pointer rounded-lg transition-all duration-200"
+                    <div class="cell touch-none aspect-square w-full flex items-center justify-center text-lg md:text-2xl font-indopak cursor-pointer rounded-lg transition-all duration-200"
                         [attr.data-row]="cell.row" [attr.data-col]="cell.col"
                         [class.bg-slate-50]="!cell.selected && !cell.found"
                         [class.dark:bg-white/5]="!cell.selected && !cell.found" [class.bg-primary]="cell.selected"
