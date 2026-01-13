@@ -32,11 +32,6 @@
 }
 
 /* Grid & Cells */
-.grid-container {
-    max-width: 600px;
-    /* Constrain max size for playability */
-}
-
 .cell {
     user-select: none;
     -webkit-user-select: none;
@@ -46,12 +41,4 @@
 /* Ensure nice active state */
 .cell:active {
     transform: scale(0.95);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .grid-container {
-        width: 100%;
-        max-width: 100%;
-    }
 }

@@ -21,7 +21,7 @@
                     </span>
                     <span
                         class="text-xs px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white/60">
-                        {{ level.gridSize }}x{{ level.gridSize }}
+                        {{ dynamicGridSize() }}x{{ dynamicGridSize() }}
                     </span>
                 </div>
 
@@ -74,12 +74,11 @@
             </div>
 
             <!-- The Grid -->
-            <div class="grid-container relative p-2 md:p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-xl select-none overflow-x-auto w-full max-w-[90vw] md:max-w-full mx-auto"
+            <div class="grid-container relative p-2 md:p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-xl select-none w-full mx-auto"
                 (mouseleave)="onCellUp()" (mouseup)="onCellUp()" (touchend)="onCellUp()"
                 (touchmove)="handleTouchMove($event)" (mousemove)="handleMouseMove($event)">
 
-                <div class="grid gap-1 w-full"
-                    [style.grid-template-columns]="'repeat(' + currentLevel()?.gridSize + ', minmax(35px, 1fr))'">
+                <div class="grid gap-1 w-full" [style.grid-template-columns]="'repeat(' + dynamicGridSize() + ', 1fr)'">
                     @for (row of state().grid; track $index) {
                     @for (cell of row; track cell.col) {
                     <div class="cell touch-none aspect-square w-full flex items-center justify-center text-lg md:text-2xl font-indopak cursor-pointer rounded-lg transition-all duration-200"

@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy, signal, computed, effect, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { WordSearchLevel, WordSearchState, Cell, WordSearchWord } from './word-search.model';
 import { WORD_SEARCH_LEVELS } from './word-search.data';
@@ -15,8 +15,24 @@ import { WORD_SEARCH_LEVELS } from './word-search.data';
   }
 })
 export class WordSearchComponent {
+  // Platform detection for SSR compatibility
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
+
   // Config
   private readonly ARABIC_ALPHABET = 'ابتثجحخدذرزسشصضطظعغفقكلمنوهي';
+
+  // Screen size detection
+  public readonly windowWidth = signal<number>(this.isBrowser ? window.innerWidth : 1024);
+  private resizeTimeout: any = null;
+
+  // Dynamic grid size based on screen width
+  public readonly dynamicGridSize = computed(() => {
+    const width = this.windowWidth();
+    if (width < 640) return 8;  // Mobile
+    if (width < 1024) return 10; // Tablet
+    return 12; // Desktop
+  });
 
   // State
   public readonly state = signal<WordSearchState>({
@@ -39,7 +55,50 @@ export class WordSearchComponent {
 
   public readonly isSelectionActive = computed(() => this.state().currentSelection.length > 0);
 
+  constructor() {
+    // Setup resize listener
+    if (this.isBrowser) {
+      window.addEventListener('resize', this.handleResize.bind(this));
+    }
+
+    // Effect to regenerate grid when screen size changes during active game
+    effect(() => {
+      const gridSize = this.dynamicGridSize();
+      const currentState = this.state();
+
+      // Only regenerate if game is active and grid size actually changed
+      if (currentState.currentLevelId > 0 && currentState.grid.length > 0 && currentState.grid.length !== gridSize) {
+        // Regenerate grid with new size while preserving game state
+        const newGrid = this.generateGrid(gridSize, currentState.currentWords);
+
+        // Re-mark found words in the new grid
+        if (currentState.foundWords.length > 0) {
+          this.reapplyFoundWords(newGrid, currentState.currentWords, currentState.foundWords);
+        }
+
+        this.state.update(s => ({
+          ...s,
+          grid: newGrid,
+          currentSelection: [],
+          selectionStart: null
+        }));
+      }
+    });
+  }
+
   // Methods
+
+  /** Handle window resize with debouncing */
+  private handleResize() {
+    if (this.resizeTimeout) {
+      clearTimeout(this.resizeTimeout);
+    }
+    this.resizeTimeout = setTimeout(() => {
+      if (this.isBrowser) {
+        this.windowWidth.set(window.innerWidth);
+      }
+    }, 300);
+  }
 
   /** Start a specific level */
   public startLevel(levelId: number) {
@@ -54,11 +113,14 @@ export class WordSearchComponent {
       sessionWords.push(pool.splice(randomIndex, 1)[0]);
     }
 
+    // Use dynamic grid size instead of level.gridSize
+    const gridSize = this.dynamicGridSize();
+
     this.state.update(s => ({
       ...s,
       currentLevelId: levelId,
       currentWords: sessionWords,
-      grid: this.generateGrid(level.gridSize, sessionWords),
+      grid: this.generateGrid(gridSize, sessionWords),
       foundWords: [],
       isGameComplete: false,
       score: 0,
@@ -109,6 +171,80 @@ export class WordSearchComponent {
     }
 
     return grid;
+  }
+
+  /**
+   * Re-mark found words in a newly generated grid
+   */
+  private reapplyFoundWords(grid: Cell[][], words: WordSearchWord[], foundWords: string[]) {
+    for (const foundWord of foundWords) {
+      const word = words.find(w => w.arabic === foundWord);
+      if (!word) continue;
+
+      // Search for the word in the new grid
+      const wordCells = this.findWordInGrid(grid, word.arabic);
+      if (wordCells.length > 0) {
+        // Mark cells as found
+        wordCells.forEach(cell => {
+          grid[cell.row][cell.col].found = true;
+        });
+      }
+    }
+  }
+
+  /**
+   * Find a word in the grid and return its cell positions
+   */
+  private findWordInGrid(grid: Cell[][], word: string): Cell[] {
+    const size = grid.length;
+    const directions = [
+      [0, 1],   // Horizontal
+      [1, 0],   // Vertical
+      [1, 1],   // Diagonal
+      [0, -1],  // Horizontal reverse
+      [-1, 0],  // Vertical reverse
+      [-1, -1], // Diagonal reverse
+    ];
+
+    // Search all positions and directions
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        for (const [dr, dc] of directions) {
+          const cells = this.checkWordAtPosition(grid, word, row, col, dr, dc);
+          if (cells.length > 0) {
+            return cells;
+          }
+        }
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Check if a word exists at a specific position and direction
+   */
+  private checkWordAtPosition(grid: Cell[][], word: string, startRow: number, startCol: number, dr: number, dc: number): Cell[] {
+    const size = grid.length;
+    const cells: Cell[] = [];
+
+    for (let i = 0; i < word.length; i++) {
+      const r = startRow + (i * dr);
+      const c = startCol + (i * dc);
+
+      // Check bounds
+      if (r < 0 || r >= size || c < 0 || c >= size) {
+        return [];
+      }
+
+      // Check if letter matches
+      if (grid[r][c].value !== word[i]) {
+        return [];
+      }
+
+      cells.push(grid[r][c]);
+    }
+
+    return cells;
   }
 
   private placeWordInGrid(grid: Cell[][], word: string): boolean {
