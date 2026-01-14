@@ -5,13 +5,15 @@ import { UserMetaData, User, SessionInfo } from '../model/auth.model';
 import { DatePipe } from '@angular/common';
 
 import { TitleComponent } from '../shared/title/title.component';
+import { DeleteAccountDialogComponent } from '../shared/delete-account-dialog/delete-account-dialog.component';
 
 @Component({
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
     TitleComponent,
-    DatePipe
+    DatePipe,
+    DeleteAccountDialogComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
@@ -29,6 +31,8 @@ export class ProfileComponent {
   sessions = signal<SessionInfo[]>([]);
   sessionLoading = signal<boolean>(false);
   sessionError = signal<string>('');
+  showDeleteDialog = signal<boolean>(false);
+  deleteSuccess = signal<boolean>(false);
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -145,6 +149,20 @@ export class ProfileComponent {
         this.loading.set(false);
       }
     });
+  }
+
+  openDeleteDialog(): void {
+    this.showDeleteDialog.set(true);
+  }
+
+  closeDeleteDialog(): void {
+    this.showDeleteDialog.set(false);
+  }
+
+  onAccountDeleted(): void {
+    this.showDeleteDialog.set(false);
+    this.deleteSuccess.set(true);
+    // User will be automatically logged out and redirected by the service
   }
 
 }
