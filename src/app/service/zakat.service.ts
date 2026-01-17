@@ -1,4 +1,7 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, catchError, of, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { AssetCategory, Currency, Liabilities, ZakatState } from '../home/tool/calculator/calculator.model';
 
 @Injectable({
@@ -6,6 +9,7 @@ import { AssetCategory, Currency, Liabilities, ZakatState } from '../home/tool/c
 })
 export class ZakatService {
     private readonly STORAGE_KEY = 'taqwa_tracker_zakat_state';
+    private httpClient = inject(HttpClient);
 
     readonly currencies: Currency[] = [
         { code: 'INR', symbol: '₹', name: 'Indian Rupee', nisabDefault: 85000 },
@@ -159,5 +163,22 @@ export class ZakatService {
         this.assetCategories.set(this.defaultAssetCategories.map(cat => ({ ...cat, amount: 0, enabled: true })));
         this.liabilities.set(this.defaultLiabilities);
         // Keep currency as is or reset to default? Usually keep currency is better.
+    }
+
+    saveCalculationToBackend(): Observable<boolean> {
+        const state: ZakatState = {
+            assetCategories: this.assetCategories(),
+            liabilities: this.liabilities(),
+            selectedCurrencyCode: this.selectedCurrencyCode()
+        };
+
+        return this.httpClient.post<{ message: string, id: string }>(`${environment.apiBaseUrl}/calculator/zakat/save`, state)
+            .pipe(
+                map(() => true),
+                catchError(error => {
+                    console.error('Error saving calculation:', error);
+                    return of(false);
+                })
+            );
     }
 }
