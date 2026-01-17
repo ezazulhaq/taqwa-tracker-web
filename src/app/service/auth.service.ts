@@ -337,4 +337,22 @@ export class AuthService {
     );
   }
 
+  deleteAccount(password: string): Observable<void> {
+    const params = new HttpParams().set('password', password);
+
+    return this.http.delete<void>(`${this.API_BASE_URL}/user/me`, { params }).pipe(
+      tap(() => {
+        // Clear auth state and navigate to home
+        this.authTokenService.clearAuthState();
+        this.router.navigate(['/home']);
+      }),
+      catchError(error => {
+        if (error.status === 401) {
+          return throwError(() => new Error('Invalid password. Please try again.'));
+        }
+        return throwError(() => new Error(error.error?.detail || 'Failed to delete account'));
+      })
+    );
+  }
+
 }
