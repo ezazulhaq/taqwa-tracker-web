@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { ZakatService } from '../../../service/zakat.service';
 import { AuthService } from '../../../service/auth.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 import { AmountFormatDirective } from '../../../shared/directive/amount-format.directive';
 
 @Component({
@@ -24,6 +25,7 @@ import { AmountFormatDirective } from '../../../shared/directive/amount-format.d
 export class CalculatorComponent {
   public zakatService = inject(ZakatService);
   public authService = inject(AuthService);
+  private toastService = inject(ToastService);
   public isSaving = signal(false);
 
   formatCurrency(value: number): string {
@@ -41,12 +43,15 @@ export class CalculatorComponent {
       next: (success) => {
         this.isSaving.set(false);
         if (success) {
-          alert('Calculation saved successfully!');
+          this.toastService.show('Calculation saved successfully!');
         } else {
-          alert('Failed to save calculation.');
+          this.toastService.show('Failed to save calculation.', 'error');
         }
       },
-      error: () => this.isSaving.set(false)
+      error: () => {
+        this.isSaving.set(false);
+        this.toastService.show('An error occurred while saving.', 'error');
+      }
     });
   }
 }
