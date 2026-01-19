@@ -3,6 +3,7 @@ import { Ayah, BookMarkedSurah } from '../../quran.model';
 import { AuthService } from '../../../../../service/auth.service';
 import { BookmarkService } from '../../../../../service/bookmark.service';
 import { QuranService } from '../../quran.service';
+import { ToastService } from '../../../../../shared/toast/toast.service';
 
 @Component({
     selector: 'app-ayah-card',
@@ -18,6 +19,7 @@ export class AyahCardComponent {
     private readonly authService = inject(AuthService);
     private readonly bookmarkService = inject(BookmarkService);
     protected readonly quranService = inject(QuranService);
+    private readonly toastService = inject(ToastService);
 
     ayah = input.required<Ayah>();
     surahNumber = input.required<string>();
@@ -80,20 +82,7 @@ export class AyahCardComponent {
     }
 
     private showCopySuccessMessage() {
-        // Create a temporary success message
-        const message = document.createElement('div');
-        message.textContent = 'Ayah copied to clipboard!';
-        message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-opacity duration-300';
-
-        document.body.appendChild(message);
-
-        // Remove the message after 2 seconds
-        setTimeout(() => {
-            message.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(message);
-            }, 300);
-        }, 2000);
+        this.toastService.show('Ayah copied to clipboard!');
     }
 
     private fallbackCopyToClipboard(ayah: Ayah) {

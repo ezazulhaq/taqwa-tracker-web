@@ -6,6 +6,7 @@ import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 import { HadithService } from '../hadith.service';
+import { ToastService } from '../../../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-chapter',
@@ -21,6 +22,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   private readonly authService = inject(AuthService);
   private readonly readStreakService = inject(ReadStreakService);
   private readonly hadithService = inject(HadithService);
+  private readonly toastService = inject(ToastService);
 
   @ViewChild('stickyTitle') stickyTitle!: ElementRef;
   private originalOffset: number = 0;
@@ -203,20 +205,7 @@ export class ChapterComponent implements OnInit, AfterViewInit {
   }
 
   private showCopySuccessMessage() {
-    // Create a temporary success message
-    const message = document.createElement('div');
-    message.textContent = 'Hadith copied to clipboard!';
-    message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-opacity duration-300';
-
-    document.body.appendChild(message);
-
-    // Remove the message after 2 seconds
-    setTimeout(() => {
-      message.style.opacity = '0';
-      setTimeout(() => {
-        document.body.removeChild(message);
-      }, 300);
-    }, 2000);
+    this.toastService.show('Hadith copied to clipboard!');
   }
 
   private fallbackCopyToClipboard(hadith: Hadiths) {
