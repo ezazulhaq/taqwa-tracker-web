@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, catchError, of, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AssetCategory, Currency, Liabilities, ZakatState } from '../home/tool/calculator/calculator.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -48,6 +49,8 @@ export class ZakatService {
     assetCategories = signal<AssetCategory[]>(this.defaultAssetCategories);
     liabilities = signal<Liabilities>(this.defaultLiabilities);
     selectedCurrencyCode = signal<string>(this.currencies[0].code);
+
+    private readonly authService = inject(AuthService);
 
     // Derived Signals
     selectedCurrency = computed(() =>
@@ -95,6 +98,13 @@ export class ZakatService {
     constructor() {
         this.loadFromStorage();
 
+        // Load from backend if authenticated
+        effect(() => {
+            if (this.authService.isAuthenticated()) {
+                this.fetchFromBackend();
+            }
+        });
+
         // Auto-save on state changes
         effect(() => {
             const state: ZakatState = {
@@ -106,29 +116,50 @@ export class ZakatService {
         });
     }
 
+    private fetchFromBackend(): void {
+        this.httpClient.get<ZakatState>(`${environment.apiBaseUrl}/calculator/zakat/latest`)
+            .pipe(
+                catchError((error: any) => {
+                    // If 404, it just means no calculation saved yet, so we can ignore it
+                    if (error.status !== 404) {
+                        console.error('Error fetching latest calculation:', error);
+                    }
+                    return of(null);
+                })
+            )
+            .subscribe(state => {
+                if (state) {
+                    this.updateStateFromData(state);
+                }
+            });
+    }
+
     private loadFromStorage(): void {
         try {
             const storedData = localStorage.getItem(this.STORAGE_KEY);
             if (storedData) {
                 const state: ZakatState = JSON.parse(storedData);
-
-                // Merge stored asset categories with defaults to ensure new fields (like PF/NPS) appear
-                if (state.assetCategories) {
-                    const mergedAssets = this.defaultAssetCategories.map(defaultCat => {
-                        const storedCat = state.assetCategories.find(sc => sc.id === defaultCat.id);
-                        return storedCat ? { ...defaultCat, amount: storedCat.amount, enabled: storedCat.enabled } : defaultCat;
-                    });
-                    this.assetCategories.set(mergedAssets);
-                } else {
-                    this.assetCategories.set(this.defaultAssetCategories);
-                }
-
-                this.liabilities.set(state.liabilities || this.defaultLiabilities);
-                this.selectedCurrencyCode.set(state.selectedCurrencyCode || this.currencies[0].code);
+                this.updateStateFromData(state);
             }
         } catch (error) {
             console.error('Error loading Zakat state from storage:', error);
         }
+    }
+
+    private updateStateFromData(state: ZakatState): void {
+        // Merge stored asset categories with defaults to ensure new fields (like PF/NPS) appear
+        if (state.assetCategories) {
+            const mergedAssets = this.defaultAssetCategories.map(defaultCat => {
+                const storedCat = state.assetCategories.find(sc => sc.id === defaultCat.id);
+                return storedCat ? { ...defaultCat, amount: storedCat.amount, enabled: storedCat.enabled } : defaultCat;
+            });
+            this.assetCategories.set(mergedAssets);
+        } else {
+            this.assetCategories.set(this.defaultAssetCategories);
+        }
+
+        this.liabilities.set(state.liabilities || this.defaultLiabilities);
+        this.selectedCurrencyCode.set(state.selectedCurrencyCode || this.currencies[0].code);
     }
 
     private saveToStorage(state: ZakatState): void {
