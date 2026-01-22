@@ -6,13 +6,15 @@ import { ZakatService } from '../../../service/zakat.service';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../shared/toast/toast.service';
 import { AmountFormatDirective } from '../../../shared/directive/amount-format.directive';
+import { CalculatorToolComponent } from './calculator-tool/calculator-tool.component';
 
 @Component({
   selector: 'app-calculator',
   imports: [
     TitleComponent,
     FormsModule,
-    AmountFormatDirective
+    AmountFormatDirective,
+    CalculatorToolComponent
   ],
 
   templateUrl: './calculator.component.html',
