@@ -1,26 +1,34 @@
-import { Component, ElementRef, ViewChild, signal, inject, computed, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, signal, inject, computed, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { ChatbotService } from '../service/chatbot.service';
 import { Conversation, ChatbotMessage } from './chatbot.model';
 import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { TitleComponent } from '../shared/title/title.component';
+import { ConversationHistoryComponent } from './conversation-history/conversation-history.component';
+import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
 
 @Component({
   selector: 'app-chatbot',
   imports: [
     FormsModule,
-    DatePipe
+    TitleComponent,
+    ConversationHistoryComponent,
+    ChatMessagesComponent
   ],
   templateUrl: './chatbot.component.html',
-  styleUrl: './chatbot.component.css'
+  styleUrl: './chatbot.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'app-bg'
+  }
 })
 export class ChatbotComponent {
 
-  @ViewChild('chatContainer') private chatContainer!: ElementRef;
+  @ViewChild(ChatMessagesComponent) private chatMessagesComponent!: ChatMessagesComponent;
   private authService = inject(AuthService);
 
-  isChatbotVisible = signal<boolean>(false);
-  isChatbotDialogeVisible = signal<boolean>(true);
+  isChatbotVisible = signal<boolean>(true);
+  isChatbotDialogeVisible = signal<boolean>(false);
   isConversationMenuVisible = signal<boolean>(false);
 
   messages = signal<ChatbotMessage[]>([]);
@@ -29,11 +37,9 @@ export class ChatbotComponent {
 
   isChatRequested = signal<boolean>(false);
   deletingConversationId = signal<string | null>(null);
-  editingConversationId = signal<string | null>(null);
-  editingTitle = signal<string>('');
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
-  
+
   constructor(
     private chatbotService: ChatbotService
   ) { }
@@ -130,36 +136,25 @@ export class ChatbotComponent {
     });
   }
 
-  protected startEditingTitle(conversationId: string, currentTitle: string, event: Event) {
-    event.stopPropagation();
-    this.editingConversationId.set(conversationId);
-    this.editingTitle.set(currentTitle);
+  protected handleTitleEdit(data: { id: string, title: string, event: Event }) {
+    // Placeholder for title editing - handled by child component
   }
 
-  protected saveTitle(conversationId: string, event: Event) {
-    if (event instanceof KeyboardEvent && event.key !== 'Enter') return;
-    event.stopPropagation();
-    
-    this.chatbotService.renameConversation(conversationId, this.editingTitle()).subscribe({
+  protected handleSaveTitle(data: { id: string, title: string, event: Event }) {
+    this.chatbotService.renameConversation(data.id, data.title).subscribe({
       next: () => {
         this.loadConversations();
-        this.editingConversationId.set(null);
       },
       error: (error) => {
         console.error('Failed to rename conversation:', error);
-        this.editingConversationId.set(null);
       }
     });
-  }
-
-  protected cancelEdit() {
-    this.editingConversationId.set(null);
   }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.conversation-menu') && this.isConversationMenuVisible() && !this.editingConversationId()) {
+    if (!target.closest('.conversation-menu') && this.isConversationMenuVisible()) {
       this.isConversationMenuVisible.set(false);
     }
   }
@@ -173,8 +168,7 @@ export class ChatbotComponent {
   }
 
   private scrollToBottom(): void {
-    const container = this.chatContainer.nativeElement;
-    container.scrollTop = container.scrollHeight; // Scroll to the bottom
+    this.chatMessagesComponent?.scrollToBottom();
   }
 
 }

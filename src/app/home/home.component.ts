@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ChatbotComponent } from '../chatbot/chatbot.component';
+import { ChatbotToggleComponent } from '../chatbot/chatbot-toggle/chatbot-toggle.component';
 import { AuthService } from '../service/auth.service';
 import { TitleComponent } from '../shared/title/title.component';
 import { HomeIcons } from '../model/home.model';
@@ -13,7 +14,7 @@ import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component
   selector: 'app-home',
   imports: [
     ModuleComponent,
-    ChatbotComponent,
+    ChatbotToggleComponent,
     TitleComponent,
     WelcomeComponent,
     StreakDashboardComponent,
