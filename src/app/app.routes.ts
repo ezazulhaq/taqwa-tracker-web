@@ -142,6 +142,11 @@ export const routes: Routes = [
         loadComponent: () => import('./home/games/salah-master/salah-master.component').then(m => m.SalahMasterComponent)
     },
     {
+        path: 'chatbot',
+        title: 'Islamic Guidance',
+        loadComponent: () => import('./chatbot/chatbot.component').then(m => m.ChatbotComponent)
+    },
+    {
         path: 'privacy-policy',
         title: 'Privacy Policy',
         loadComponent: () => import('./shared/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent)

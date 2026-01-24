@@ -1,0 +1,35 @@
+:host {
+    display: block;
+}
+
+@keyframes animate-in {
+    from {
+        opacity: 0;
+        transform: translateY(1rem) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-in {
+    animation: animate-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Glassmorphism effect for the calculator container */
+.bg-white\/80 {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Button hover feedback */
+button:active {
+    transform: scale(0.95);
+}
+
+/* Custom shadow for premium feel */
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}

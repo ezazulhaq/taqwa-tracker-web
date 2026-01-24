@@ -11,3 +11,15 @@ export interface Currency {
     name: string;
     nisabDefault: number;
 }
+
+export interface Liabilities {
+    debts: number;
+    loans: number;
+    bills: number;
+}
+
+export interface ZakatState {
+    assetCategories: AssetCategory[];
+    liabilities: Liabilities;
+    selectedCurrencyCode: string;
+}
