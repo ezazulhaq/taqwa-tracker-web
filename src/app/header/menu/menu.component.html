@@ -1,6 +1,6 @@
 @if(localMenuVisible()){
 <div (click)="onMenuItemClick()"
-    class="fixed z-10 top-0 left-0 w-full h-full bg-gray-500/60 flex items-center justify-center"></div>
+    class="fixed z-[100] top-0 left-0 w-full h-full bg-gray-500/60 flex items-center justify-center"></div>
 }
 <div class="relative app-menu-left" [class.translate-x-0]="localMenuVisible()"
     [class.-translate-x-full]="!localMenuVisible()">
