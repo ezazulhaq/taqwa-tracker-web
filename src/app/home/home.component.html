@@ -1,23 +1,8 @@
-<app-title [title]="'The Taqwa Tracker'"></app-title>
+<app-title [title]="'The Taqwa Tracker'" [subTitle]="'All-in-One Islamic Companion'"></app-title>
 
-<!-- App Introduction -->
-<app-welcome></app-welcome>
+<app-prayer-times-widget />
+<app-recommended-apps-widget />
+<app-streak-dashboard />
 
-<div class="flex flex-col space-y-6 mb-6">
-    <!-- Modules Component -->
-    <app-home-module [label]="'Sacred Text'" [icons]="modules"></app-home-module>
-
-    <!-- Games Component -->
-    <app-home-module [label]="'Ilm Quest'" [icons]="games"></app-home-module>
-
-    <!-- Tools Component -->
-    <app-home-module [label]="'Ibadah Tools'" [icons]="tools"></app-home-module>
-</div>
-
+<!-- Footer/Fixed Elements -->
 <app-install-pwa />
-
-<!-- Chatbot Toggle -->
-<app-chatbot-toggle></app-chatbot-toggle>
-
-<!-- Reading Streak Dashboard -->
-<app-streak-dashboard></app-streak-dashboard>

@@ -1,24 +1,19 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ChatbotComponent } from '../chatbot/chatbot.component';
-import { ChatbotToggleComponent } from '../chatbot/chatbot-toggle/chatbot-toggle.component';
-import { AuthService } from '../service/auth.service';
 import { TitleComponent } from '../shared/title/title.component';
-import { HomeIcons } from '../model/home.model';
-import { ModuleComponent } from '../shared/module/module.component';
-import { module_icons, tool_icons, game_icons } from '../shared/module/module.contant';
-import { WelcomeComponent } from './welcome/welcome.component';
+import { PrayerTimesWidgetComponent } from './prayer-times-widget/prayer-times-widget.component';
+import { RecommendedAppsWidgetComponent } from './recommended-apps-widget/recommended-apps-widget.component';
 import { StreakDashboardComponent } from './streak-dashboard/streak-dashboard.component';
 import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-home',
   imports: [
-    ModuleComponent,
-    ChatbotToggleComponent,
     TitleComponent,
-    WelcomeComponent,
+    PrayerTimesWidgetComponent,
+    RecommendedAppsWidgetComponent,
     StreakDashboardComponent,
-    InstallPwaComponent,
+    InstallPwaComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
@@ -29,11 +24,6 @@ import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component
 export class HomeComponent {
 
   private readonly authService = inject(AuthService);
-
-  modules: HomeIcons[] = module_icons;
-  tools: HomeIcons[] = tool_icons;
-  games: HomeIcons[] = game_icons;
-
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
 }
