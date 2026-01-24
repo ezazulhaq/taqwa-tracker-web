@@ -1,0 +1,31 @@
+<div class="mb-6 px-4">
+    <div class="flex flex-col items-center justify-center space-y-1 mb-2">
+        @if (timeRemaining()) {
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+            Next: <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ timeRemaining()!.name
+                }}</span>
+            in <span class="font-semibold">{{ timeRemaining()!.formatted }}</span>
+        </p>
+        }
+        <div class="text-xs text-slate-500 dark:text-slate-400">
+            {{ hijriDate() + ' • ' + (currentDate() | date:'d MMMM, y') }}
+        </div>
+    </div>
+
+    <div routerLink="/prayer"
+        class="flex flex-row space-x-2 md:space-x-4 justify-start items-center overflow-x-auto pb-2 snap-x hide-scrollbar">
+        @for (prayer of prayers(); track prayer.name) {
+        <div [class]="getCardClass(prayer.isCurrent)"
+            class="flex flex-col items-center justify-center p-2 min-w-[90px] rounded-2xl snap-start shrink-0 transition-all duration-300">
+            <span [class]="getTextClass(prayer.isCurrent, 'name')"
+                class="text-xs font-medium uppercase tracking-wider mb-1">
+                {{ prayer.name }}
+            </span>
+
+            <span [class]="getTextClass(prayer.isCurrent, 'time')" class="text-sm font-bold">
+                {{ prayer.time | date:'shortTime' }}
+            </span>
+        </div>
+        }
+    </div>
+</div>
