@@ -1,0 +1,8 @@
+<div class="mb-6 px-4">
+    <div class="grid grid-cols-4 gap-3">
+        @for (app of recommendedApps; track app.title) {
+        <app-icon [title]="app.title" [link]="app.link" [path]="app.path" [viewBox]="app.viewBox"
+            class="aspect-[4/3]" />
+        }
+    </div>
+</div>
