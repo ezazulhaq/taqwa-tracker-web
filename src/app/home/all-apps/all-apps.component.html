@@ -1,0 +1,33 @@
+<app-title [title]="'All Apps'" [subTitle]="'Explore all apps in one place'" [routerLink]="'/home'"></app-title>
+
+<div class="space-y-6 px-4 pb-4">
+    <!-- Sacred Texts -->
+    <div>
+        <h3 class="apps-title">Sacred Texts</h3>
+        <div class="apps-grid">
+            @for (app of modules; track app.title) {
+            <app-icon [title]="app.title" [link]="app.link" [path]="app.path" [viewBox]="app.viewBox" />
+            }
+        </div>
+    </div>
+
+    <!-- Tools -->
+    <div>
+        <h3 class="apps-title">Tools</h3>
+        <div class="apps-grid">
+            @for (app of tools; track app.title) {
+            <app-icon [title]="app.title" [link]="app.link" [path]="app.path" [viewBox]="app.viewBox" />
+            }
+        </div>
+    </div>
+
+    <!-- Games -->
+    <div>
+        <h3 class="apps-title">Ilm Quest</h3>
+        <div class="apps-grid">
+            @for (app of games; track app.title) {
+            <app-icon [title]="app.title" [link]="app.link" [path]="app.path" [viewBox]="app.viewBox" />
+            }
+        </div>
+    </div>
+</div>

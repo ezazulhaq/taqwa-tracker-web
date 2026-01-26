@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Coordinates, PrayerTimes, CalculationMethod, Qibla, Madhab } from 'adhan';
+import { Coordinates, PrayerTimes, CalculationMethod, Qibla, Madhab, Shafaq, SunnahTimes } from 'adhan';
 import { NamazTimes } from '../model/namaz-time.model';
 import { HttpClient } from '@angular/common/http';
 import { OpenStreetMapResponse } from '../model/open-stream-map.model';
@@ -99,21 +99,38 @@ export class SalahAppService {
       map(location => {
         if (!location) return null;
         const coordinates = new Coordinates(location.latitude, location.longitude);
-        const params = CalculationMethod.MuslimWorldLeague();
+
+        // Use MoonsightingCommittee for Hanafi (supports Shafaq for Isha)
+        // Use MuslimWorldLeague for non-Hanafi (widely used standard)
+        const params = hanafiVal
+          ? CalculationMethod.MoonsightingCommittee()
+          : CalculationMethod.MuslimWorldLeague();
 
         // Set Madhab for Asr calculation
         // Hanafi: Later Asr time (shadow length = 2x object height + Zuhr shadow)
         // Shafi: Earlier Asr time (shadow length = 1x object height + Zuhr shadow)
         params.madhab = hanafiVal ? Madhab.Hanafi : Madhab.Shafi;
 
+        // Set Shafaq for Isha calculation (only effective with MoonsightingCommittee)
+        // Hanafi: Abyad (white twilight) - Later Isha time
+        // Shafi/Maliki/Hanbali: Ahmer (red twilight) - Earlier Isha time
+        if (hanafiVal) {
+          params.shafaq = Shafaq.Abyad;
+        }
+
         const prayerTimes = new PrayerTimes(coordinates, date, params);
+
+        // Calculate Sunnah times for Tahajjud (night prayer)
+        const sunnahTimes = new SunnahTimes(prayerTimes);
+
         return {
           fajr: prayerTimes.fajr,
           sunrise: prayerTimes.sunrise,
           dhuhr: prayerTimes.dhuhr,
           asr: prayerTimes.asr,
           maghrib: prayerTimes.maghrib,
-          isha: prayerTimes.isha
+          isha: prayerTimes.isha,
+          tahajjud: sunnahTimes.lastThirdOfTheNight, // Best time for Tahajjud prayer
         };
       })
     );

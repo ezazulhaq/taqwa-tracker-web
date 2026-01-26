@@ -38,17 +38,17 @@ export class HeaderComponent implements OnInit {
     // Only trigger if scroll distance is above threshold
     if (scrollDifference > this.scrollThreshold) {
       if (currentScrollTop > this.lastScrollTop) {
-        // Scrolling down - hide header
+        // Scrolling down - hide bottom nav
         this.isHeaderVisible = false;
       } else {
-        // Scrolling up - show header
+        // Scrolling up - show bottom nav
         this.isHeaderVisible = true;
       }
 
       this.lastScrollTop = currentScrollTop;
     }
 
-    // Always show header when at the top of the page
+    // Always show bottom nav when at the top of the page
     if (currentScrollTop <= 0) {
       this.isHeaderVisible = true;
     }

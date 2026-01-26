@@ -40,6 +40,11 @@ export const routes: Routes = [
         loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
     },
     {
+        path: 'apps',
+        title: 'All Apps',
+        loadComponent: () => import('./home/all-apps/all-apps.component').then(m => m.AllAppsComponent)
+    },
+    {
         path: 'prayer',
         title: 'Prayer Times',
         loadComponent: () => import('./home/tool/prayer-times/prayer-times.component').then(m => m.PrayerTimesComponent)
