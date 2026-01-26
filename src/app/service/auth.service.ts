@@ -25,6 +25,8 @@ export class AuthService {
   private authTokenService = inject(AuthTokenService);
   private initializationPromise: Promise<void>;
   private readonly API_BASE_URL = environment.apiBaseUrl;
+  private refreshTimer: any = null;
+  private isRefreshing = false;
 
   // Delegate signals to authTokenService
   currentUser = this.authTokenService.currentUser;
@@ -40,10 +42,17 @@ export class AuthService {
     try {
       const token = this.authTokenService.getAccessToken();
       if (token) {
-        const user = await this.getCurrentUser().toPromise();
-        if (user) {
-          this.authTokenService.setUserFromApiResponse(user);
+        // Check if token needs refresh
+        if (this.authTokenService.shouldRefreshToken()) {
+          await this.refreshSession().toPromise();
+        } else {
+          const user = await this.getCurrentUser().toPromise();
+          if (user) {
+            this.authTokenService.setUserFromApiResponse(user);
+          }
         }
+        // Start automatic token refresh timer
+        this.startTokenRefreshTimer();
       }
     } catch (error) {
       console.error('Failed to load user session:', error);
@@ -124,7 +133,14 @@ export class AuthService {
       tap(tokenResponse => {
         this.rateLimitService.recordAttempt(email, true);
         // Store tokens immediately
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
+        this.authTokenService.setTokens(
+          tokenResponse.access_token,
+          tokenResponse.refresh_token,
+          tokenResponse.session_id,
+          tokenResponse.expires_in
+        );
+        // Start automatic token refresh timer
+        this.startTokenRefreshTimer();
       }),
       // Switch to get user data
       map(tokenResponse => this.getCurrentUser().pipe(
@@ -226,6 +242,9 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
+    // Clear refresh timer
+    this.clearTokenRefreshTimer();
+
     return this.http.post<void>(`${this.API_BASE_URL}/auth/logout`, {}).pipe(
       tap(() => {
         this.authTokenService.clearAuthState();
@@ -247,10 +266,26 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'));
     }
 
+    // Prevent concurrent refresh attempts
+    if (this.isRefreshing) {
+      return throwError(() => new Error('Token refresh already in progress'));
+    }
+
+    this.isRefreshing = true;
+
     return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
       map(tokenResponse => {
-        // Store new tokens
-        this.authTokenService.setTokens(tokenResponse.access_token, tokenResponse.refresh_token, tokenResponse.session_id);
+        // Store new tokens with expiration
+        this.authTokenService.setTokens(
+          tokenResponse.access_token,
+          tokenResponse.refresh_token,
+          tokenResponse.session_id,
+          tokenResponse.expires_in
+        );
+
+        // Reschedule next refresh
+        this.startTokenRefreshTimer();
+        this.isRefreshing = false;
 
         return {
           user: this.currentUser(),
@@ -261,6 +296,8 @@ export class AuthService {
       }),
       catchError(error => {
         // Clear user state on refresh failure
+        this.isRefreshing = false;
+        this.clearTokenRefreshTimer();
         this.authTokenService.clearAuthState();
         return throwError(() => new Error(error.message || 'Failed to refresh session'));
       })
@@ -342,7 +379,8 @@ export class AuthService {
 
     return this.http.delete<void>(`${this.API_BASE_URL}/user/me`, { params }).pipe(
       tap(() => {
-        // Clear auth state and navigate to home
+        // Clear refresh timer and auth state
+        this.clearTokenRefreshTimer();
         this.authTokenService.clearAuthState();
         this.router.navigate(['/home']);
       }),
@@ -353,6 +391,54 @@ export class AuthService {
         return throwError(() => new Error(error.error?.detail || 'Failed to delete account'));
       })
     );
+  }
+
+  /**
+   * Start automatic token refresh timer
+   * Schedules token refresh before expiration
+   */
+  private startTokenRefreshTimer(): void {
+    // Clear any existing timer
+    this.clearTokenRefreshTimer();
+
+    // Calculate time until token needs refresh
+    const timeUntilRefresh = this.authTokenService.getTimeUntilExpiration() - (5 * 60 * 1000); // 5 minutes before expiration
+
+    if (timeUntilRefresh > 0) {
+      this.refreshTimer = setTimeout(() => {
+        this.scheduleTokenRefresh();
+      }, timeUntilRefresh);
+    } else if (this.authTokenService.getAccessToken()) {
+      // Token is already expired or close to expiration, refresh immediately
+      this.scheduleTokenRefresh();
+    }
+  }
+
+  /**
+   * Execute token refresh and handle errors
+   */
+  private scheduleTokenRefresh(): void {
+    this.refreshSession().subscribe({
+      next: () => {
+        console.log('Token refreshed successfully');
+      },
+      error: (error) => {
+        console.error('Failed to refresh token:', error);
+        // On refresh failure, clear auth state and redirect to login
+        this.clearTokenRefreshTimer();
+        this.authTokenService.clearAuthState();
+      }
+    });
+  }
+
+  /**
+   * Clear the token refresh timer
+   */
+  private clearTokenRefreshTimer(): void {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 
 }
