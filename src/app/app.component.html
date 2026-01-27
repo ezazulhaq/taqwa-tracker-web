@@ -1,5 +1,12 @@
 <div class="flex flex-col items-center justify-start md:justify-center h-100 bg-gray-200 dark:bg-slate-700">
 
+  <!-- Update Notification -->
+  @if (autoUpdateService.updateAvailable()) {
+  <app-update-notification (updateNow)="autoUpdateService.activateUpdate()"
+    (dismiss)="autoUpdateService.dismissUpdate()">
+  </app-update-notification>
+  }
+
   <!-- Header -->
   <app-header></app-header>
 
@@ -10,7 +17,7 @@
   <app-menu></app-menu>
   }
 
-  <!-- Menu added for mobile -->
+  <!-- Settings -->
   @if (headerService.isSettingsVisible()){
   <app-settings></app-settings>
   }

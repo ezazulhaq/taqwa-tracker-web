@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { HeaderService } from './header/header.service';
 import { SecurityHeadersService } from './service/security-headers.service';
 import { PreferenceSyncService } from './service/preference-sync.service';
+import { UpdateNotificationComponent } from './shared/update-notification/update-notification.component';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ import { PreferenceSyncService } from './service/preference-sync.service';
     HeaderComponent,
     MenuComponent,
     SettingsComponent,
-    ScrollTopComponent
+    ScrollTopComponent,
+    UpdateNotificationComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -26,9 +28,9 @@ export class AppComponent implements OnInit {
 
   headerService = inject(HeaderService);
   private prefSyncService = inject(PreferenceSyncService);
+  autoUpdateService = inject(AutoUpdateService);
 
   constructor(
-    private autoUpdateService: AutoUpdateService,
     protected themeSelector: ThemeSelectorService,
     private securityHeadersService: SecurityHeadersService
   ) { }
