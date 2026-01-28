@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, effect, viewChild, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SalahAppService } from '../../service/salah-app.service';
@@ -14,6 +14,8 @@ import moment from 'moment-hijri';
 })
 export class PrayerTimesWidgetComponent {
   private salahService = inject(SalahAppService);
+  scrollContainer = viewChild<ElementRef>('scrollContainer');
+  private lastScrolledPrayer = '';
 
   // Writable signal for prayer times
   times = signal<NamazTimes | null>(null);
@@ -35,6 +37,24 @@ export class PrayerTimesWidgetComponent {
     setInterval(() => {
       this.currentTime.set(new Date());
     }, 60000); // Update every 60 seconds
+
+    // Scroll to current prayer when it changes
+    effect(() => {
+      const prayers = this.prayers();
+      const currentPrayer = prayers.find(p => p.isCurrent);
+      const container = this.scrollContainer();
+
+      if (container && currentPrayer && currentPrayer.name !== this.lastScrolledPrayer) {
+        this.lastScrolledPrayer = currentPrayer.name;
+        // Use timeout to ensure DOM is updated
+        setTimeout(() => {
+          const currentElement = container.nativeElement.querySelector('.current-prayer-card');
+          if (currentElement) {
+            currentElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }, 300);
+      }
+    });
   }
 
   currentDate = signal(new Date());
