@@ -12,10 +12,10 @@
         </div>
     </div>
 
-    <div routerLink="/prayer"
+    <div #scrollContainer routerLink="/prayer"
         class="flex flex-row space-x-2 md:space-x-4 justify-start items-center overflow-x-auto pb-2 snap-x hide-scrollbar">
         @for (prayer of prayers(); track prayer.name) {
-        <div [class]="getCardClass(prayer.isCurrent)"
+        <div [class]="getCardClass(prayer.isCurrent)" [class.current-prayer-card]="prayer.isCurrent"
             class="flex flex-col items-center justify-center p-2 min-w-[90px] rounded-2xl snap-start shrink-0 transition-all duration-300">
             <span [class]="getTextClass(prayer.isCurrent, 'name')"
                 class="text-xs font-medium uppercase tracking-wider mb-1">
