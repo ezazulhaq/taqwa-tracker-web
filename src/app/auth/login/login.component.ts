@@ -10,7 +10,7 @@ import { AuthService } from '../../service/auth.service';
   imports: [
     ReactiveFormsModule,
     RouterLink
-],
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   host: {
@@ -31,7 +31,8 @@ export class LoginComponent {
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
 
     // Get return URL from route parameters or default to home
@@ -49,6 +50,7 @@ export class LoginComponent {
     const credentials: LoginCredentials = {
       email: this.loginForm.controls['email'].value,
       password: this.loginForm.controls['password'].value,
+      rememberMe: this.loginForm.controls['rememberMe'].value,
     };
 
     this.authService.login(credentials).subscribe({

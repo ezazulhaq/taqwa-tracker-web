@@ -8,7 +8,7 @@ export class AuthTokenService {
     // Use signals for reactive state management
     currentUser = signal<User | null>(null);
     userMetaData = signal<UserMetaData | null>(null);
-    isAuthenticated = signal<boolean>(!!localStorage.getItem('access_token'));
+    isAuthenticated = signal<boolean>(!!(localStorage.getItem('access_token') || sessionStorage.getItem('access_token')));
 
     // Token expiration buffer (5 minutes before actual expiration)
     private readonly TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000;
@@ -36,46 +36,55 @@ export class AuthTokenService {
         this.currentUser.set(null);
         this.userMetaData.set(null);
         this.isAuthenticated.set(false);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('session_id');
-        localStorage.removeItem('token_expiration');
+        const stores = [localStorage, sessionStorage];
+        stores.forEach(store => {
+            store.removeItem('access_token');
+            store.removeItem('refresh_token');
+            store.removeItem('session_id');
+            store.removeItem('token_expiration');
+        });
     }
 
     getValidAccessToken(): string | null {
         if (!this.isAuthenticated() || this.isTokenExpired()) {
             return null;
         }
-        return localStorage.getItem('access_token');
+        return this.getAccessToken();
     }
 
     getAccessToken(): string | null {
-        return localStorage.getItem('access_token');
+        return localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
     }
 
     getRefreshToken(): string | null {
-        return localStorage.getItem('refresh_token');
+        return localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token');
     }
 
-    setTokens(accessToken: string, refreshToken?: string, sessionId?: string, expiresIn?: number): void {
-        localStorage.setItem('access_token', accessToken);
+    setTokens(accessToken: string, refreshToken?: string, sessionId?: string, expiresIn?: number, rememberMe: boolean = false): void {
+        const store = rememberMe ? localStorage : sessionStorage;
+
+        // Clear other store to avoid stale tokens
+        const otherStore = rememberMe ? sessionStorage : localStorage;
+        ['access_token', 'refresh_token', 'session_id', 'token_expiration'].forEach(key => otherStore.removeItem(key));
+
+        store.setItem('access_token', accessToken);
         if (refreshToken) {
-            localStorage.setItem('refresh_token', refreshToken);
+            store.setItem('refresh_token', refreshToken);
         }
         if (sessionId) {
-            localStorage.setItem('session_id', sessionId);
+            store.setItem('session_id', sessionId);
         }
 
         // Store token expiration time (default to 1 hour if not provided)
         const expirationMs = expiresIn ? expiresIn * 1000 : 60 * 60 * 1000;
         const expirationTime = Date.now() + expirationMs;
-        localStorage.setItem('token_expiration', expirationTime.toString());
+        store.setItem('token_expiration', expirationTime.toString());
 
         this.isAuthenticated.set(true);
     }
 
     getSessionId(): string | null {
-        return localStorage.getItem('session_id');
+        return localStorage.getItem('session_id') || sessionStorage.getItem('session_id');
     }
 
     /**
@@ -105,7 +114,7 @@ export class AuthTokenService {
      * Get the token expiration timestamp
      */
     getTokenExpirationTime(): number | null {
-        const expiration = localStorage.getItem('token_expiration');
+        const expiration = localStorage.getItem('token_expiration') || sessionStorage.getItem('token_expiration');
         return expiration ? parseInt(expiration, 10) : null;
     }
 
