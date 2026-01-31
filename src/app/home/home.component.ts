@@ -4,6 +4,7 @@ import { PrayerTimesWidgetComponent } from './prayer-times-widget/prayer-times-w
 import { RecommendedAppsWidgetComponent } from './recommended-apps-widget/recommended-apps-widget.component';
 import { StreakDashboardComponent } from './streak-dashboard/streak-dashboard.component';
 import { InstallPwaComponent } from '../shared/install-pwa/install-pwa.component';
+import { WelcomeComponent } from './welcome/welcome.component';
 import { AuthService } from '../service/auth.service';
 
 @Component({
@@ -13,7 +14,8 @@ import { AuthService } from '../service/auth.service';
     PrayerTimesWidgetComponent,
     RecommendedAppsWidgetComponent,
     StreakDashboardComponent,
-    InstallPwaComponent
+    InstallPwaComponent,
+    WelcomeComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
