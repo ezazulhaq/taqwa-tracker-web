@@ -28,11 +28,7 @@ export class ThemeSelectorService {
     initTheme() {
         if (this.currentTheme()) {
             // Theme is already set (from localStorage), apply it
-            if (this.currentTheme() === AppTheme.DARK) {
-                this.addClassToHtml('dark');
-            } else {
-                this.removeClassFromHtml('dark');
-            }
+            this.applyTheme(this.currentTheme()!);
         } else {
             // No theme set, default to system
             this.setSystemTheme();
@@ -42,36 +38,28 @@ export class ThemeSelectorService {
     setLightTheme() {
         this.currentTheme.set(AppTheme.LIGHT);
         this.setToLocalStorage(AppTheme.LIGHT);
-        this.removeClassFromHtml('dark');
+        this.applyTheme(AppTheme.LIGHT);
     }
     setDarkTheme() {
         this.currentTheme.set(AppTheme.DARK);
         this.setToLocalStorage(AppTheme.DARK);
-        this.addClassToHtml('dark');
+        this.applyTheme(AppTheme.DARK);
     }
     setSystemTheme() {
         this.removeFromLocalStorage();
-        if (isSystemDark()) {
-            this.currentTheme.set(AppTheme.DARK);
-            this.addClassToHtml('dark');
-        } else {
-            this.currentTheme.set(AppTheme.LIGHT);
-            this.removeClassFromHtml('dark');
-        }
+        const theme = isSystemDark() ? AppTheme.DARK : AppTheme.LIGHT;
+        this.currentTheme.set(theme);
+        this.applyTheme(theme);
     }
-    private addClassToHtml(className: string) {
+    private applyTheme(theme: AppTheme) {
         if (CLIENT_RENDER) {
-            this.removeClassFromHtml(className);
-            document.documentElement.classList.add(className);
-            // Set dark theme color
-            this.meta.updateTag({ name: 'theme-color', content: '#1e293b' });
-        }
-    }
-    private removeClassFromHtml(className: string) {
-        if (CLIENT_RENDER) {
-            document.documentElement.classList.remove(className);
-            // Set light theme color (default to white)
-            this.meta.updateTag({ name: 'theme-color', content: '#ffffff' });
+            if (theme === AppTheme.DARK) {
+                document.documentElement.classList.add('dark');
+                this.meta.updateTag({ name: 'theme-color', content: '#1e293b' });
+            } else {
+                document.documentElement.classList.remove('dark');
+                this.meta.updateTag({ name: 'theme-color', content: '#ffffff' });
+            }
         }
     }
     private setToLocalStorage(theme: AppTheme) {
