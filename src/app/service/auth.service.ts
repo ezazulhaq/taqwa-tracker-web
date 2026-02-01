@@ -281,7 +281,8 @@ export class AuthService {
           tokenResponse.access_token,
           tokenResponse.refresh_token,
           tokenResponse.session_id,
-          tokenResponse.expires_in
+          tokenResponse.expires_in,
+          this.authTokenService.isUsingPersistentStorage()
         );
 
         // Reschedule next refresh

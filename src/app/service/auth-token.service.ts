@@ -60,6 +60,14 @@ export class AuthTokenService {
         return localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token');
     }
 
+    /**
+     * Determine if tokens are currently stored in localStorage (persistent)
+     * Returns true if using localStorage, false if using sessionStorage
+     */
+    isUsingPersistentStorage(): boolean {
+        return !!localStorage.getItem('access_token');
+    }
+
     setTokens(accessToken: string, refreshToken?: string, sessionId?: string, expiresIn?: number, rememberMe: boolean = false): void {
         const store = rememberMe ? localStorage : sessionStorage;
 
