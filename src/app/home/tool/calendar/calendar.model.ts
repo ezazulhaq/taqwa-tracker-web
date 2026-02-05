@@ -14,6 +14,12 @@ export interface CalendarDay {
     hasEvent: boolean;
     eventName?: string;
     eventType?: 'major' | 'important' | 'special';
+    // Pre-computed display properties for performance
+    eventBgColor?: string;
+    eventTextColor?: string;
+    eventBorderColor?: string;
+    eventColor?: string;
+    eventDetails?: IslamicEvent;
 }
 
 export interface IslamicEvent {
