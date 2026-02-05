@@ -53,7 +53,8 @@ export class ReadStreakService {
     private saveStreakData(stats: StreakStats): void {
         try {
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
-            this.streakStats.set(stats);
+            // Update signal with a shallow copy to ensure reactivity triggers
+            this.streakStats.set({ ...stats });
         } catch (error) {
             console.error('Error saving streak data:', error);
         }
@@ -99,7 +100,8 @@ export class ReadStreakService {
      * Track reading (Ayah or Hadith)
      */
     trackRead(count: number = 1, readItem?: ReadItem): void {
-        const stats = this.loadStreakData();
+        // Use in-memory signal for performance
+        const stats = this.streakStats();
         const today = this.getTodayDate();
 
         // Update or create today's activity
@@ -182,7 +184,7 @@ export class ReadStreakService {
      * Get reading activity for last N days
      */
     getRecentActivity(days: number = 7): ReadActivity[] {
-        const stats = this.loadStreakData();
+        const stats = this.streakStats();
         return stats.readingHistory.slice(-days);
     }
 
@@ -230,7 +232,7 @@ export class ReadStreakService {
      * Get recent read items across all days
      */
     getRecentReadItems(limit: number = 10): ReadItem[] {
-        const stats = this.loadStreakData();
+        const stats = this.streakStats();
         const allItems: ReadItem[] = [];
 
         // Get items from recent days, newest first
