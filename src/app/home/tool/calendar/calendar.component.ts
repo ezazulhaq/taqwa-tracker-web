@@ -64,7 +64,16 @@ export class IslamicCalendarComponent implements OnInit {
     const today = moment();
     const nextThreeMonths = moment().add(3, 'months');
 
-    const events: Array<{ event: IslamicEvent, date: moment.Moment, daysUntil: number }> = [];
+    const events: Array<{
+      event: IslamicEvent,
+      date: moment.Moment,
+      daysUntil: number,
+      // Pre-computed colors
+      eventBgColor: string,
+      eventTextColor: string,
+      eventBorderColor: string,
+      eventColor: string
+    }> = [];
 
     // Check events in the next 3 months
     for (let i = 0; i <= 90; i++) {
@@ -80,7 +89,11 @@ export class IslamicCalendarComponent implements OnInit {
         events.push({
           event,
           date: checkDate,
-          daysUntil: i
+          daysUntil: i,
+          eventBgColor: this.getEventBgColor(event.type),
+          eventTextColor: this.getEventTextColor(event.type),
+          eventBorderColor: this.getEventBorderColor(event.type),
+          eventColor: this.getEventColor(event.type)
         });
       }
     }
@@ -141,7 +154,13 @@ export class IslamicCalendarComponent implements OnInit {
       isFriday,
       hasEvent: !!event,
       eventName: event?.name,
-      eventType: event?.type
+      eventType: event?.type,
+      // Pre-computed properties
+      eventBgColor: this.getEventBgColor(event?.type),
+      eventTextColor: this.getEventTextColor(event?.type),
+      eventBorderColor: this.getEventBorderColor(event?.type),
+      eventColor: this.getEventColor(event?.type),
+      eventDetails: event
     };
   }
 
@@ -172,14 +191,7 @@ export class IslamicCalendarComponent implements OnInit {
     this.showUpcomingEvents.update(value => !value);
   }
 
-  getEventDetails(day: CalendarDay): IslamicEvent | undefined {
-    return this.islamicEvents.find(e =>
-      e.month === day.hijriMonthNumber &&
-      e.day === day.hijriDay
-    );
-  }
-
-  getEventColor(type?: 'major' | 'important' | 'special'): string {
+  private getEventColor(type?: 'major' | 'important' | 'special'): string {
     switch (type) {
       case 'major': return 'bg-amber-500';
       case 'important': return 'bg-emerald-500';
@@ -188,7 +200,7 @@ export class IslamicCalendarComponent implements OnInit {
     }
   }
 
-  getEventBorderColor(type?: 'major' | 'important' | 'special'): string {
+  private getEventBorderColor(type?: 'major' | 'important' | 'special'): string {
     switch (type) {
       case 'major': return 'border-amber-200 dark:border-amber-800';
       case 'important': return 'border-emerald-200 dark:border-emerald-800';
@@ -197,7 +209,7 @@ export class IslamicCalendarComponent implements OnInit {
     }
   }
 
-  getEventBgColor(type?: 'major' | 'important' | 'special'): string {
+  private getEventBgColor(type?: 'major' | 'important' | 'special'): string {
     switch (type) {
       case 'major': return 'bg-amber-50 dark:bg-amber-900/20';
       case 'important': return 'bg-emerald-50 dark:bg-emerald-900/20';
@@ -206,7 +218,7 @@ export class IslamicCalendarComponent implements OnInit {
     }
   }
 
-  getEventTextColor(type?: 'major' | 'important' | 'special'): string {
+  private getEventTextColor(type?: 'major' | 'important' | 'special'): string {
     switch (type) {
       case 'major': return 'text-amber-900 dark:text-amber-300';
       case 'important': return 'text-emerald-900 dark:text-emerald-300';
