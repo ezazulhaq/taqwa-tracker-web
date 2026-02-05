@@ -259,7 +259,6 @@ export class AyahComponent {
   }
 
   private getTranslatedAayahs() {
-    console.log("getTranslatedAayahs function called");
     this.isLoading.set(true);
 
     let apiCall;
