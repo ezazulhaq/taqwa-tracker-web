@@ -75,7 +75,7 @@
             @for(item of recentReads(); track item.link) {
             <div (click)="navigateToRead(item)"
                 class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 cursor-pointer transition-colors group">
-                <div class="text-2xl">{{getItemIcon(item.type)}}</div>
+                <div class="text-2xl">{{item.type | itemIcon}}</div>
                 <div class="flex-1 min-w-0">
                     <div
                         class="font-medium text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300">

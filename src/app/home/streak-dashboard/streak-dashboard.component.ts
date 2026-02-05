@@ -2,10 +2,11 @@ import { Component, computed, inject } from '@angular/core';
 import { ReadStreakService } from '../../service/read-streak.service';
 import { Router } from '@angular/router';
 import { ReadItem } from './streak-dashboard.model';
+import { ItemIconPipe } from './item-icon.pipe';
 
 @Component({
   selector: 'app-streak-dashboard',
-  imports: [],
+  imports: [ItemIconPipe],
   templateUrl: './streak-dashboard.component.html',
   styleUrl: './streak-dashboard.component.css',
 })
@@ -60,10 +61,6 @@ export class StreakDashboardComponent {
 
   navigateToRead(item: ReadItem): void {
     this.router.navigateByUrl(item.link);
-  }
-
-  getItemIcon(type: string): string {
-    return type === 'quran' ? '📖' : '📚';
   }
 
 }
