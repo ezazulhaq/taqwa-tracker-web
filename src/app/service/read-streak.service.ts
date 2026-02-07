@@ -1,19 +1,16 @@
-import { Injectable, signal, inject } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { ReadActivity, StreakStats, ReadItem } from "../home/streak-dashboard/streak-dashboard.model";
-import { StreakMigrationService } from "./streak-migration.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ReadStreakService {
     private readonly STORAGE_KEY = 'taqwa_tracker_reading_streak';
-    private readonly migrationService = inject(StreakMigrationService);
 
     // Signals for reactive updates
     streakStats = signal<StreakStats>(this.loadStreakData());
 
     constructor() {
-        // Migration happens automatically when StreakMigrationService is injected
         this.initializeStreak();
     }
 

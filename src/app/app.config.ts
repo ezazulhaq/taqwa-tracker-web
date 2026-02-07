@@ -17,11 +17,8 @@ const markedOptionsFactory = () => {
   };
 }
 
-import { StreakMigrationService } from './service/streak-migration.service';
-
 export const appConfig: ApplicationConfig = {
   providers: [
-    StreakMigrationService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
