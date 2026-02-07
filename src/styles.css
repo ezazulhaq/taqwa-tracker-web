@@ -11,8 +11,9 @@
   /* This helps with font loading behavior */
 }
 
-html, body {
-  @apply bg-gray-200 dark:bg-slate-700 min-h-screen;
+html,
+body {
+  @apply bg-white dark:bg-slate-800 min-h-screen;
 }
 
 .app-bg {

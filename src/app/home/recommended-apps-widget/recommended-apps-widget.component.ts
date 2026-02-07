@@ -26,7 +26,7 @@ export class RecommendedAppsWidgetComponent {
     module_icons.find(m => m.title === "Qur'an")!,
     module_icons.find(m => m.title === "Hadith")!,
     tool_icons.find(t => t.title === "Kaaba")!, // Qibla
-    tool_icons.find(t => t.title === "Tasbih")!
+    tool_icons.find(t => t.title === "Calculator")!
   ].filter(Boolean); // Ensure no undefined values
 
 }
