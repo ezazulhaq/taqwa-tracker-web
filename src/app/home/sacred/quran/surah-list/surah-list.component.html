@@ -15,7 +15,7 @@
     @defer(when surahList() && surahList().length > 0){
     @for (surah of surahList(); track $index) {
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-6 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer"
-        [routerLink]="['../ayah']"
+        [routerLink]="['../surah-ayah']"
         [queryParams]="{ surahNumber: surah.surah_id, surahName: surah.name_transliteration, surahName_ar: surah.name }">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">

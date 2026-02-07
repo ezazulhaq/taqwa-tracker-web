@@ -77,9 +77,19 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'quran/surah-ayah',
+        title: 'Surah',
+        loadComponent: () => import('./home/sacred/quran/surah-ayah/surah-ayah.component').then(m => m.SurahAyahComponent)
+    },
+    {
+        path: 'quran/juz-ayah',
+        title: 'Juz',
+        loadComponent: () => import('./home/sacred/quran/juz-ayah/juz-ayah.component').then(m => m.JuzAyahComponent)
+    },
+    {
         path: 'quran/ayah',
-        title: 'Ayah',
-        loadComponent: () => import('./home/sacred/quran/ayah/ayah.component').then(m => m.AyahComponent)
+        title: 'Redirecting...',
+        loadComponent: () => import('./home/sacred/quran/ayah-redirect/ayah-redirect.component').then(m => m.AyahRedirectComponent)
     },
     {
         path: 'hadith',
