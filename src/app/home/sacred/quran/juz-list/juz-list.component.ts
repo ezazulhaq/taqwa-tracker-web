@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, linkedSignal, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ListHomeComponent } from '../../../../shared/skeleton/list-home/list-home.component';
@@ -23,20 +23,28 @@ export class JuzListComponent implements OnInit {
 
     private readonly quranService = inject(QuranService);
 
-    juzList = signal<Juz[]>([]);
+    private readonly rawJuzList = signal<Juz[]>([]);
 
     isAscending = signal<boolean>(true);
 
+    juzList = computed(() => {
+        const list = [...this.rawJuzList()];
+        return list.sort((a, b) => {
+            const comparison = a.juz_id - b.juz_id;
+            return this.isAscending() ? comparison : -comparison;
+        });
+    });
+
     ngOnInit(): void {
-        this.getJuzList();
+        this.loadJuzList();
     }
 
-    getJuzList = linkedSignal(() => {
+    private loadJuzList(): void {
         this.quranService.getAllJuz()
             .subscribe(
                 {
                     next: (data: any) => {
-                        this.juzList.set(data);
+                        this.rawJuzList.set(data);
                     },
                     error: (error: any) => console.log(error.error),
                     complete: () => {
@@ -44,17 +52,9 @@ export class JuzListComponent implements OnInit {
                     }
                 }
             );
-    });
+    }
 
     toggleSort() {
-        this.isAscending.set(!this.isAscending());
-        this.juzList.set(
-            this.juzList().sort(
-                (a, b) => {
-                    const comparison = a.juz_id - b.juz_id;
-                    return this.isAscending() ? comparison : -comparison;
-                }
-            )
-        );
+        this.isAscending.update(asc => !asc);
     }
 }
