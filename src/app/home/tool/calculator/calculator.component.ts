@@ -1,6 +1,8 @@
 
+
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { ZakatService } from '../../../service/zakat.service';
 import { AuthService } from '../../../service/auth.service';
@@ -28,6 +30,7 @@ export class CalculatorComponent {
   public zakatService = inject(ZakatService);
   public authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private router = inject(Router);
   public isSaving = signal(false);
 
   formatCurrency(value: number): string {
@@ -55,6 +58,10 @@ export class CalculatorComponent {
         this.toastService.show('An error occurred while saving.', 'error');
       }
     });
+  }
+
+  navigateToContributions() {
+    this.router.navigate(['/calculator/contributions']);
   }
 }
 

@@ -1,8 +1,17 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError, of, Observable } from 'rxjs';
+import { map, catchError, of, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AssetCategory, Currency, Liabilities, ZakatState } from '../home/tool/calculator/calculator.model';
+import {
+    AssetCategory,
+    Currency,
+    Liabilities,
+    ZakatState,
+    ZakatContribution,
+    ContributionCreate,
+    ContributionSummary,
+    ContributionListResponse
+} from '../home/tool/calculator/calculator.model';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -51,6 +60,10 @@ export class ZakatService {
     selectedCurrencyCode = signal<string>(this.currencies[0].code);
 
     private readonly authService = inject(AuthService);
+
+    // Contribution State Signals
+    contributions = signal<ZakatContribution[]>([]);
+    contributionSummary = signal<ContributionSummary | null>(null);
 
     // Derived Signals
     selectedCurrency = computed(() =>
@@ -208,6 +221,80 @@ export class ZakatService {
                 map(() => true),
                 catchError(error => {
                     console.error('Error saving calculation:', error);
+                    return of(false);
+                })
+            );
+    }
+
+    // Contribution Methods
+    addContribution(contribution: ContributionCreate): Observable<boolean> {
+        return this.httpClient.post<ZakatContribution>(`${environment.apiBaseUrl}/calculator/zakat/contributions`, contribution)
+            .pipe(
+                tap(() => {
+                    // Refresh contributions and summary after adding
+                    this.loadContributions();
+                    this.loadContributionSummary();
+                }),
+                map(() => true),
+                catchError(error => {
+                    console.error('Error adding contribution:', error);
+                    return of(false);
+                })
+            );
+    }
+
+    loadContributions(page: number = 1, pageSize: number = 20): void {
+        this.httpClient.get<ContributionListResponse>(
+            `${environment.apiBaseUrl}/calculator/zakat/contributions?page=${page}&page_size=${pageSize}`
+        )
+            .pipe(
+                catchError(error => {
+                    console.error('Error loading contributions:', error);
+                    return of({ contributions: [], total_count: 0, page: 1, page_size: 20, total_pages: 0 });
+                })
+            )
+            .subscribe(response => {
+                // Convert date strings to Date objects
+                const contributions = response.contributions.map(c => ({
+                    ...c,
+                    contribution_date: new Date(c.contribution_date),
+                    created_at: new Date(c.created_at)
+                }));
+                this.contributions.set(contributions);
+            });
+    }
+
+    loadContributionSummary(): void {
+        this.httpClient.get<ContributionSummary>(`${environment.apiBaseUrl}/calculator/zakat/contributions/summary`)
+            .pipe(
+                catchError(error => {
+                    console.error('Error loading contribution summary:', error);
+                    return of(null);
+                })
+            )
+            .subscribe(summary => {
+                if (summary && summary.last_contribution_date) {
+                    summary.last_contribution_date = new Date(summary.last_contribution_date);
+                }
+                this.contributionSummary.set(summary);
+            });
+    }
+
+    reverseContribution(contributionId: string, notes?: string): Observable<boolean> {
+        const payload = notes ? { notes } : {};
+        return this.httpClient.post<ZakatContribution>(
+            `${environment.apiBaseUrl}/calculator/zakat/contributions/${contributionId}/reverse`,
+            payload
+        )
+            .pipe(
+                tap(() => {
+                    // Reload contributions and summary after successful reversal
+                    this.loadContributions();
+                    this.loadContributionSummary();
+                }),
+                map(() => true),
+                catchError(error => {
+                    console.error('Error reversing contribution:', error);
                     return of(false);
                 })
             );
