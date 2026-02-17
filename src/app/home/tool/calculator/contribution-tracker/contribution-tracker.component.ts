@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ZakatService } from '../../../../service/zakat.service';
 import { TitleComponent } from '../../../../shared/title/title.component';
+import { PopupComponent } from '../../../../shared/popup/popup.component';
 import { ContributionCreate } from '../calculator.model';
 
 @Component({
@@ -10,7 +11,8 @@ import { ContributionCreate } from '../calculator.model';
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        TitleComponent
+        TitleComponent,
+        PopupComponent
     ],
     templateUrl: './contribution-tracker.component.html',
     styleUrl: './contribution-tracker.component.css',
@@ -29,6 +31,9 @@ export class ContributionTrackerComponent implements OnInit {
     reversingId = signal<string | null>(null);
     currentPage = signal(1);
     pageSize = 20;
+    
+    @ViewChild('confirmPopup') confirmPopup!: PopupComponent;
+    pendingReversal = signal<{id: string, amount: number, date: Date} | null>(null);
 
     // Expose Math to template
     Math = Math;
@@ -115,32 +120,34 @@ export class ContributionTrackerComponent implements OnInit {
     }
 
     reverseContribution(contributionId: string, amount: number, date: Date): void {
-        const formattedDate = this.formatDate(date);
-        const formattedAmount = this.formatCurrency(amount);
-
-        const confirmed = confirm(
-            `Are you sure you want to reverse this contribution?\n\n` +
-            `Amount: ${formattedAmount}\n` +
-            `Date: ${formattedDate}\n\n` +
-            `This will create an offsetting entry and cannot be undone.`
-        );
-
-        if (confirmed) {
-            this.reversingId.set(contributionId);
-
-            this.zakatService.reverseContribution(contributionId).subscribe({
-                next: (success) => {
-                    this.reversingId.set(null);
-                    if (!success) {
-                        alert('Failed to reverse contribution. Please try again.');
-                    }
-                },
-                error: () => {
-                    this.reversingId.set(null);
-                    alert('An error occurred while reversing the contribution.');
+        this.pendingReversal.set({id: contributionId, amount, date});
+        this.confirmPopup.show();
+    }
+    
+    confirmReverse(): void {
+        const reversal = this.pendingReversal();
+        if (!reversal) return;
+        
+        this.reversingId.set(reversal.id);
+        this.confirmPopup.close();
+        
+        this.zakatService.reverseContribution(reversal.id).subscribe({
+            next: (success) => {
+                this.reversingId.set(null);
+                if (!success) {
+                    alert('Failed to reverse contribution. Please try again.');
                 }
-            });
-        }
+            },
+            error: () => {
+                this.reversingId.set(null);
+                alert('An error occurred while reversing the contribution.');
+            }
+        });
+    }
+    
+    cancelReverse(): void {
+        this.pendingReversal.set(null);
+        this.confirmPopup.close();
     }
 
     isReversing(contributionId: string): boolean {
