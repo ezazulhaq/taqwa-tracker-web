@@ -1,0 +1,33 @@
+.popup-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
+    backdrop-filter: blur(2px);
+}
+
+.popup-container {
+    @apply rounded-lg max-w-md w-full max-h-[90vh] overflow-hidden;
+    animation: popupSlideIn 0.2s ease-out;
+}
+
+.popup-header {
+    @apply flex items-center justify-between p-4;
+}
+
+.popup-content {
+    @apply p-4 overflow-y-auto;
+}
+
+.popup-actions {
+    @apply p-4 flex gap-2 justify-end;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

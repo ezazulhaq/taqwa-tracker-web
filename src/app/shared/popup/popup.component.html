@@ -1,0 +1,30 @@
+@if (isVisible()) {
+<div class="popup-overlay" (click)="onOverlayClick($event)">
+    <div class="popup-container bg-white dark:bg-gray-800 shadow-xl" (click)="$event.stopPropagation()">
+        @if (title()) {
+        <div class="popup-header border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ title() }}</h3>
+            @if (showCloseButton()) {
+            <button (click)="close()"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            }
+        </div>
+        }
+
+        <div class="popup-content text-gray-700 dark:text-gray-300">
+            <ng-content></ng-content>
+        </div>
+
+        @if (showActions()) {
+        <div class="popup-actions border-t border-gray-200 dark:border-gray-700">
+            <ng-content select="[slot=actions]"></ng-content>
+        </div>
+        }
+    </div>
+</div>
+}
