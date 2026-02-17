@@ -1,0 +1,342 @@
+/* Remove custom background, will use app-bg class from host */
+.contribution-tracker {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Summary Cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-content h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card-content .amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.card-content small {
+  font-size: 0.875rem;
+}
+
+.summary-card.zakat-due {
+  border-left: 4px solid #3b82f6;
+}
+
+.summary-card.contributed {
+  border-left: 4px solid #10b981;
+}
+
+.summary-card.remaining {
+  border-left: 4px solid #f59e0b;
+}
+
+.summary-card.remaining.overpaid {
+  border-left: 4px solid #8b5cf6;
+}
+
+/* Progress Section */
+.progress-section {
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.percentage {
+  font-size: 1.25rem;
+  color: #3b82f6;
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+  transition: width 0.5s ease;
+  border-radius: 6px;
+}
+
+/* Form Section */
+.form-section {
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.contribution-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group .error {
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.success-message {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* History Section */
+.history-section {
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+.contributions-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 120px 150px 100px 1fr 120px;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.table-header {
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table-row {
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-row:hover {
+  transform: translateX(4px);
+}
+
+.col-amount {
+  font-weight: 600;
+}
+
+.col-type {
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.col-actions {
+  text-align: center;
+}
+
+.col-notes {
+  font-size: 0.875rem;
+}
+
+/* Reversed/Reversal Styling */
+.table-row.reversed-row {
+  opacity: 0.6;
+  background: repeating-linear-gradient(45deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 10px,
+      rgba(0, 0, 0, 0.06) 10px,
+      rgba(0, 0, 0, 0.06) 20px);
+}
+
+.dark .table-row.reversed-row {
+  background: repeating-linear-gradient(45deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(255, 255, 255, 0.03) 10px,
+      rgba(255, 255, 255, 0.06) 10px,
+      rgba(255, 255, 255, 0.06) 20px);
+}
+
+.table-row.reversal-row {
+  border-left: 4px solid #dc2626;
+}
+
+.dark .table-row.reversal-row {
+  border-left: 4px solid #ef4444;
+}
+
+.no-contributions,
+.no-calculation {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contribution-form {
+    grid-template-columns: 1fr;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    padding: 1.5rem;
+  }
+
+  .col-date::before {
+    content: 'Date: ';
+    font-weight: 600;
+  }
+
+  .col-amount::before {
+    content: 'Amount: ';
+    font-weight: 600;
+  }
+
+  .col-type::before {
+    content: 'Type: ';
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .col-notes::before {
+    content: 'Notes: ';
+    font-weight: 600;
+  }
+
+  .col-actions::before {
+    content: 'Actions: ';
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+
+  .col-type,
+  .col-actions {
+    text-align: left;
+  }
+}

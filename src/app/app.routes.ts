@@ -132,6 +132,12 @@ export const routes: Routes = [
         loadComponent: () => import('./home/tool/calculator/calculator.component').then(m => m.CalculatorComponent)
     },
     {
+        path: 'calculator/contributions',
+        title: 'Zakat Contribution Tracker',
+        loadComponent: () => import('./home/tool/calculator/contribution-tracker/contribution-tracker.component').then(m => m.ContributionTrackerComponent),
+        canActivate: [authGuard]
+    },
+    {
         path: 'games/quiz',
         title: 'Islamic Quiz Challenge',
         loadComponent: () => import('./home/games/quiz/quiz.component').then(m => m.QuizComponent)
