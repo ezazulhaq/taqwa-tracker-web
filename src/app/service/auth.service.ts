@@ -3,12 +3,8 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { AuthSession, LoginCredentials, UserMetaData, RegisterCredentials, User, ApiUser, LoginResponse, SessionInfo, UserPreferences } from '../model/auth.model';
-import { Observable } from 'rxjs/internal/Observable';
-import { map } from 'rxjs/internal/operators/map';
-import { catchError } from 'rxjs/internal/operators/catchError';
-import { throwError } from 'rxjs/internal/observable/throwError';
-import { tap } from 'rxjs/internal/operators/tap';
-import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError, tap, switchMap, shareReplay, finalize } from 'rxjs/operators';
 import { RateLimitService } from './rate-limit.service';
 import { SanitizationService } from './sanitization.service';
 import { AuthTokenService } from './auth-token.service';
@@ -26,7 +22,7 @@ export class AuthService {
   private initializationPromise: Promise<void>;
   private readonly API_BASE_URL = environment.apiBaseUrl;
   private refreshTimer: any = null;
-  private isRefreshing = false;
+  private refreshObservable: Observable<AuthSession> | null = null;
 
   // Delegate signals to authTokenService
   currentUser = this.authTokenService.currentUser;
@@ -267,14 +263,12 @@ export class AuthService {
       return throwError(() => new Error('No refresh token available'));
     }
 
-    // Prevent concurrent refresh attempts
-    if (this.isRefreshing) {
-      return throwError(() => new Error('Token refresh already in progress'));
+    // Prevent concurrent refresh attempts by returning the existing observable
+    if (this.refreshObservable) {
+      return this.refreshObservable;
     }
 
-    this.isRefreshing = true;
-
-    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
+    this.refreshObservable = this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
       map(tokenResponse => {
         // Store new tokens with expiration
         this.authTokenService.setTokens(
@@ -287,7 +281,6 @@ export class AuthService {
 
         // Reschedule next refresh
         this.startTokenRefreshTimer();
-        this.isRefreshing = false;
 
         return {
           user: this.currentUser(),
@@ -296,14 +289,19 @@ export class AuthService {
           refreshToken: tokenResponse.refresh_token || refreshToken
         };
       }),
+      shareReplay(1),
+      finalize(() => {
+        this.refreshObservable = null;
+      }),
       catchError(error => {
         // Clear user state on refresh failure
-        this.isRefreshing = false;
         this.clearTokenRefreshTimer();
         this.authTokenService.clearAuthState();
         return throwError(() => new Error(error.message || 'Failed to refresh session'));
       })
     );
+
+    return this.refreshObservable;
   }
 
   // Security methods
