@@ -268,7 +268,9 @@ export class AuthService {
       return this.refreshObservable;
     }
 
-    this.refreshObservable = this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, { refresh_token: refreshToken }).pipe(
+    const params = new HttpParams().set('refresh_token', refreshToken);
+
+    this.refreshObservable = this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, null, { params }).pipe(
       map(tokenResponse => {
         // Store new tokens with expiration
         this.authTokenService.setTokens(
