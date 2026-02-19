@@ -97,10 +97,18 @@ export class PrayerTimesWidgetComponent {
       currentPrayerIndex = nextPrayerIndex - 1;
     }
 
-    return prayerList.map((p, index) => ({
-      ...p,
-      isCurrent: index === currentPrayerIndex
-    }));
+    return prayerList.map((p, index) => {
+      const isCurrent = index === currentPrayerIndex;
+      return {
+        ...p,
+        isCurrent,
+        cardClass: isCurrent
+          ? 'bg-emerald-600 shadow-md scale-105 border-0'
+          : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700',
+        nameClass: isCurrent ? 'text-white' : 'text-slate-400 dark:text-slate-500',
+        timeClass: isCurrent ? 'text-white' : 'text-slate-800 dark:text-slate-200'
+      };
+    });
   });
 
   // Computed signal for time remaining until next prayer
@@ -133,14 +141,4 @@ export class PrayerTimesWidgetComponent {
     return new Date(dateObj);
   }
 
-  getCardClass(isCurrent: boolean): string {
-    return isCurrent
-      ? 'bg-emerald-600 shadow-md scale-105 border-0'
-      : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700';
-  }
-
-  getTextClass(isCurrent: boolean, type: 'name' | 'time'): string {
-    if (isCurrent) return 'text-white';
-    return type === 'name' ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200';
-  }
 }
