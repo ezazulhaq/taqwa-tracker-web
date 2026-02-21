@@ -7,6 +7,13 @@ import { AuthService } from '../../../../service/auth.service';
 import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 import { Ayah, BookMarkedSurah } from '../quran.model';
+
+export interface SurahGroup {
+    surah_no: number;
+    surah_name: string;
+    surah_name_ar: string;
+    ayahs: Ayah[];
+}
 import { QuranService } from '../quran.service';
 import { AyahSkeletonComponent } from '../../../../shared/skeleton/ayah-skeleton/ayah-skeleton.component';
 import { AyahCardComponent } from '../ayah/ayah-card/ayah-card.component';
@@ -52,9 +59,44 @@ export class JuzAyahComponent {
 
     // Translation is hidden by default for Juz view
     isTranslationVisible = signal<boolean>(false);
-    selectedAyahNumber = signal<string>(''); // For dropdown selection
+
+    // ── Custom Jump-to-Ayah dropdown state ────────────────────────
+    @ViewChild('dropdownRef') dropdownRef!: ElementRef;
+    isDropdownOpen = signal<boolean>(false);
+    dropdownSearch = signal<string>('');
+    selectedAyahLabel = signal<string>('');
+    selectedAyahNumber = signal<string>(''); // kept for scroll logic compatibility
+
+    filteredAyahs = computed(() => {
+        const q = this.dropdownSearch().toLowerCase().trim();
+        if (!q) return this.ayahs();
+        return this.ayahs().filter(a =>
+            a.surah_name.toLowerCase().includes(q) ||
+            String(a.ayah_no).includes(q)
+        );
+    });
 
     translator = computed(() => this.quranService.quranTranslator());
+
+    /** Ayahs grouped by surah, preserving Quran order */
+    ayahsBySurah = computed<SurahGroup[]>(() => {
+        const groups: SurahGroup[] = [];
+        const map = new Map<number, SurahGroup>();
+        for (const ayah of this.ayahs()) {
+            if (!map.has(ayah.surah_no)) {
+                const group: SurahGroup = {
+                    surah_no: ayah.surah_no,
+                    surah_name: ayah.surah_name,
+                    surah_name_ar: ayah.surah_name_ar,
+                    ayahs: []
+                };
+                map.set(ayah.surah_no, group);
+                groups.push(group);
+            }
+            map.get(ayah.surah_no)!.ayahs.push(ayah);
+        }
+        return groups;
+    });
 
     isAuthenticated = computed(() => this.authService.isAuthenticated());
 
@@ -171,9 +213,46 @@ export class JuzAyahComponent {
     }
 
     /**
-     * Handle ayah selection from dropdown
-     * Expects format: "surah_no:ayah_no"
+     * Toggle the custom dropdown open/closed.
      */
+    toggleDropdown(): void {
+        this.isDropdownOpen.update(v => !v);
+        if (this.isDropdownOpen()) {
+            this.dropdownSearch.set('');
+        }
+    }
+
+    /**
+     * Handle Escape key to close the dropdown.
+     */
+    @HostListener('document:keydown.escape')
+    closeDropdownOnEscape(): void {
+        this.isDropdownOpen.set(false);
+    }
+
+    /**
+     * Close dropdown when clicking outside it.
+     */
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: Event): void {
+        if (this.dropdownRef && !this.dropdownRef.nativeElement.contains(event.target)) {
+            this.isDropdownOpen.set(false);
+        }
+    }
+
+    /**
+     * Select an ayah from the custom dropdown and scroll to it.
+     */
+    selectAyah(ayah: Ayah): void {
+        const value = `${ayah.surah_no}:${ayah.ayah_no}`;
+        this.selectedAyahNumber.set(value);
+        this.selectedAyahLabel.set(`${ayah.surah_name} : ${ayah.ayah_no}`);
+        this.isDropdownOpen.set(false);
+        this.dropdownSearch.set('');
+        this.scrollToAyah(ayah.surah_no, ayah.ayah_no);
+    }
+
+    /** @deprecated kept for compat – use selectAyah() instead */
     onAyahSelect(value: string): void {
         if (value && value !== '') {
             const [surahNo, ayahNo] = value.split(':').map(Number);
