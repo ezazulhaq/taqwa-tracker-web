@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { LoginCredentials } from '../../model/auth.model';
@@ -13,14 +13,15 @@ import { AuthService } from '../../service/auth.service';
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "app-bg"
   }
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  error = '';
-  loading = false;
+  error = signal('');
+  loading = signal(false);
   returnUrl: string;
 
   private fb = inject(FormBuilder);
@@ -31,8 +32,7 @@ export class LoginComponent {
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     // Get return URL from route parameters or default to home
@@ -44,13 +44,12 @@ export class LoginComponent {
       return;
     }
 
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     const credentials: LoginCredentials = {
       email: this.loginForm.controls['email'].value,
-      password: this.loginForm.controls['password'].value,
-      rememberMe: this.loginForm.controls['rememberMe'].value,
+      password: this.loginForm.controls['password'].value
     };
 
     this.authService.login(credentials).subscribe({
@@ -58,8 +57,8 @@ export class LoginComponent {
         this.router.navigate([this.returnUrl]);
       },
       error: (err) => {
-        this.error = err.message || 'Login failed';
-        this.loading = false;
+        this.error.set(err.message || 'Login failed');
+        this.loading.set(false);
       }
     });
   }

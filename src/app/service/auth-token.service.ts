@@ -8,7 +8,7 @@ export class AuthTokenService {
     // Use signals for reactive state management
     currentUser = signal<User | null>(null);
     userMetaData = signal<UserMetaData | null>(null);
-    isAuthenticated = signal<boolean>(!!(localStorage.getItem('access_token') || sessionStorage.getItem('access_token')));
+    isAuthenticated = signal<boolean>(!!localStorage.getItem('access_token'));
 
     // Token expiration buffer (5 minutes before actual expiration)
     private readonly TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000;
@@ -36,12 +36,8 @@ export class AuthTokenService {
         this.currentUser.set(null);
         this.userMetaData.set(null);
         this.isAuthenticated.set(false);
-        const stores = [localStorage, sessionStorage];
-        stores.forEach(store => {
-            store.removeItem('access_token');
-            store.removeItem('refresh_token');
-            store.removeItem('session_id');
-            store.removeItem('token_expiration');
+        ['access_token', 'refresh_token', 'session_id', 'token_expiration'].forEach(key => {
+            localStorage.removeItem(key);
         });
     }
 
@@ -53,46 +49,40 @@ export class AuthTokenService {
     }
 
     getAccessToken(): string | null {
-        return localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        return localStorage.getItem('access_token');
     }
 
     getRefreshToken(): string | null {
-        return localStorage.getItem('refresh_token') || sessionStorage.getItem('refresh_token');
+        return localStorage.getItem('refresh_token');
     }
 
     /**
-     * Determine if tokens are currently stored in localStorage (persistent)
-     * Returns true if using localStorage, false if using sessionStorage
+     * Tokens are always stored in localStorage for persistence across browser restarts.
      */
     isUsingPersistentStorage(): boolean {
-        return !!localStorage.getItem('access_token');
+        return true;
     }
 
-    setTokens(accessToken: string, refreshToken?: string, sessionId?: string, expiresIn?: number, rememberMe: boolean = false): void {
-        const store = rememberMe ? localStorage : sessionStorage;
-
-        // Clear other store to avoid stale tokens
-        const otherStore = rememberMe ? sessionStorage : localStorage;
-        ['access_token', 'refresh_token', 'session_id', 'token_expiration'].forEach(key => otherStore.removeItem(key));
-
-        store.setItem('access_token', accessToken);
+    setTokens(accessToken: string, refreshToken?: string, sessionId?: string, expiresIn?: number): void {
+        // Always persist in localStorage so sessions survive browser restarts / PWA kills
+        localStorage.setItem('access_token', accessToken);
         if (refreshToken) {
-            store.setItem('refresh_token', refreshToken);
+            localStorage.setItem('refresh_token', refreshToken);
         }
         if (sessionId) {
-            store.setItem('session_id', sessionId);
+            localStorage.setItem('session_id', sessionId);
         }
 
         // Store token expiration time (default to 1 hour if not provided)
         const expirationMs = expiresIn ? expiresIn * 1000 : 60 * 60 * 1000;
         const expirationTime = Date.now() + expirationMs;
-        store.setItem('token_expiration', expirationTime.toString());
+        localStorage.setItem('token_expiration', expirationTime.toString());
 
         this.isAuthenticated.set(true);
     }
 
     getSessionId(): string | null {
-        return localStorage.getItem('session_id') || sessionStorage.getItem('session_id');
+        return localStorage.getItem('session_id');
     }
 
     /**
@@ -101,7 +91,9 @@ export class AuthTokenService {
     isTokenExpired(): boolean {
         const expirationTime = this.getTokenExpirationTime();
         if (!expirationTime) {
-            return false; // If no expiration time, assume token is valid
+            // No expiration stored — fail safe: treat as expired and force a refresh.
+            // This prevents a stale or missing timestamp from keeping an expired token alive.
+            return true;
         }
         return Date.now() >= expirationTime;
     }
@@ -122,7 +114,7 @@ export class AuthTokenService {
      * Get the token expiration timestamp
      */
     getTokenExpirationTime(): number | null {
-        const expiration = localStorage.getItem('token_expiration') || sessionStorage.getItem('token_expiration');
+        const expiration = localStorage.getItem('token_expiration');
         return expiration ? parseInt(expiration, 10) : null;
     }
 
