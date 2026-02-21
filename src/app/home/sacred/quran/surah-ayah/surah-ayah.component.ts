@@ -51,7 +51,19 @@ export class SurahAyahComponent {
     isLoading = signal<boolean>(false);
 
     isTranslationVisible = signal<boolean>(true);
-    selectedAyahNumber = signal<string>(''); // For dropdown selection
+
+    // ── Custom Jump-to-Ayah dropdown state ────────────────────────
+    @ViewChild('dropdownRef') dropdownRef!: ElementRef;
+    isDropdownOpen = signal<boolean>(false);
+    dropdownSearch = signal<string>('');
+    selectedAyahLabel = signal<string>('');
+    selectedAyahNumber = signal<string>(''); // kept for scroll logic compatibility
+
+    filteredAyahs = computed(() => {
+        const q = this.dropdownSearch().toLowerCase().trim();
+        if (!q) return this.ayahs();
+        return this.ayahs().filter(a => String(a.ayah_no).includes(q));
+    });
 
     translator = computed(() => this.quranService.quranTranslator());
 
@@ -170,9 +182,37 @@ export class SurahAyahComponent {
     }
 
     /**
-     * Handle ayah selection from dropdown
-     * Expects format: "surah_no:ayah_no"
+     * Toggle the custom dropdown open/closed.
      */
+    toggleDropdown(): void {
+        this.isDropdownOpen.update(v => !v);
+        if (this.isDropdownOpen()) {
+            this.dropdownSearch.set('');
+        }
+    }
+
+    @HostListener('document:keydown.escape')
+    closeDropdownOnEscape(): void {
+        this.isDropdownOpen.set(false);
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: Event): void {
+        if (this.dropdownRef && !this.dropdownRef.nativeElement.contains(event.target)) {
+            this.isDropdownOpen.set(false);
+        }
+    }
+
+    selectAyah(ayah: Ayah): void {
+        const value = `${ayah.surah_no}:${ayah.ayah_no}`;
+        this.selectedAyahNumber.set(value);
+        this.selectedAyahLabel.set(`Ayah ${ayah.ayah_no}`);
+        this.isDropdownOpen.set(false);
+        this.dropdownSearch.set('');
+        this.scrollToAyah(ayah.surah_no, ayah.ayah_no);
+    }
+
+    /** @deprecated kept for compat */
     onAyahSelect(value: string): void {
         if (value && value !== '') {
             const [surahNo, ayahNo] = value.split(':').map(Number);

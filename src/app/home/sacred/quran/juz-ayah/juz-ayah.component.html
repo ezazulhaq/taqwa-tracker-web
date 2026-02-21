@@ -1,59 +1,143 @@
 <app-title [title]="juzName_en()" [subTitle]="juzName()" [routerLink]="'/quran/juz'"></app-title>
 
 <div #stickyCheckbox class="w-full mb-6 px-4">
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-stone-200 dark:border-slate-600 p-3">
-        <div class="flex justify-between items-center space-x-4">
-            <!-- Translation Toggle -->
-            <div class="flex items-center">
+    <div class="toolbar-card">
+        <div class="flex justify-between items-center gap-3">
 
-                <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" [(ngModel)]="isTranslationVisible" class="sr-only" />
-                    <div class="relative">
-                        <div class="w-10 h-6 bg-stone-300 dark:bg-slate-600 rounded-full shadow-inner transition-colors"
-                            [class.bg-emerald-500]="isTranslationVisible()"
-                            [class.dark:bg-emerald-400]="isTranslationVisible()"></div>
-                        <div class="absolute w-4 h-4 bg-white rounded-full shadow top-1 left-1 transition-transform"
-                            [class.translate-x-4]="isTranslationVisible()"></div>
-                    </div>
-                    <span class="ml-3 text-stone-700 dark:text-stone-200 font-medium">{{ isTranslationVisible() ?
-                        'Translation' : 'Reading' }}</span>
-                </label>
-            </div>
+            <!-- ── Mode Toggle (segmented pill) ─────────────────── -->
+            <label class="mode-toggle" aria-label="Switch reading mode">
+                <input type="checkbox" [(ngModel)]="isTranslationVisible" class="sr-only" />
 
-            <!-- Ayah Navigation Dropdown -->
-            <div class="relative">
-                <select id="ayahSelect" [(ngModel)]="selectedAyahNumber" (ngModelChange)="onAyahSelect($event)"
-                    class="w-32 px-3 py-1 text-sm border border-stone-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-stone-800 dark:text-stone-200 focus:border-emerald-500 focus:outline-none appearance-none">
-                    <option value="">Go to Ayah</option>
-                    @for (ayah of ayahs(); track ayah.surah_no + '-' + ayah.ayah_no) {
-                    <option [value]="ayah.surah_no + ':' + ayah.ayah_no">
-                        {{ ayah.surah_name }} : {{ ayah.ayah_no }}
-                    </option>
-                    }
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg class="w-3 h-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                <!-- Reading pill -->
+                <span class="mode-pill" [class.mode-pill--active]="!isTranslationVisible()">
+                    <!-- book-open icon -->
+                    <svg class="mode-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                     </svg>
+                </span>
+
+                <!-- Translation pill -->
+                <span class="mode-pill" [class.mode-pill--active]="isTranslationVisible()">
+                    <!-- language/globe icon -->
+                    <svg class="mode-pill__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="2" y1="12" x2="22" y2="12" />
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                </span>
+            </label>
+
+            <!-- ── Jump-to Ayah (custom dropdown) ─────────────── -->
+            <div #dropdownRef class="cdd-wrapper" [class.cdd-wrapper--open]="isDropdownOpen()">
+
+                <!-- Trigger button -->
+                <button type="button" class="cdd-trigger" (click)="toggleDropdown()"
+                    [attr.aria-expanded]="isDropdownOpen()" aria-haspopup="listbox">
+
+                    <!-- navigation icon -->
+                    <svg class="cdd-trigger__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+
+                    <span class="cdd-trigger__label">
+                        {{ selectedAyahLabel() || 'Jump to Ayah' }}
+                    </span>
+
+                    <!-- chevron rotates when open -->
+                    <svg class="cdd-trigger__chevron" [class.cdd-trigger__chevron--open]="isDropdownOpen()"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </button>
+
+                <!-- ─── Dropdown Panel ─────────────────────────── -->
+                @if (isDropdownOpen()) {
+                <div class="cdd-panel" role="listbox" aria-label="Select Ayah">
+
+                    <!-- Search field -->
+                    <div class="cdd-search-wrap">
+                        <svg class="cdd-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <input #searchInput type="text" class="cdd-search" placeholder="Surah name or ayah …"
+                            [value]="dropdownSearch()" (input)="dropdownSearch.set($any($event.target).value)"
+                            autocomplete="off" />
+                    </div>
+
+                    <!-- Options list -->
+                    <ul class="cdd-list">
+                        @if (filteredAyahs().length === 0) {
+                        <li class="cdd-empty">No ayahs found</li>
+                        }
+                        @for (ayah of filteredAyahs(); track ayah.surah_no + '-' + ayah.ayah_no) {
+                        <li class="cdd-option"
+                            [class.cdd-option--selected]="selectedAyahNumber() === ayah.surah_no + ':' + ayah.ayah_no"
+                            role="option"
+                            [attr.aria-selected]="selectedAyahNumber() === ayah.surah_no + ':' + ayah.ayah_no"
+                            (click)="selectAyah(ayah)">
+
+                            <!-- Surah names (Arabic + English stacked) -->
+                            <span class="cdd-option__names">
+                                <span class="cdd-option__surah-ar font-indopak">{{ ayah.surah_name_ar }}</span>
+                                <span class="cdd-option__surah-en">{{ ayah.surah_name }}</span>
+                            </span>
+
+                            <!-- Ayah badge -->
+                            <span class="cdd-option__badge">{{ ayah.ayah_no }}</span>
+                        </li>
+                        }
+                    </ul>
                 </div>
+                }
             </div>
+
         </div>
     </div>
 </div>
-<div class="flex justify-center items-center px-2 py-4 font-indopak text-2xl md:text-4xl">
-    بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-</div>
+
 @if (isLoading()) {
 <app-ayah-skeleton [isTranslationVisible]="isTranslationVisible()"></app-ayah-skeleton>
 } @else {
+
 @if (!isTranslationVisible()) {
-<!-- Reader Mode: Arabic Only -->
-<div #ayahContainer class="pb-6 px-4">
+<!-- Reader Mode: Arabic Only — one container per Surah -->
+<div #ayahContainer class="flex flex-col gap-6 pb-6 px-4">
+    @for (group of ayahsBySurah(); track group.surah_no) {
+
+    <!-- Surah Header -->
+    <div class="surah-header">
+        <div class="surah-header-inner">
+            <div class="flex flex-col items-center gap-1">
+                <span class="surah-name-ar font-indopak">{{ group.surah_name_ar }}</span>
+                <span class="surah-name-en">{{ group.surah_name }}</span>
+            </div>
+            <span class="ayah-count">{{ group.ayahs.length }} Ayahs</span>
+        </div>
+    </div>
+
+    <!-- Bismillah (skip for Surah 1 Al-Fatiha & Surah 9 At-Tawbah) -->
+    @if (group.surah_no !== 9) {
+    <div
+        class="flex justify-center items-center px-2 py-3 font-indopak text-2xl md:text-4xl text-stone-700 dark:text-stone-300">
+        بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+    </div>
+    }
+
+    <!-- Arabic Text Block -->
     <div
         class="w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-8">
         <div dir="rtl" [style.fontSize.px]="quranService.ayahFontSize()"
             class="text-right font-indopak leading-[60px] md:leading-[70px] text-stone-800 dark:text-stone-200">
-            @for (ayah of ayahs(); track $index) {
+            @for (ayah of group.ayahs; track $index) {
             <span class="cursor-pointer" [id]="'ayah-' + ayah.surah_no + '-' + ayah.ayah_no"
                 (click)="navigateToTranslation(ayah)">
                 {{ayah.arabic_text}}
@@ -65,17 +149,47 @@
             }
         </div>
     </div>
+
+    }
 </div>
+
 } @else {
-<!-- Card Mode: Full Layout -->
-<div #ayahContainer class="flex flex-col space-y-6 justify-center items-center pb-6 px-4">
-    @for (ayah of ayahs(); track $index) {
-    <app-ayah-card [id]="'ayah-' + ayah.surah_no + '-' + ayah.ayah_no" class="w-full" [ayah]="ayah"
-        [surahNumber]="ayah.surah_no + ''" [surahName]="ayah.surah_name" [surahName_ar]="ayah.surah_name_ar"
-        [isTranslationVisible]="isTranslationVisible()" [bookmarkContext]="'juz'" [juzId]="+juzNumber()"
-        (onReadClick)="navigateToReading(ayah)">
-    </app-ayah-card>
+<!-- Card Mode: Full Layout — one section per Surah -->
+<div #ayahContainer class="flex flex-col gap-8 pb-6 px-4">
+    @for (group of ayahsBySurah(); track group.surah_no) {
+
+    <!-- Surah Header -->
+    <div class="surah-header">
+        <div class="surah-header-inner">
+            <div class="flex flex-col items-center gap-1">
+                <span class="surah-name-ar font-indopak">{{ group.surah_name_ar }}</span>
+                <span class="surah-name-en">{{ group.surah_name }}</span>
+            </div>
+            <span class="ayah-count">{{ group.ayahs.length }} Ayahs</span>
+        </div>
+    </div>
+
+    <!-- Bismillah -->
+    @if (group.surah_no !== 9) {
+    <div
+        class="flex justify-center items-center px-2 py-2 font-indopak text-2xl md:text-4xl text-stone-700 dark:text-stone-300">
+        بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+    </div>
+    }
+
+    <!-- Ayah Cards -->
+    <div class="flex flex-col space-y-6">
+        @for (ayah of group.ayahs; track $index) {
+        <app-ayah-card [id]="'ayah-' + ayah.surah_no + '-' + ayah.ayah_no" class="w-full" [ayah]="ayah"
+            [surahNumber]="ayah.surah_no + ''" [surahName]="ayah.surah_name" [surahName_ar]="ayah.surah_name_ar"
+            [isTranslationVisible]="isTranslationVisible()" [bookmarkContext]="'juz'" [juzId]="+juzNumber()"
+            (onReadClick)="navigateToReading(ayah)">
+        </app-ayah-card>
+        }
+    </div>
+
     }
 </div>
 }
+
 }

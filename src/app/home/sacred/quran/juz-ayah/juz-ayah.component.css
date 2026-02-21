@@ -1,16 +1,183 @@
+/* ─── Legacy helpers ─────────────────────────────────────── */
 .ayah-numbers {
     @apply inline-flex justify-center items-center size-7 rounded-full text-gray-300 dark:text-slate-900 bg-slate-800 dark:bg-white;
 }
 
+/* ─── Sticky behaviour ───────────────────────────────────── */
 .checkbox-fixed {
     @apply fixed top-0 z-50 w-full md:max-w-2xl py-2 px-4 bg-white dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-600;
 }
 
-/* Ensure proper spacing when checkbox is sticky */
 .checkbox-fixed+* {
     margin-top: 4rem;
 }
 
-.ayahSelect {
-    @apply block min-w-16 px-2 pr-10 text-sm bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-2 border-slate-300 dark:border-slate-600 rounded-lg shadow-sm font-medium text-slate-900 cursor-pointer appearance-none transition-all duration-200 hover:from-slate-100 hover:to-slate-200 hover:border-slate-400 hover:-translate-y-0.5 hover:shadow-lg dark:hover:from-slate-700 dark:hover:to-slate-800 dark:hover:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:border-slate-600 focus:-translate-y-0.5 focus:shadow-xl focus:from-white focus:to-slate-50 dark:focus:from-slate-800 dark:focus:to-slate-900
+/* ════════════════════════════════════════════════════════════
+   TOOLBAR CARD
+════════════════════════════════════════════════════════════ */
+.toolbar-card {
+    @apply bg-white dark:bg-slate-800 rounded-2xl shadow-lg shadow-stone-200/60 dark:shadow-slate-900/60 border border-stone-200 dark:border-slate-700 px-4 py-3;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MODE TOGGLE  – segmented pill
+════════════════════════════════════════════════════════════ */
+.mode-toggle {
+    @apply inline-flex items-center p-1 gap-0.5 cursor-pointer bg-stone-100 dark:bg-slate-700 rounded-xl border border-stone-200 dark:border-slate-600 select-none;
+}
+
+.mode-pill {
+    @apply flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide text-stone-500 dark:text-slate-400 transition-all duration-200 ease-in-out;
+}
+
+.mode-pill__icon {
+    @apply w-3.5 h-3.5 flex-shrink-0;
+}
+
+/* Active pill gets the emerald highlight */
+.mode-pill--active {
+    @apply bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md shadow-emerald-100/60 dark:shadow-emerald-900/40 border border-emerald-200 dark:border-emerald-700/60 scale-[1.03];
+}
+
+/* ════════════════════════════════════════════════════════════
+   CUSTOM DROPDOWN  (cdd-*)
+════════════════════════════════════════════════════════════ */
+
+/* Wrapper — anchor for the absolute panel */
+.cdd-wrapper {
+    @apply relative;
+}
+
+/* ── Trigger button ───────────────────────────────────────── */
+.cdd-trigger {
+    @apply flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer bg-stone-100 dark:bg-slate-700 border border-stone-200 dark:border-slate-600 text-stone-600 dark:text-stone-300 transition-all duration-200 hover:border-emerald-400 dark:hover:border-emerald-600 hover:bg-stone-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/30;
+}
+
+.cdd-wrapper--open .cdd-trigger {
+    @apply border-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/20 bg-white dark:bg-slate-800;
+}
+
+.cdd-trigger__icon {
+    @apply w-3.5 h-3.5 flex-shrink-0 text-emerald-500 dark:text-emerald-400;
+}
+
+.cdd-trigger__label {
+    @apply text-xs font-semibold whitespace-nowrap max-w-[7rem] truncate;
+}
+
+.cdd-trigger__chevron {
+    @apply w-3.5 h-3.5 text-stone-400 dark:text-slate-400 transition-transform duration-200 flex-shrink-0;
+}
+
+.cdd-trigger__chevron--open {
+    @apply rotate-180 text-emerald-500;
+}
+
+/* ── Floating panel ───────────────────────────────────────── */
+.cdd-panel {
+    @apply absolute right-0 top-[calc(100%+6px)] z-50 w-72 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 shadow-xl shadow-stone-300/40 dark:shadow-slate-900/60 animate-in;
+}
+
+/* ── Search row ───────────────────────────────────────────── */
+.cdd-search-wrap {
+    @apply relative flex items-center gap-2 px-3 py-2.5 border-b border-stone-100 dark:border-slate-700;
+}
+
+.cdd-search-icon {
+    @apply w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-slate-500;
+}
+
+.cdd-search {
+    @apply flex-1 bg-transparent text-sm text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-slate-500 border-none outline-none;
+}
+
+/* ── Options list ─────────────────────────────────────────── */
+.cdd-list {
+    @apply max-h-64 overflow-y-auto list-none m-0 p-1.5 flex flex-col gap-0.5;
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.emerald.300') transparent;
+}
+
+.cdd-option {
+    @apply flex items-center justify-between gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm text-stone-700 dark:text-stone-200 transition-colors duration-100 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-700 dark:hover:text-emerald-300;
+}
+
+.cdd-option--selected {
+    @apply bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 font-semibold;
+}
+
+.cdd-option__names {
+    @apply flex-1 flex flex-col items-end gap-0.5 overflow-hidden;
+}
+
+.cdd-option__surah-ar {
+    @apply text-base leading-snug text-stone-800 dark:text-stone-100 truncate;
+}
+
+.cdd-option__surah-en {
+    @apply text-[10px] font-medium tracking-wide text-stone-400 dark:text-slate-400 truncate;
+}
+
+.cdd-option__badge {
+    @apply flex-shrink-0 inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded-full text-xs font-bold bg-stone-100 dark:bg-slate-700 text-stone-500 dark:text-slate-300;
+}
+
+.cdd-option--selected .cdd-option__badge {
+    @apply bg-emerald-200 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-300;
+}
+
+.cdd-empty {
+    @apply px-4 py-6 text-center text-sm text-stone-400 dark:text-slate-500 italic;
+}
+
+/* panel open animation */
+@keyframes animate-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-in {
+    animation: animate-in 0.15s ease-out forwards;
+}
+
+/* ─── Surah Section Header ─────────────────────────────────────────── */
+.surah-header {
+    @apply relative flex items-center justify-center;
+}
+
+.surah-header::before,
+.surah-header::after {
+    content: '';
+    @apply flex-1 h-px bg-gradient-to-r from-transparent via-emerald-300 to-transparent dark:via-emerald-700;
+}
+
+.surah-header::before {
+    @apply mr-4;
+}
+
+.surah-header::after {
+    @apply ml-4;
+}
+
+.surah-header-inner {
+    @apply flex flex-col items-center gap-1 px-5 py-3 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-2xl border border-emerald-200 dark:border-emerald-800 shadow-md shadow-emerald-100/60 dark:shadow-emerald-900/40;
+}
+
+.surah-name-ar {
+    @apply text-2xl md:text-3xl text-emerald-800 dark:text-emerald-300 leading-relaxed;
+}
+
+.surah-name-en {
+    @apply text-sm font-semibold tracking-widest uppercase text-emerald-600 dark:text-emerald-400;
+}
+
+.ayah-count {
+    @apply text-xs text-stone-400 dark:text-stone-500 mt-0.5;
 }
