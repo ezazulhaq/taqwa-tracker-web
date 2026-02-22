@@ -36,12 +36,34 @@ export class AuthService {
 
   private async loadUser(): Promise<void> {
     try {
-      const token = this.authTokenService.getAccessToken();
-      if (token) {
-        // Check if token needs refresh
-        if (this.authTokenService.shouldRefreshToken()) {
-          await this.refreshSession().toPromise();
+      const accessToken = this.authTokenService.getAccessToken();
+      const refreshToken = this.authTokenService.getRefreshToken();
+
+      if (!accessToken && !refreshToken) {
+        // No credentials at all — user has never logged in or explicitly logged out
+        return;
+      }
+
+      if (!accessToken && refreshToken) {
+        // Access token is missing (e.g., cleared) but refresh token exists — recover session
+        await this.refreshSession().toPromise();
+        this.startTokenRefreshTimer();
+        return;
+      }
+
+      if (accessToken) {
+        if (this.authTokenService.isTokenExpired() || this.authTokenService.shouldRefreshToken()) {
+          // Access token expired or nearing expiry — use the refresh token to get a new one.
+          // This is the key path for surviving a browser restart / PWA kill.
+          if (refreshToken) {
+            await this.refreshSession().toPromise();
+          } else {
+            // No refresh token to recover with — clear stale state
+            this.authTokenService.clearAuthState();
+            return;
+          }
         } else {
+          // Access token is still valid — just reload the user profile
           const user = await this.getCurrentUser().toPromise();
           if (user) {
             this.authTokenService.setUserFromApiResponse(user);
@@ -108,33 +130,32 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<AuthSession> {
-    const email = this.sanitizationService.sanitizeEmail(credentials.email);
+    const sanitizedEmail = this.sanitizationService.sanitizeEmail(credentials.email);
 
     // Check rate limiting
-    if (!this.rateLimitService.canAttempt(email)) {
-      const remainingTime = Math.ceil(this.rateLimitService.getRemainingTime(email) / 1000 / 60);
+    if (!this.rateLimitService.canAttempt(sanitizedEmail)) {
+      const remainingTime = Math.ceil(this.rateLimitService.getRemainingTime(sanitizedEmail) / 1000 / 60);
       return throwError(() => new Error(`Too many failed attempts. Try again in ${remainingTime} minutes.`));
     }
 
     // Validate inputs
-    if (!this.sanitizationService.validateEmail(email)) {
+    if (!this.sanitizationService.validateEmail(sanitizedEmail)) {
       return throwError(() => new Error('Please enter a valid email address'));
     }
 
-    const params = new HttpParams()
-      .set('email', email)
-      .set('password', credentials.password);
+    // Send credentials in the request body — NOT as URL query params
+    // (URL params appear in server logs, browser history, and CORS preflight)
+    const body = { email: sanitizedEmail, password: credentials.password };
 
-    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/login`, null, { params }).pipe(
+    return this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/login`, body).pipe(
       tap(tokenResponse => {
-        this.rateLimitService.recordAttempt(email, true);
-        // Store tokens immediately
+        this.rateLimitService.recordAttempt(sanitizedEmail, true);
+        // Always persist tokens in localStorage for cross-restart session survival
         this.authTokenService.setTokens(
           tokenResponse.access_token,
           tokenResponse.refresh_token,
           tokenResponse.session_id,
-          tokenResponse.expires_in,
-          credentials.rememberMe
+          tokenResponse.expires_in
         );
         // Start automatic token refresh timer
         this.startTokenRefreshTimer();
@@ -146,7 +167,7 @@ export class AuthService {
       // Flatten the nested observable
       switchMap(sessionObservable => sessionObservable),
       catchError(error => {
-        this.rateLimitService.recordAttempt(email, false);
+        this.rateLimitService.recordAttempt(sanitizedEmail, false);
         return this.handleAuthError(error);
       })
     );
@@ -268,38 +289,56 @@ export class AuthService {
       return this.refreshObservable;
     }
 
-    const params = new HttpParams().set('refresh_token', refreshToken);
+    // Send refresh token in the request body — NOT as a URL query param
+    const body = { refresh_token: refreshToken };
 
-    this.refreshObservable = this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, null, { params }).pipe(
-      map(tokenResponse => {
-        // Store new tokens with expiration
+    this.refreshObservable = this.http.post<LoginResponse>(`${this.API_BASE_URL}/auth/refresh`, body).pipe(
+      switchMap(tokenResponse => {
+        // Persist refreshed tokens
         this.authTokenService.setTokens(
           tokenResponse.access_token,
           tokenResponse.refresh_token,
           tokenResponse.session_id,
-          tokenResponse.expires_in,
-          this.authTokenService.isUsingPersistentStorage()
+          tokenResponse.expires_in
         );
 
         // Reschedule next refresh
         this.startTokenRefreshTimer();
 
-        return {
-          user: this.currentUser(),
-          metaData: this.userMetaData(),
-          accessToken: tokenResponse.access_token,
-          refreshToken: tokenResponse.refresh_token || refreshToken
-        };
+        // Re-fetch user profile so currentUser signal is always populated (critical on restart)
+        return this.getCurrentUser().pipe(
+          map(user => {
+            if (user) {
+              this.authTokenService.setUserFromApiResponse(user);
+            }
+            return {
+              user: this.currentUser(),
+              metaData: this.userMetaData(),
+              accessToken: tokenResponse.access_token,
+              refreshToken: tokenResponse.refresh_token || refreshToken
+            } as AuthSession;
+          }),
+          catchError(() => {
+            // If user fetch fails after refresh, still return a partial session
+            return [{
+              user: this.currentUser(),
+              metaData: this.userMetaData(),
+              accessToken: tokenResponse.access_token,
+              refreshToken: tokenResponse.refresh_token || refreshToken
+            } as AuthSession];
+          })
+        );
+      }),
+      // catchError MUST come before shareReplay — if placed after, the error
+      // gets replayed to all concurrent subscribers and prevents future retries
+      catchError(error => {
+        this.clearTokenRefreshTimer();
+        this.authTokenService.clearAuthState();
+        return throwError(() => new Error(error.message || 'Failed to refresh session'));
       }),
       shareReplay(1),
       finalize(() => {
         this.refreshObservable = null;
-      }),
-      catchError(error => {
-        // Clear user state on refresh failure
-        this.clearTokenRefreshTimer();
-        this.authTokenService.clearAuthState();
-        return throwError(() => new Error(error.message || 'Failed to refresh session'));
       })
     );
 
