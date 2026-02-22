@@ -16,7 +16,9 @@ export class HeaderComponent implements OnInit {
 
   private lastScrollTop = 0;
   private scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
-  isHeaderVisible = true;
+
+  // Get signal from service
+  isHeaderVisible = this.headerService.isHeaderVisible;
 
   isAuthenticated = computed(() => this.authService.isAuthenticated());
 
@@ -39,10 +41,10 @@ export class HeaderComponent implements OnInit {
     if (scrollDifference > this.scrollThreshold) {
       if (currentScrollTop > this.lastScrollTop) {
         // Scrolling down - hide bottom nav
-        this.isHeaderVisible = false;
+        this.headerService.isHeaderVisible.set(false);
       } else {
         // Scrolling up - show bottom nav
-        this.isHeaderVisible = true;
+        this.headerService.isHeaderVisible.set(true);
       }
 
       this.lastScrollTop = currentScrollTop;
@@ -50,7 +52,7 @@ export class HeaderComponent implements OnInit {
 
     // Always show bottom nav when at the top of the page
     if (currentScrollTop <= 0) {
-      this.isHeaderVisible = true;
+      this.headerService.isHeaderVisible.set(true);
     }
   }
 

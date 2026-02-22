@@ -17,7 +17,11 @@ body {
 }
 
 .app-bg {
-  @apply bg-white dark:bg-slate-800 w-full md:max-w-2xl min-h-screen text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg;
+  @apply bg-white dark:bg-slate-800 w-full md:max-w-4xl min-h-screen text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg pb-16;
+}
+
+.app-chat-viewport {
+  @apply bg-white dark:bg-slate-800 w-full md:max-w-4xl mx-auto h-[100dvh] text-center text-slate-900 dark:text-gray-300 rounded-none md:rounded-lg shadow-lg flex flex-col relative overflow-hidden;
 }
 
 .app-hamburger {

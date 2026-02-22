@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild, signal, inject, computed, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { ChatbotService } from '../service/chatbot.service';
+import { HeaderService } from '../header/header.service';
 import { Conversation, ChatbotMessage } from './chatbot.model';
 import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
@@ -19,13 +20,16 @@ import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
   styleUrl: './chatbot.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'app-bg'
+    class: 'app-chat-viewport'
   }
 })
 export class ChatbotComponent {
 
   @ViewChild(ChatMessagesComponent) private chatMessagesComponent!: ChatMessagesComponent;
   private authService = inject(AuthService);
+  private headerService = inject(HeaderService);
+
+  isHeaderVisible = this.headerService.isHeaderVisible;
 
   isChatbotVisible = signal<boolean>(true);
   isChatbotDialogeVisible = signal<boolean>(false);

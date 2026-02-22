@@ -4,9 +4,10 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class HeaderService {
-  
+
   isMenuVisible = signal<boolean>(false);
   isSettingsVisible = signal<boolean>(false);
+  isHeaderVisible = signal<boolean>(true);
 
   constructor() { }
 
