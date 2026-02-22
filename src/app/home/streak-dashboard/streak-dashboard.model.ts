@@ -1,5 +1,5 @@
 export interface ReadItem {
-    type: 'quran' | 'hadith';
+    type: 'quran' | 'hadith' | 'library';
     title: string;
     subtitle?: string;
     link: string;
