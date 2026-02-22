@@ -20,7 +20,7 @@ describe('StreakDashboardComponent', () => {
     getRecentReadItems: (limit: number) => [
       { type: 'quran', title: 'Surah Al-Fatiha', link: '/quran/1', timestamp: '2023-10-26T10:00:00Z' },
       { type: 'hadith', title: 'Sahih Bukhari 1', link: '/hadith/1', timestamp: '2023-10-26T10:00:00Z' },
-      { type: 'quran', title: 'Surah Al-Baqarah', link: '/quran/2', timestamp: '2023-10-26T10:00:00Z' }
+      { type: 'library', title: 'Fortress Of The Muslim', link: '/reader?pdfName=fortress.pdf', timestamp: '2023-10-26T10:00:00Z' }
     ],
     resetStreak: jasmine.createSpy('resetStreak')
   };
@@ -37,7 +37,7 @@ describe('StreakDashboardComponent', () => {
         { provide: Router, useValue: mockRouter }
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(StreakDashboardComponent);
     component = fixture.componentInstance;
@@ -55,5 +55,6 @@ describe('StreakDashboardComponent', () => {
     const textContent = compiled.textContent || '';
     expect(textContent).toContain('📖');
     expect(textContent).toContain('📚');
+    expect(textContent).toContain('📄');
   });
 });
