@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { PdfViewerComponent } from '../../../../shared/pdf-viewer/pdf-viewer.component';
 import { ReadStreakService } from '../../../../service/read-streak.service';
+import { AuthTokenService } from '../../../../service/auth-token.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 
 @Component({
@@ -15,31 +16,56 @@ import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
     class: 'app-bg'
   }
 })
-export class ReaderComponent {
+export class ReaderComponent implements OnDestroy {
 
   pdfSrc!: string;
   storageKey!: string;
+  initialPage = signal<number | undefined>(undefined);
 
   private pdfName = '';
   private category = '';
+  private currentPage = 1;
+  private hasTrackedInitial = false;
 
   private readonly route = inject(ActivatedRoute);
   private readonly readStreakService = inject(ReadStreakService);
+  private readonly authTokenService = inject(AuthTokenService);
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.pdfName = params['pdfName'] ?? '';
       this.category = params['category'] ?? '';
       this.storageKey = params['storageKey'] ?? '';
+      const pageParam = params['page'];
+      if (pageParam) {
+        this.initialPage.set(+pageParam);
+        this.currentPage = +pageParam;
+      }
       this.pdfSrc = `https://${environment.github.pdfUri}/${this.category}/${this.pdfName}`;
-      this.trackReading();
+
+      // Track initial read (count=1) only once
+      if (!this.hasTrackedInitial) {
+        this.trackReading(1);
+        this.hasTrackedInitial = true;
+      }
     });
   }
 
-  private trackReading(): void {
-    if (!this.pdfName) return;
+  ngOnDestroy() {
+    // Update streak link with latest page (count=0 to avoid double counting)
+    if (this.authTokenService.isAuthenticated()) {
+      this.trackReading(0);
+    }
+  }
 
-    const link = `/reader?pdfName=${encodeURIComponent(this.pdfName)}&category=${encodeURIComponent(this.category)}&storageKey=${encodeURIComponent(this.storageKey)}`;
+  onPageChange(page: number): void {
+    this.currentPage = page;
+  }
+
+  private trackReading(count: number): void {
+    if (!this.pdfName || !this.authTokenService.isAuthenticated()) return;
+
+    const link = `/reader?pdfName=${encodeURIComponent(this.pdfName)}&category=${encodeURIComponent(this.category)}&storageKey=${encodeURIComponent(this.storageKey)}&page=${this.currentPage}`;
 
     const readItem: ReadItem = {
       type: 'library',
@@ -49,7 +75,7 @@ export class ReaderComponent {
       timestamp: new Date().toISOString()
     };
 
-    this.readStreakService.trackRead(1, readItem);
+    this.readStreakService.trackRead(count, readItem);
   }
 
   private formatTitle(value: string): string {

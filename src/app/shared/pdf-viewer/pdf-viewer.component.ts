@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID, computed, effect, input, signal } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, computed, effect, input, output, signal } from '@angular/core';
 import { PDFProgressData, PDFDocumentProxy, PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormsModule } from '@angular/forms';
 import { IslamicLibrary } from '../../model/islamic-library.model';
@@ -18,6 +18,9 @@ export class PdfViewerComponent implements OnInit {
 
   pdfSrc = input.required<string>();
   storageKey = input.required<string>();
+  initialPage = input<number>();
+
+  pageChange = output<number>();
 
   page = signal<number>(1);
   pagesRendered = signal<number>(0);
@@ -29,13 +32,20 @@ export class PdfViewerComponent implements OnInit {
   constructor(@Inject(PLATFORM_ID) private readonly platformId: Object) {
     effect(() => {
       this.updateIslamicLibrary();
-    })
+    });
+    effect(() => {
+      this.pageChange.emit(this.page());
+    });
   }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
+      const overridePage = this.initialPage();
       const islamicLibrary = this.getIslamicLibraryFromLocalStorage()?.find(item => item.storageKey === this.storageKey()) ?? null;
-      if (islamicLibrary) {
+      if (overridePage && overridePage > 0) {
+        this.page.set(overridePage);
+        this.zoom.set(islamicLibrary?.zoom ?? 1);
+      } else if (islamicLibrary) {
         this.page.set(islamicLibrary.page ?? 1);
         this.zoom.set(islamicLibrary.zoom ?? 1);
       }
