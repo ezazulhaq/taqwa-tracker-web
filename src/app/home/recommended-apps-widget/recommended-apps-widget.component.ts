@@ -20,11 +20,10 @@ export class RecommendedAppsWidgetComponent {
     isVisible: true
   };
 
-  // Combine Quran, Hadith from modules and Qibla, Tasbih from tools
+  // Combine Library from modules and Qibla, Zakat from tools
   recommendedApps: HomeIcons[] = [
     this.appsIcon,
-    module_icons.find(m => m.title === "Qur'an")!,
-    module_icons.find(m => m.title === "Hadith")!,
+    module_icons.find(m => m.title === "Library")!,
     tool_icons.find(t => t.title === "Kaaba")!, // Qibla
     tool_icons.find(t => t.title === "Zakat")!
   ].filter(Boolean); // Ensure no undefined values
