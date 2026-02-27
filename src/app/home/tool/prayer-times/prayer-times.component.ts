@@ -1,10 +1,11 @@
-import { Component, linkedSignal, OnInit, signal } from '@angular/core';
+import { Component, inject, linkedSignal, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { OpenStreetMapResponse } from '../../../model/open-stream-map.model';
 import { NamazTimes } from '../../../model/namaz-time.model';
-import { map } from 'rxjs/internal/operators/map';
-import { shareReplay } from 'rxjs/internal/operators/shareReplay';
+import { of } from 'rxjs';
+import { map, shareReplay, catchError } from 'rxjs/operators';
 import { PrayerTimeInfo } from './prayer-times.model';
 import { CalendarComponent } from "../../../shared/calendar/calendar.component";
 import { RakatComponent } from './rakat/rakat.component';
@@ -21,7 +22,19 @@ import { NotificationService } from '../../../service/notification.service';
   }
 })
 export class PrayerTimesComponent implements OnInit {
-  address = signal<string>("");
+  private prayerService = inject(SalahAppService);
+  protected notificationService = inject(NotificationService);
+
+  address = toSignal(
+    this.prayerService.getAddress().pipe(
+      map(response => response?.display_name ?? ""),
+      catchError(error => {
+        console.error('Error fetching address:', error);
+        return of('Error fetching address');
+      })
+    ),
+    { initialValue: "" }
+  );
 
   isCalendarVisible = signal<boolean>(false);
   selectedDate = signal<Date>(new Date());
@@ -61,10 +74,7 @@ export class PrayerTimesComponent implements OnInit {
       );
   });
 
-  constructor(
-    private prayerService: SalahAppService,
-    protected notificationService: NotificationService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
     // check if location access allowed
@@ -72,22 +82,6 @@ export class PrayerTimesComponent implements OnInit {
       this.haveLocationAccess.set(true);
     }, () => {
       this.haveLocationAccess.set(false);
-    });
-
-    this.fetchAddress();
-  }
-
-  fetchAddress() {
-    this.prayerService.getAddress().subscribe({
-      next: (response: OpenStreetMapResponse | null) => {
-        response
-          ? this.address.set(response.display_name)
-          : this.address.set("");
-      },
-      error: (error: any) => {
-        console.error('Error fetching address:', error);
-        this.address.set('Error fetching address');
-      }
     });
   }
 
