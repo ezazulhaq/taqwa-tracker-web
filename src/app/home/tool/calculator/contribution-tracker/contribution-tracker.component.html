@@ -1,6 +1,17 @@
 <app-title [title]="'Zakat Contribution Tracker'" [subTitle]="'Track your Zakat payments and monitor your progress'"
     [routerLink]="'../calculator'"></app-title>
 
+<!-- Floating Action Button -->
+<div class="fixed top-6 right-6 z-50">
+    <button (click)="openAddPopup()"
+        class="size-12 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 transform"
+        title="Add Contribution">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+</div>
+
 <!-- Summary Cards -->
 @if (zakatService.contributionSummary(); as summary) {
 <div class="summary-grid mx-2">
@@ -55,54 +66,56 @@
 </div>
 }
 
-<!-- Add Contribution Form -->
-<div class="form-section bg-white dark:bg-gray-800 shadow-md">
-    <h2 class="section-title text-gray-900 dark:text-white">Add New Contribution</h2>
+<!-- Add Contribution Popup -->
+<app-popup #addPopup [title]="'Add New Contribution'" [showActions]="true" (closed)="submitSuccess.set(false)">
     <form [formGroup]="contributionForm" (ngSubmit)="onSubmit()" class="contribution-form">
-        <div class="form-group">
-            <label for="amount" class="text-gray-700 dark:text-gray-300">Amount</label>
+        <div class="form-group mb-4">
+            <label for="amount" class="text-gray-700 dark:text-gray-300 block mb-1">Amount</label>
             <input type="number" id="amount" formControlName="amount" placeholder="Enter amount" step="0.01" min="0.01"
-                class="border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+                class="w-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded p-2">
             @if (contributionForm.get('amount')?.invalid && contributionForm.get('amount')?.touched) {
-            <span class="error">Please enter a valid amount</span>
+            <span class="error text-red-500 text-sm">Please enter a valid amount</span>
             }
         </div>
 
-        <div class="form-group">
-            <label for="date" class="text-gray-700 dark:text-gray-300">Date</label>
+        <div class="form-group mb-4">
+            <label for="date" class="text-gray-700 dark:text-gray-300 block mb-1">Date</label>
             <input type="date" id="date" formControlName="contribution_date"
-                class="border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                class="w-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded p-2">
         </div>
 
-        <div class="form-group full-width">
-            <label for="notes" class="text-gray-700 dark:text-gray-300">Notes (Optional)</label>
+        <div class="form-group mb-4 full-width">
+            <label for="notes" class="text-gray-700 dark:text-gray-300 block mb-1">Notes (Optional)</label>
             <textarea id="notes" formControlName="notes" placeholder="Add any notes about this contribution" rows="3"
                 maxlength="500"
-                class="border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"></textarea>
+                class="w-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded p-2"></textarea>
             <small class="char-count text-gray-500 dark:text-gray-400">{{
                 contributionForm.get('notes')?.value?.length || 0 }}/500</small>
         </div>
-
-        <div class="form-actions">
-            @if (submitSuccess()) {
-            <div class="success-message">✅ Contribution added successfully!</div>
-            }
-            <button type="submit"
-                class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
-                [disabled]="contributionForm.invalid || isSubmitting()">
-                @if (isSubmitting()) {
-                <span>Adding...</span>
-                } @else {
-                <span>Add Contribution</span>
-                }
-            </button>
-        </div>
     </form>
-</div>
+
+    <div slot="actions">
+        <button (click)="addPopup.close()"
+            class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+            Cancel
+        </button>
+        <button (click)="onSubmit()"
+            class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            [disabled]="contributionForm.invalid || isSubmitting()">
+            @if (isSubmitting()) {
+            <span>Adding...</span>
+            } @else {
+            <span>Add</span>
+            }
+        </button>
+    </div>
+</app-popup>
 
 <!-- Contribution History -->
 <div class="history-section bg-white dark:bg-gray-800 shadow-md">
-    <h2 class="section-title text-gray-900 dark:text-white">Contribution History</h2>
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="section-title text-gray-900 dark:text-white mb-0">Contribution History</h2>
+    </div>
     @if (zakatService.contributions().length > 0) {
     <div class="contributions-table">
         <div class="table-header text-gray-600 dark:text-gray-400 border-b-2 border-gray-200 dark:border-gray-700">
