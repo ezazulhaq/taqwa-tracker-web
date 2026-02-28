@@ -115,6 +115,8 @@ export class ZakatService {
         effect(() => {
             if (this.authService.isAuthenticated()) {
                 this.fetchFromBackend();
+                this.loadContributions();
+                this.loadContributionSummary();
             }
         });
 

@@ -31,9 +31,10 @@ export class ContributionTrackerComponent implements OnInit {
     reversingId = signal<string | null>(null);
     currentPage = signal(1);
     pageSize = 20;
-    
+
     @ViewChild('confirmPopup') confirmPopup!: PopupComponent;
-    pendingReversal = signal<{id: string, amount: number, date: Date} | null>(null);
+    @ViewChild('addPopup') addPopup!: PopupComponent;
+    pendingReversal = signal<{ id: string, amount: number, date: Date } | null>(null);
 
     // Expose Math to template
     Math = Math;
@@ -54,6 +55,16 @@ export class ContributionTrackerComponent implements OnInit {
     private loadData(): void {
         this.zakatService.loadContributions(this.currentPage(), this.pageSize);
         this.zakatService.loadContributionSummary();
+    }
+
+    openAddPopup(): void {
+        this.contributionForm.reset({
+            amount: 0,
+            contribution_date: new Date().toISOString().split('T')[0],
+            notes: ''
+        });
+        this.submitSuccess.set(false);
+        this.addPopup.show();
     }
 
     onSubmit(): void {
@@ -78,6 +89,7 @@ export class ContributionTrackerComponent implements OnInit {
                             contribution_date: new Date().toISOString().split('T')[0],
                             notes: ''
                         });
+                        this.addPopup.close();
                         setTimeout(() => this.submitSuccess.set(false), 3000);
                     }
                 },
@@ -120,17 +132,17 @@ export class ContributionTrackerComponent implements OnInit {
     }
 
     reverseContribution(contributionId: string, amount: number, date: Date): void {
-        this.pendingReversal.set({id: contributionId, amount, date});
+        this.pendingReversal.set({ id: contributionId, amount, date });
         this.confirmPopup.show();
     }
-    
+
     confirmReverse(): void {
         const reversal = this.pendingReversal();
         if (!reversal) return;
-        
+
         this.reversingId.set(reversal.id);
         this.confirmPopup.close();
-        
+
         this.zakatService.reverseContribution(reversal.id).subscribe({
             next: (success) => {
                 this.reversingId.set(null);
@@ -144,7 +156,7 @@ export class ContributionTrackerComponent implements OnInit {
             }
         });
     }
-    
+
     cancelReverse(): void {
         this.pendingReversal.set(null);
         this.confirmPopup.close();

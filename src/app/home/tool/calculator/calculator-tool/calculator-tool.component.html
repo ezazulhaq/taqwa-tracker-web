@@ -1,24 +1,30 @@
-<div class="fixed bottom-6 right-6 z-50">
-    <!-- Floating Action Button -->
+<!-- Floating Action Button -->
+<div class="fixed top-6 right-6 z-50">
     <button (click)="toggle()"
-        class="w-14 h-14 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 transform"
+        class="size-12 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 transform"
         [class.rotate-45]="isOpen()" title="Open Calculator">
         @if (isOpen()) {
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
         } @else {
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
         </svg>
         }
     </button>
+</div>
 
-    <!-- Calculator UI -->
-    @if (isOpen()) {
+<!-- Calculator Modal -->
+@if (isOpen()) {
+<!-- Backdrop -->
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]" (click)="toggle()"></div>
+
+<!-- Calculator UI -->
+<div class="fixed inset-0 z-[70] flex items-center justify-center pointer-events-none">
     <div
-        class="absolute bottom-20 right-0 w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">
+        class="pointer-events-auto w-72 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">
         <!-- Display -->
         <div class="p-6 bg-gray-50 dark:bg-gray-900/50 text-right">
             <div class="text-xs text-gray-500 dark:text-gray-400 h-4 mb-1">
@@ -71,5 +77,5 @@
                 class="p-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-colors">.</button>
         </div>
     </div>
-    }
 </div>
+}
