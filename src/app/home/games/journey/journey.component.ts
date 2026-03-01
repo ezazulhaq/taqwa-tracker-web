@@ -27,6 +27,8 @@ export class JourneyComponent {
     isFinished: false
   });
 
+  public readonly feedbackMessage = signal<string | null>(null);
+
   // Computed Values
   public readonly currentJourney = computed(() => {
     const id = this.gameState().currentJourneyId;
@@ -47,6 +49,7 @@ export class JourneyComponent {
 
   // Methods
   public selectJourney(journeyId: string) {
+    this.feedbackMessage.set(null);
     this.gameState.set({
       currentJourneyId: journeyId,
       currentSceneId: 'start',
@@ -59,6 +62,12 @@ export class JourneyComponent {
   public makeChoice(choice: Choice) {
     if (this.gameState().isFinished) return;
 
+    if (choice.feedback) {
+      this.feedbackMessage.set(choice.feedback);
+    } else {
+      this.feedbackMessage.set(null);
+    }
+
     this.gameState.update(s => ({
       ...s,
       currentSceneId: choice.nextSceneId,
@@ -68,7 +77,12 @@ export class JourneyComponent {
     }));
   }
 
+  public dismissFeedback() {
+    this.feedbackMessage.set(null);
+  }
+
   public restart() {
+    this.feedbackMessage.set(null);
     this.gameState.update(s => ({
       ...s,
       currentJourneyId: null,

@@ -81,6 +81,30 @@
                 <div class="h-1 w-12 bg-current opacity-20 rounded-full"></div>
             </div>
 
+            @if (feedbackMessage()) {
+            <div
+                class="mb-8 p-4 sm:p-5 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/30 relative shadow-sm animate-fade-in">
+                <button (click)="dismissFeedback()"
+                    class="absolute top-3 right-3 text-amber-700/50 hover:text-amber-700 dark:text-amber-400/50 dark:hover:text-amber-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <div class="pr-6 flex gap-3 items-start">
+                    <span class="text-xl">💡</span>
+                    <div>
+                        <span
+                            class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 block mb-1">Divine
+                            Insight</span>
+                        <p class="text-sm sm:text-base font-medium text-amber-900 dark:text-amber-100 leading-snug">
+                            {{feedbackMessage()}}</p>
+                    </div>
+                </div>
+            </div>
+            }
+
             <div class="narrative-text mb-10 sm:mb-12">
                 <p class="text-lg sm:text-xl text-slate-700 dark:text-white/90 leading-relaxed italic">
                     "{{currentScene()?.text}}"
@@ -89,7 +113,7 @@
 
             <!-- Choices -->
             <div class="space-y-3 sm:space-y-4">
-                @for (choice of currentScene()?.choices; track choice.nextSceneId) {
+                @for (choice of currentScene()?.choices; track $index) {
                 <button (click)="makeChoice(choice)"
                     [class]="'w-full p-4 sm:p-5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-[1.02] shadow-lg flex items-center justify-between group ' + getButtonClass(currentScene()?.themeColor)">
                     <span>{{choice.text}}</span>
