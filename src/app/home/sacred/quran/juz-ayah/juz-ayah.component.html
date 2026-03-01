@@ -102,6 +102,14 @@
 
         </div>
     </div>
+
+    @if (currentSurah()) {
+    <div class="surah-sticky-bar">
+        <span class="surah-sticky-bar__ar font-indopak">{{ currentSurah()!.surah_name_ar }}</span>
+        <span class="surah-sticky-bar__sep">•</span>
+        <span class="surah-sticky-bar__en">{{ currentSurah()!.surah_name }}</span>
+    </div>
+    }
 </div>
 
 @if (isLoading()) {
@@ -114,7 +122,7 @@
     @for (group of ayahsBySurah(); track group.surah_no) {
 
     <!-- Surah Header -->
-    <div class="surah-header">
+    <div class="surah-header" [attr.data-surah-index]="$index">
         <div class="surah-header-inner">
             <div class="flex flex-col items-center gap-1">
                 <span class="surah-name-ar font-indopak">{{ group.surah_name_ar }}</span>
@@ -159,7 +167,7 @@
     @for (group of ayahsBySurah(); track group.surah_no) {
 
     <!-- Surah Header -->
-    <div class="surah-header">
+    <div class="surah-header" [attr.data-surah-index]="$index">
         <div class="surah-header-inner">
             <div class="flex flex-col items-center gap-1">
                 <span class="surah-name-ar font-indopak">{{ group.surah_name_ar }}</span>
