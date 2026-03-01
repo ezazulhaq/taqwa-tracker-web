@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookmarkService } from '../../../../service/bookmark.service';
@@ -17,7 +17,7 @@ export interface SurahGroup {
 import { QuranService } from '../quran.service';
 import { AyahSkeletonComponent } from '../../../../shared/skeleton/ayah-skeleton/ayah-skeleton.component';
 import { AyahCardComponent } from '../ayah/ayah-card/ayah-card.component';
-import { ChangeDetectionStrategy } from '@angular/core';
+
 
 @Component({
     selector: 'app-juz-ayah',
@@ -34,7 +34,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
         class: 'app-bg',
     }
 })
-export class JuzAyahComponent {
+export class JuzAyahComponent implements AfterViewInit, OnDestroy {
 
     private readonly authService = inject(AuthService);
     private readonly readStreakService = inject(ReadStreakService);
@@ -42,12 +42,16 @@ export class JuzAyahComponent {
 
     @ViewChild('stickyCheckbox') stickyCheckbox!: ElementRef;
     private originalOffset: number = 0;
+    private surahObserver: IntersectionObserver | null = null;
 
     @ViewChild('ayahContainer') ayahContainer!: ElementRef;
 
     private ayahIdToScrollTo = signal<number | null>(null);
     private readAyahsSet = new Set<number>(); // Track read ayahs in current session
     private lastReadAyahNo = signal<number | null>(null);
+
+    /** The surah currently in the viewport (for sticky sub-header) */
+    currentSurah = signal<SurahGroup | null>(null);
 
     juzNumber = signal<string>('');
     juzName = signal<string>('');
@@ -139,6 +143,7 @@ export class JuzAyahComponent {
             }, 100);
         }
         this.setupReadingTracker();
+        this.setupSurahObserver();
     }
 
     /**
@@ -327,6 +332,68 @@ export class JuzAyahComponent {
                 complete: () => console.log(`Aayahs set this translator: ${this.translator()}`)
             }
         );
+    }
+
+    /**
+     * Set up IntersectionObserver on surah-header elements
+     * to track which surah the user is currently reading.
+     */
+    private setupSurahObserver(): void {
+        const groups = this.ayahsBySurah();
+        if (groups.length === 0) return;
+
+        // Clean up any previous observer
+        this.surahObserver?.disconnect();
+
+        // We'll observe each surah-header; when a header leaves the top
+        // of the viewport, the corresponding surah becomes "current".
+        // rootMargin: negative top = trigger when header passes above toolbar zone
+        const toolbarHeight = this.stickyCheckbox?.nativeElement?.offsetHeight ?? 80;
+
+        // Track which surah headers are above the viewport
+        const headersAbove = new Set<number>();
+
+        this.surahObserver = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    const el = entry.target as HTMLElement;
+                    const surahIndex = parseInt(el.getAttribute('data-surah-index') ?? '-1', 10);
+                    if (surahIndex < 0) continue;
+
+                    if (!entry.isIntersecting && entry.boundingClientRect.top < toolbarHeight) {
+                        // Header scrolled above toolbar → this surah is current
+                        headersAbove.add(surahIndex);
+                    } else {
+                        headersAbove.delete(surahIndex);
+                    }
+                }
+
+                if (headersAbove.size > 0) {
+                    // The current surah is the one with the highest index that has scrolled past
+                    const maxIndex = Math.max(...headersAbove);
+                    this.currentSurah.set(groups[maxIndex]);
+                } else {
+                    this.currentSurah.set(null);
+                }
+            },
+            {
+                root: null,
+                rootMargin: `-${toolbarHeight}px 0px 0px 0px`,
+                threshold: 0
+            }
+        );
+
+        // Wait for DOM to render, then observe all surah-header elements
+        setTimeout(() => {
+            const container = this.ayahContainer?.nativeElement;
+            if (!container) return;
+            const headers: HTMLElement[] = container.querySelectorAll('[data-surah-index]');
+            headers.forEach((el: HTMLElement) => this.surahObserver!.observe(el));
+        }, 200);
+    }
+
+    ngOnDestroy(): void {
+        this.surahObserver?.disconnect();
     }
 
 }
