@@ -190,8 +190,8 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
      */
     private trackReading(): void {
         let link = `/quran/juz-ayah?juzNumber=${this.juzNumber()}&juzName=${encodeURIComponent(this.juzName())}&juzName_en=${encodeURIComponent(this.juzName_en())}`;
-        let title = `Juz ${this.juzNumber()}`;
-        let subtitle = this.juzName_en();
+        let title = this.juzName_en();
+        let subtitle = `Juz ${this.juzNumber()}`;
 
         if (this.lastReadAyahNo()) {
             link += `&ayahNo=${this.lastReadAyahNo()}`;
