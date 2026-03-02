@@ -60,7 +60,9 @@ export class PrayerTimesWidgetComponent {
   currentDate = signal(new Date());
 
   hijriDate = computed(() => {
-    return moment(this.currentDate()).format('iMMMM iD, iYYYY') + ' AH';
+    const offset = this.salahService.hijriOffset();
+    const adjustedDate = moment(this.currentDate()).add(offset, 'days');
+    return adjustedDate.format('iMMMM iD, iYYYY') + ' AH';
   });
 
   // Computed signal to process prayer times into a view model and determine the current prayer

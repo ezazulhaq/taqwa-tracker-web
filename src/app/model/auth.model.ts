@@ -34,6 +34,7 @@ export interface UserPreferences {
     hanafi?: boolean;
     salah_alerts?: boolean;
     font_size?: number;
+    hijri_offset?: number;
 }
 
 export interface LoginResponse {

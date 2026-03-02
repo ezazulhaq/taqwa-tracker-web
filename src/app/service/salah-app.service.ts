@@ -18,6 +18,7 @@ export class SalahAppService {
   location$ = this.locationSubject.asObservable();
   error$ = this.errorSubject.asObservable();
   isHanafi = signal<boolean>(false);
+  hijriOffset = signal<number>(0);
 
   constructor(
     private http: HttpClient,
@@ -26,6 +27,7 @@ export class SalahAppService {
     this.getLocation();
     this.setupDailyNotificationScheduling();
     this.loadHanafiPreference();
+    this.loadHijriOffsetPreference();
   }
 
   private loadHanafiPreference() {
@@ -35,10 +37,36 @@ export class SalahAppService {
     }
   }
 
+  private loadHijriOffsetPreference() {
+    const savedPreference = localStorage.getItem('hijriOffset');
+    if (savedPreference !== null) {
+      this.hijriOffset.set(parseInt(savedPreference, 10));
+    } else {
+      // Smart Default: If no preference is saved, check timezone
+      // South Asian countries (India, Pakistan, Bangladesh) are typically +5:00 to +6:00
+      // This is a rough estimation based on timezone offset
+      const tzOffset = new Date().getTimezoneOffset();
+
+      // -330 mins = +5:30 (India)
+      // -300 mins = +5:00 (Pakistan)
+      // -360 mins = +6:00 (Bangladesh)
+      if (tzOffset <= -300 && tzOffset >= -360) {
+        this.hijriOffset.set(-1);
+      } else {
+        this.hijriOffset.set(0);
+      }
+    }
+  }
+
   toggleHanafi() {
     const newValue = !this.isHanafi();
     this.isHanafi.set(newValue);
     localStorage.setItem('hanafiPreference', newValue.toString());
+  }
+
+  setHijriOffset(offset: number) {
+    this.hijriOffset.set(offset);
+    localStorage.setItem('hijriOffset', offset.toString());
   }
 
   private setupDailyNotificationScheduling() {
