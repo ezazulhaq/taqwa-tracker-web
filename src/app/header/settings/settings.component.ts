@@ -96,6 +96,11 @@ export class SettingsComponent implements OnInit {
     this.hadithService.hadithSource.set(select.value);
   }
 
+  updateHijriOffset(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.prayerService.setHijriOffset(parseInt(select.value, 10));
+  }
+
   toggleHanafi(): void {
     this.prayerService.toggleHanafi();
   }
@@ -132,7 +137,8 @@ export class SettingsComponent implements OnInit {
       hadith_source: this.selectedSource(),
       hanafi: this.prayerService.isHanafi(),
       salah_alerts: this.notificationService.userNotificationsEnabled(),
-      font_size: this.quranService.ayahFontSize()
+      font_size: this.quranService.ayahFontSize(),
+      hijri_offset: this.prayerService.hijriOffset()
     };
 
     this.authService.savePreferences(preferences).subscribe({

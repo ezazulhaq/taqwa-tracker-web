@@ -1,6 +1,7 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, effect } from '@angular/core';
 import { CalendarDay, IslamicEvent } from './calendar.model';
 import moment from 'moment-hijri';
+import { SalahAppService } from '../../../service/salah-app.service';
 
 import { TitleComponent } from '../../../shared/title/title.component';
 
@@ -8,7 +9,7 @@ import { TitleComponent } from '../../../shared/title/title.component';
   selector: 'app-islamic-calendar',
   imports: [
     TitleComponent
-],
+  ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
   host: {
@@ -16,10 +17,20 @@ import { TitleComponent } from '../../../shared/title/title.component';
   }
 })
 export class IslamicCalendarComponent implements OnInit {
+  private salahService = inject(SalahAppService);
+
   currentDate = signal(moment());
   calendarDays = signal<CalendarDay[]>([]);
   selectedDay = signal<CalendarDay | null>(null);
   showUpcomingEvents = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.salahService.hijriOffset(); // Track this signal
+      // When it changes, re-generate the calendar based on the *current* month
+      this.generateCalendar();
+    });
+  }
 
   hijriMonths = [
     'Muharram', 'Safar', 'Rabi\' al-Awwal', 'Rabi\' al-Thani',
@@ -56,7 +67,8 @@ export class IslamicCalendarComponent implements OnInit {
   });
 
   currentHijriMonth = computed(() => {
-    const date = this.currentDate();
+    const offset = this.salahService.hijriOffset();
+    const date = this.currentDate().clone().add(offset, 'days');
     return `${date.format('iMMMM')} ${date.format('iYYYY')}`;
   });
 
@@ -76,10 +88,12 @@ export class IslamicCalendarComponent implements OnInit {
     }> = [];
 
     // Check events in the next 3 months
+    const offset = this.salahService.hijriOffset();
     for (let i = 0; i <= 90; i++) {
       const checkDate = moment().add(i, 'days');
-      const hijriMonth = parseInt(checkDate.format('iM'));
-      const hijriDay = parseInt(checkDate.format('iD'));
+      const adjustedDate = checkDate.clone().add(offset, 'days');
+      const hijriMonth = parseInt(adjustedDate.format('iM'));
+      const hijriDay = parseInt(adjustedDate.format('iD'));
 
       const event = this.islamicEvents.find(e =>
         e.month === hijriMonth && e.day === hijriDay
@@ -127,10 +141,13 @@ export class IslamicCalendarComponent implements OnInit {
   }
 
   createCalendarDay(date: moment.Moment, currentMonth: number): CalendarDay {
-    const hijriDay = parseInt(date.format('iD'));
-    const hijriMonth = parseInt(date.format('iM'));
-    const hijriMonthName = date.format('iMMMM');
-    const hijriYear = parseInt(date.format('iYYYY'));
+    const offset = this.salahService.hijriOffset();
+    const adjustedHijriDate = date.clone().add(offset, 'days');
+
+    const hijriDay = parseInt(adjustedHijriDate.format('iD'));
+    const hijriMonth = parseInt(adjustedHijriDate.format('iM'));
+    const hijriMonthName = adjustedHijriDate.format('iMMMM');
+    const hijriYear = parseInt(adjustedHijriDate.format('iYYYY'));
     const gregorianDay = date.date();
 
     const isCurrentMonth = date.month() === currentMonth;
