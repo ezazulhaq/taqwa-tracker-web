@@ -1,4 +1,3 @@
-import { Component, linkedSignal, OnInit, signal } from '@angular/core';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { OpenStreetMapResponse } from '../../../model/open-stream-map.model';
@@ -10,6 +9,7 @@ import { CalendarComponent } from "../../../shared/calendar/calendar.component";
 import { RakatComponent } from './rakat/rakat.component';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { NotificationService } from '../../../service/notification.service';
+import { Component, linkedSignal, OnInit, signal, OnDestroy, computed } from '@angular/core';
 
 @Component({
   selector: 'app-prayer-times',
@@ -17,10 +17,10 @@ import { NotificationService } from '../../../service/notification.service';
   templateUrl: './prayer-times.component.html',
   styleUrl: './prayer-times.component.css',
   host: {
-    '[class]': 'hostClasses()'
+    'class': 'app-bg !bg-transparent dark:!bg-transparent relative isolate overflow-hidden'
   }
 })
-export class PrayerTimesComponent implements OnInit {
+export class PrayerTimesComponent implements OnInit, OnDestroy {
   address = signal<string>("");
 
   isCalendarVisible = signal<boolean>(false);
@@ -30,13 +30,48 @@ export class PrayerTimesComponent implements OnInit {
 
   prayerName = signal<string>("");
 
-  currentPrayer = signal<string>("");
+  currentTime = signal<Date>(new Date());
 
-  hostClasses = linkedSignal(() => {
-    const base = "app-bg transition-colors duration-1000 ease-in-out";
-    const prayer = this.currentPrayer();
-    if (!prayer) return base;
-    return `${base} bg-${prayer}`;
+  private timeUpdateInterval: any;
+
+  // Calculates continuous opacities for the 4 sky layers based on exact time
+  opacities = computed(() => {
+    const time = this.currentTime();
+    const hourFloat = time.getHours() + time.getMinutes() / 60;
+
+    // Default opacities
+    let night = 0, dawn = 0, day = 0, sunset = 0;
+
+    // Define peak times for each state
+    const peakNight1 = 0;   // 12:00 AM
+    const peakDawn = 6;     // 6:00 AM
+    const peakDay = 12;     // 12:00 PM
+    const peakSunset = 18;  // 6:00 PM
+    const peakNight2 = 24;  // 12:00 AM (next day)
+
+    if (hourFloat >= peakNight1 && hourFloat < peakDawn) {
+      // Night -> Dawn
+      const progress = hourFloat / peakDawn;
+      night = 1 - progress;
+      dawn = progress;
+    } else if (hourFloat >= peakDawn && hourFloat < peakDay) {
+      // Dawn -> Day
+      const progress = (hourFloat - peakDawn) / (peakDay - peakDawn);
+      dawn = 1 - progress;
+      day = progress;
+    } else if (hourFloat >= peakDay && hourFloat < peakSunset) {
+      // Day -> Sunset
+      const progress = (hourFloat - peakDay) / (peakSunset - peakDay);
+      day = 1 - progress;
+      sunset = progress;
+    } else {
+      // Sunset -> Night
+      const progress = (hourFloat - peakSunset) / (peakNight2 - peakSunset);
+      sunset = 1 - progress;
+      night = progress;
+    }
+
+    return { night, dawn, day, sunset };
   });
 
   getTimes = linkedSignal(() => {
@@ -44,7 +79,6 @@ export class PrayerTimesComponent implements OnInit {
       .pipe(
         map((namazTimes: NamazTimes | null) => {
           if (!namazTimes) {
-            this.currentPrayer.set("");
             return [];
           }
 
@@ -65,13 +99,6 @@ export class PrayerTimesComponent implements OnInit {
           const closestFuturePrayer = sortedTimes.slice().reverse().find(prayer => prayer.value <= now && prayer.value.getDate() === now.getDate());
           if (closestFuturePrayer) {
             closestFuturePrayer.isClosest = true;
-            this.currentPrayer.set(closestFuturePrayer.key);
-          } else if (sortedTimes.length > 0 && sortedTimes[0].value > now) {
-            // Before Fajr today, so the current prayer is Isha from yesterday
-            this.currentPrayer.set("isha");
-          } else if (sortedTimes.length > 0) {
-            // No next prayer for today, which means we are past Isha
-            this.currentPrayer.set("isha");
           }
 
           return sortedTimes;
@@ -86,6 +113,11 @@ export class PrayerTimesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // update time every minute to adjust gradient smoothly
+    this.timeUpdateInterval = setInterval(() => {
+      this.currentTime.set(new Date());
+    }, 60000);
+
     // check if location access allowed
     navigator.geolocation.getCurrentPosition(() => {
       this.haveLocationAccess.set(true);
@@ -129,6 +161,12 @@ export class PrayerTimesComponent implements OnInit {
       'Test Notification',
       'If you see this, prayer alerts are working correctly!'
     );
+  }
+
+  ngOnDestroy(): void {
+    if (this.timeUpdateInterval) {
+      clearInterval(this.timeUpdateInterval);
+    }
   }
 }
 

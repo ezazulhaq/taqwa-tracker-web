@@ -1,6 +1,21 @@
+<!-- Sky Background Layers -->
+<div class="fixed inset-0 -z-10 pointer-events-none">
+  <!-- Night / Midnight -->
+  <div class="sky-layer bg-gradient-to-br from-slate-200 via-indigo-200 to-blue-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().night"></div>
+
+  <!-- Dawn / Sunrise -->
+  <div class="sky-layer bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().dawn"></div>
+
+  <!-- Day / Noon -->
+  <div class="sky-layer bg-gradient-to-br from-sky-100 via-blue-100 to-cyan-100 dark:from-slate-800 dark:via-sky-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().day"></div>
+
+  <!-- Afternoon / Sunset -->
+  <div class="sky-layer bg-gradient-to-br from-orange-200 via-rose-200 to-red-200 dark:from-slate-900 dark:via-rose-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().sunset"></div>
+</div>
+
 <app-title [title]="'Salah Timings'" [routerLink]="'/home'"></app-title>
 
-<div class="flex flex-col justify-center items-center space-y-6 pb-40">
+<div class="flex flex-col justify-center items-center space-y-6 pb-40 relative z-0">
 
   @if(prayerName() && prayerName() !== 'sunrise'){
   <div (click)="prayerName.set('')"
