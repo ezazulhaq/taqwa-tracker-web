@@ -31,3 +31,37 @@
   background-size: 200% 200%;
   animation: pan-bg 20s ease-in-out infinite;
 }
+
+@keyframes drift {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+.cloud {
+  @apply absolute;
+  animation: drift linear infinite;
+}
+
+.cloud-1 {
+  top: 10%;
+  animation-duration: 40s;
+  animation-delay: -10s;
+}
+
+.cloud-2 {
+  top: 30%;
+  animation-duration: 60s;
+  animation-delay: -30s;
+  opacity: 0.6;
+}
+
+.cloud-3 {
+  top: 50%;
+  animation-duration: 50s;
+  animation-delay: -25s;
+  opacity: 0.8;
+}

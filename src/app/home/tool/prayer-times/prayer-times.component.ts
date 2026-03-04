@@ -74,6 +74,68 @@ export class PrayerTimesComponent implements OnInit, OnDestroy {
     return { night, dawn, day, sunset };
   });
 
+  // Calculates the positions and opacities of the sun and moon along an arc
+  celestialPositions = computed(() => {
+    const time = this.currentTime();
+    const hourFloat = time.getHours() + time.getMinutes() / 60;
+
+    // Sun arc: Rises at 6am (x=0%), Peaks at 12pm (x=50%, y=10%), Sets at 6pm (x=100%)
+    const sunStart = 6;
+    const sunEnd = 18;
+    let sunX = 50;
+    let sunY = 110; // Below horizon
+    let sunOpacity = 0;
+
+    if (hourFloat >= sunStart && hourFloat <= sunEnd) {
+      const progress = (hourFloat - sunStart) / (sunEnd - sunStart);
+      sunX = progress * 100;
+      // Parabola: y = a*(x-h)^2 + k. Vertex (h,k) at (0.5, 10). Roots at 0 and 1 (110).
+      // 110 = a*(0 - 0.5)^2 + 10  => 100 = a * 0.25 => a = 400
+      sunY = 400 * Math.pow(progress - 0.5, 2) + 10;
+      sunOpacity = 1;
+    } else if (hourFloat >= sunStart - 1 && hourFloat < sunStart) {
+      // Fading in just before sunrise
+      sunX = 0;
+      sunY = 110;
+      sunOpacity = hourFloat - (sunStart - 1);
+    } else if (hourFloat > sunEnd && hourFloat <= sunEnd + 1) {
+      // Fading out just after sunset
+      sunX = 100;
+      sunY = 110;
+      sunOpacity = 1 - (hourFloat - sunEnd);
+    }
+
+    // Moon arc: Rises at 6pm (18:00), Peaks at 12am (0:00/24:00), Sets at 6am
+    let moonX = 50;
+    let moonY = 110;
+    let moonOpacity = 0;
+
+    // Normalize hour for moon arc (18 to 30)
+    const moonHour = hourFloat < 12 ? hourFloat + 24 : hourFloat;
+    const moonStart = 18;
+    const moonEnd = 30; // 6 AM next day
+
+    if (moonHour >= moonStart && moonHour <= moonEnd) {
+      const progress = (moonHour - moonStart) / (moonEnd - moonStart);
+      moonX = progress * 100;
+      moonY = 400 * Math.pow(progress - 0.5, 2) + 10;
+      moonOpacity = 1;
+    } else if (moonHour >= moonStart - 1 && moonHour < moonStart) {
+      moonX = 0;
+      moonY = 110;
+      moonOpacity = moonHour - (moonStart - 1);
+    } else if (moonHour > moonEnd && moonHour <= moonEnd + 1) {
+      moonX = 100;
+      moonY = 110;
+      moonOpacity = 1 - (moonHour - moonEnd);
+    }
+
+    return {
+      sun: { x: sunX, y: sunY, opacity: sunOpacity },
+      moon: { x: moonX, y: moonY, opacity: moonOpacity }
+    };
+  });
+
   getTimes = linkedSignal(() => {
     return this.prayerService.getPrayerTimes(this.selectedDate(), this.prayerService.isHanafi())
       .pipe(
