@@ -17,7 +17,7 @@ import { NotificationService } from '../../../service/notification.service';
   templateUrl: './prayer-times.component.html',
   styleUrl: './prayer-times.component.css',
   host: {
-    class: "app-bg"
+    '[class]': 'hostClasses()'
   }
 })
 export class PrayerTimesComponent implements OnInit {
@@ -30,11 +30,23 @@ export class PrayerTimesComponent implements OnInit {
 
   prayerName = signal<string>("");
 
+  currentPrayer = signal<string>("");
+
+  hostClasses = linkedSignal(() => {
+    const base = "app-bg transition-colors duration-1000 ease-in-out";
+    const prayer = this.currentPrayer();
+    if (!prayer) return base;
+    return `${base} bg-${prayer}`;
+  });
+
   getTimes = linkedSignal(() => {
     return this.prayerService.getPrayerTimes(this.selectedDate(), this.prayerService.isHanafi())
       .pipe(
         map((namazTimes: NamazTimes | null) => {
-          if (!namazTimes) return [];
+          if (!namazTimes) {
+            this.currentPrayer.set("");
+            return [];
+          }
 
           const now = new Date();
           const sortedTimes: PrayerTimeInfo[] = Object.entries(namazTimes)
@@ -53,6 +65,13 @@ export class PrayerTimesComponent implements OnInit {
           const closestFuturePrayer = sortedTimes.slice().reverse().find(prayer => prayer.value <= now && prayer.value.getDate() === now.getDate());
           if (closestFuturePrayer) {
             closestFuturePrayer.isClosest = true;
+            this.currentPrayer.set(closestFuturePrayer.key);
+          } else if (sortedTimes.length > 0 && sortedTimes[0].value > now) {
+            // Before Fajr today, so the current prayer is Isha from yesterday
+            this.currentPrayer.set("isha");
+          } else if (sortedTimes.length > 0) {
+            // No next prayer for today, which means we are past Isha
+            this.currentPrayer.set("isha");
           }
 
           return sortedTimes;

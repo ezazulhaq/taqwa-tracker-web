@@ -13,3 +13,63 @@
 .prayer-next-day {
   @apply text-3xl px-2 font-semibold text-slate-600 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200 cursor-pointer hover:scale-110 hover:translate-x-0.5 active:translate-x-1 transition-all duration-300;
 }
+
+@keyframes pan-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+:host(.bg-fajr) {
+  @apply bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-sunrise) {
+  @apply bg-gradient-to-br from-orange-100 via-amber-100 to-yellow-100 dark:from-slate-800 dark:via-orange-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-dhuhr) {
+  @apply bg-gradient-to-br from-sky-100 via-blue-100 to-cyan-100 dark:from-slate-800 dark:via-sky-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-asr) {
+  @apply bg-gradient-to-br from-yellow-100 via-orange-100 to-amber-100 dark:from-slate-800 dark:via-yellow-900 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-maghrib) {
+  @apply bg-gradient-to-br from-orange-200 via-rose-200 to-red-200 dark:from-slate-900 dark:via-rose-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-isha) {
+  @apply bg-gradient-to-br from-slate-200 via-indigo-200 to-blue-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-tahajjud) {
+  @apply bg-gradient-to-br from-slate-300 via-blue-200 to-indigo-300 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
+
+:host(.bg-jummah) {
+  @apply bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-100 dark:from-slate-800 dark:via-emerald-950 dark:to-slate-900;
+  background-size: 200% 200%;
+  animation: pan-bg 15s ease-in-out infinite;
+}
