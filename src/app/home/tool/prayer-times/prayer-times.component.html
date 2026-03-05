@@ -13,7 +13,7 @@
   <!-- Afternoon / Sunset (Deep orange and red) -->
   <div class="sky-layer bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 dark:from-slate-900 dark:via-rose-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().sunset"></div>
 
-  <!-- 2. Stars Layer (Visible at Night) -->
+  <!-- 2. Stars & Meteorites Layer (Visible at Night) -->
   <div class="absolute inset-0 transition-opacity duration-1000" [style.opacity]="opacities().night">
     <!-- A simple SVG pattern for stars to avoid heavy images -->
     <svg class="absolute inset-0 w-full h-full opacity-60" xmlns="http://www.w3.org/2000/svg">
@@ -29,9 +29,27 @@
       </defs>
       <rect x="0" y="0" width="100%" height="100%" fill="url(#stars)" />
     </svg>
+
+    <!-- Meteorites / Shooting Stars -->
+    <div class="meteor" style="top: 10%; right: 10%; animation-delay: 2s; animation-duration: 12s;"></div>
+    <div class="meteor" style="top: 25%; right: 30%; animation-delay: 15s; animation-duration: 9s;"></div>
+    <div class="meteor" style="top: 5%; right: 50%; animation-delay: 7s; animation-duration: 15s;"></div>
   </div>
 
-  <!-- 3. Celestial Bodies (Sun & Moon) -->
+  <!-- 3. Birds Layer (Visible during the day) -->
+  <div class="absolute inset-0 transition-opacity duration-1000 overflow-hidden" [style.opacity]="opacities().day">
+    <div class="bird bird-1">
+      <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2.06.67-2.48 1.63C17.4 5.39 15.34 4.5 13 4.5c-2.34 0-4.4.89-5.52 2.13C7.06 5.67 6.11 5 5 5c-2.76 0-5 2.24-5 5s2.24 5 5 5c1.11 0 2.06-.67 2.48-1.63C8.6 14.61 10.66 15.5 13 15.5c2.34 0 4.4-.89 5.52-2.13.42.96 1.37 1.63 2.48 1.63 2.76 0 5-2.24 5-5s-2.24-5-5-5zM5 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm8 .5c-1.93 0-3.5-1.57-3.5-3.5S11.07 6.5 13 6.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm8-1c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+    </div>
+    <div class="bird bird-2">
+      <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2.06.67-2.48 1.63C17.4 5.39 15.34 4.5 13 4.5c-2.34 0-4.4.89-5.52 2.13C7.06 5.67 6.11 5 5 5c-2.76 0-5 2.24-5 5s2.24 5 5 5c1.11 0 2.06-.67 2.48-1.63C8.6 14.61 10.66 15.5 13 15.5c2.34 0 4.4-.89 5.52-2.13.42.96 1.37 1.63 2.48 1.63 2.76 0 5-2.24 5-5s-2.24-5-5-5zM5 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm8 .5c-1.93 0-3.5-1.57-3.5-3.5S11.07 6.5 13 6.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm8-1c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+    </div>
+    <div class="bird bird-3">
+      <svg class="w-14 h-14" fill="currentColor" viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2.06.67-2.48 1.63C17.4 5.39 15.34 4.5 13 4.5c-2.34 0-4.4.89-5.52 2.13C7.06 5.67 6.11 5 5 5c-2.76 0-5 2.24-5 5s2.24 5 5 5c1.11 0 2.06-.67 2.48-1.63C8.6 14.61 10.66 15.5 13 15.5c2.34 0 4.4-.89 5.52-2.13.42.96 1.37 1.63 2.48 1.63 2.76 0 5-2.24 5-5s-2.24-5-5-5zM5 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm8 .5c-1.93 0-3.5-1.57-3.5-3.5S11.07 6.5 13 6.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5zm8-1c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+    </div>
+  </div>
+
+  <!-- 4. Celestial Bodies (Sun & Moon) -->
   <div class="absolute w-full h-full">
     <!-- Sun -->
     <div class="absolute w-24 h-24 -ml-12 -mt-12 rounded-full bg-yellow-300 shadow-[0_0_60px_30px_rgba(253,224,71,0.7),0_0_100px_50px_rgba(253,224,71,0.3)] transition-all duration-1000 ease-linear"

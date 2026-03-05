@@ -65,3 +65,51 @@
   animation-delay: -25s;
   opacity: 0.8;
 }
+
+/* Meteorites / Shooting Stars */
+@keyframes shooting-star {
+  0% {
+    transform: translateX(0) translateY(0) rotate(-45deg) scale(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+    scale(1);
+  }
+  15% {
+    transform: translateX(-400px) translateY(400px) rotate(-45deg) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-400px) translateY(400px) rotate(-45deg) scale(0);
+    opacity: 0;
+  }
+}
+
+.meteor {
+  @apply absolute w-24 h-0.5 bg-gradient-to-r from-white to-transparent rounded-full;
+  animation: shooting-star 8s linear infinite;
+  opacity: 0;
+}
+
+/* Birds */
+@keyframes fly {
+  0% {
+    transform: translateX(-10vw) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(50vw) translateY(-2vh) scale(1.1);
+  }
+  100% {
+    transform: translateX(110vw) translateY(0) scale(1);
+  }
+}
+
+.bird {
+  @apply absolute text-stone-800/40 dark:text-white/20;
+  animation: fly 20s linear infinite;
+}
+
+.bird-1 { top: 15%; animation-duration: 25s; animation-delay: -2s; }
+.bird-2 { top: 25%; animation-duration: 35s; animation-delay: -15s; }
+.bird-3 { top: 10%; animation-duration: 30s; animation-delay: -10s; }
