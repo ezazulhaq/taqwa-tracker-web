@@ -34,100 +34,119 @@ export class PrayerTimesComponent implements OnInit, OnDestroy {
 
   private timeUpdateInterval: any;
 
-  // Calculates continuous opacities for the 4 sky layers based on exact time
+  // Signal to hold the raw prayer times for celestial calculations
+  private rawPrayerTimes = signal<NamazTimes | null>(null);
+
+  // Helper to get decimal hours from a Date object
+  private getDecimalHours(date: Date): number {
+    return date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+  }
+
+  // Calculates continuous opacities for the 4 sky layers based on dynamic prayer times
   opacities = computed(() => {
     const time = this.currentTime();
-    const hourFloat = time.getHours() + time.getMinutes() / 60;
+    const hourFloat = this.getDecimalHours(time);
+    const prayers = this.rawPrayerTimes();
 
-    // Default opacities
-    let night = 0, dawn = 0, day = 0, sunset = 0;
+    // Default to 6 AM / 6 PM if times aren't loaded yet
+    const sunrise = prayers ? this.getDecimalHours(prayers.sunrise) : 6;
+    const sunset = prayers ? this.getDecimalHours(prayers.maghrib) : 18;
+    
+    // Transitions usually start ~1 hour before the actual event
+    const transitionDuration = 1.5; 
 
-    // Define peak times for each state
-    const peakNight1 = 0;   // 12:00 AM
-    const peakDawn = 6;     // 6:00 AM
-    const peakDay = 12;     // 12:00 PM
-    const peakSunset = 18;  // 6:00 PM
-    const peakNight2 = 24;  // 12:00 AM (next day)
+    let night = 0, dawn = 0, day = 0, sunsetOpacity = 0;
 
-    if (hourFloat >= peakNight1 && hourFloat < peakDawn) {
+    if (hourFloat < sunrise - transitionDuration) {
+      // Deep Night
+      night = 1;
+    } else if (hourFloat < sunrise) {
       // Night -> Dawn
-      const progress = hourFloat / peakDawn;
+      const progress = (hourFloat - (sunrise - transitionDuration)) / transitionDuration;
       night = 1 - progress;
       dawn = progress;
-    } else if (hourFloat >= peakDawn && hourFloat < peakDay) {
+    } else if (hourFloat < sunrise + transitionDuration) {
       // Dawn -> Day
-      const progress = (hourFloat - peakDawn) / (peakDay - peakDawn);
+      const progress = (hourFloat - sunrise) / transitionDuration;
       dawn = 1 - progress;
       day = progress;
-    } else if (hourFloat >= peakDay && hourFloat < peakSunset) {
+    } else if (hourFloat < sunset - transitionDuration) {
+      // Full Day
+      day = 1;
+    } else if (hourFloat < sunset) {
       // Day -> Sunset
-      const progress = (hourFloat - peakDay) / (peakSunset - peakDay);
+      const progress = (hourFloat - (sunset - transitionDuration)) / transitionDuration;
       day = 1 - progress;
-      sunset = progress;
-    } else {
+      sunsetOpacity = progress;
+    } else if (hourFloat < sunset + transitionDuration) {
       // Sunset -> Night
-      const progress = (hourFloat - peakSunset) / (peakNight2 - peakSunset);
-      sunset = 1 - progress;
+      const progress = (hourFloat - sunset) / transitionDuration;
+      sunsetOpacity = 1 - progress;
       night = progress;
+    } else {
+      // Back to Night
+      night = 1;
     }
 
-    return { night, dawn, day, sunset };
+    return { night, dawn, day, sunset: sunsetOpacity };
   });
 
   // Calculates the positions and opacities of the sun and moon along an arc
   celestialPositions = computed(() => {
     const time = this.currentTime();
-    const hourFloat = time.getHours() + time.getMinutes() / 60;
+    const hourFloat = this.getDecimalHours(time);
+    const prayers = this.rawPrayerTimes();
 
-    // Sun arc: Rises at 6am (x=0%), Peaks at 12pm (x=50%, y=10%), Sets at 6pm (x=100%)
-    const sunStart = 6;
-    const sunEnd = 18;
+    // Dynamic Sunrise and Sunset
+    const sunrise = prayers ? this.getDecimalHours(prayers.sunrise) : 6;
+    const sunset = prayers ? this.getDecimalHours(prayers.maghrib) : 18;
+
+    // Sun arc: Rises at sunrise, Peaks in middle, Sets at sunset
     let sunX = 50;
-    let sunY = 110; // Below horizon
+    let sunY = 110; 
     let sunOpacity = 0;
 
-    if (hourFloat >= sunStart && hourFloat <= sunEnd) {
-      const progress = (hourFloat - sunStart) / (sunEnd - sunStart);
+    if (hourFloat >= sunrise && hourFloat <= sunset) {
+      const progress = (hourFloat - sunrise) / (sunset - sunrise);
       sunX = progress * 100;
-      // Parabola: y = a*(x-h)^2 + k. Vertex (h,k) at (0.5, 10). Roots at 0 and 1 (110).
-      // 110 = a*(0 - 0.5)^2 + 10  => 100 = a * 0.25 => a = 400
+      // Parabola: vertex at 0.5 progress, peak height 10% from top
       sunY = 400 * Math.pow(progress - 0.5, 2) + 10;
       sunOpacity = 1;
-    } else if (hourFloat >= sunStart - 1 && hourFloat < sunStart) {
+    } else if (hourFloat >= sunrise - 0.5 && hourFloat < sunrise) {
       // Fading in just before sunrise
       sunX = 0;
       sunY = 110;
-      sunOpacity = hourFloat - (sunStart - 1);
-    } else if (hourFloat > sunEnd && hourFloat <= sunEnd + 1) {
+      sunOpacity = (hourFloat - (sunrise - 0.5)) * 2;
+    } else if (hourFloat > sunset && hourFloat <= sunset + 0.5) {
       // Fading out just after sunset
       sunX = 100;
       sunY = 110;
-      sunOpacity = 1 - (hourFloat - sunEnd);
+      sunOpacity = 1 - (hourFloat - sunset) * 2;
     }
 
-    // Moon arc: Rises at 6pm (18:00), Peaks at 12am (0:00/24:00), Sets at 6am
+    // Moon arc: Rises at sunset, Peaks at midnight (roughly), Sets at sunrise
     let moonX = 50;
     let moonY = 110;
     let moonOpacity = 0;
 
-    // Normalize hour for moon arc (18 to 30)
-    const moonHour = hourFloat < 12 ? hourFloat + 24 : hourFloat;
-    const moonStart = 18;
-    const moonEnd = 30; // 6 AM next day
+    // Normalize moon cycle (sunset to sunrise next day)
+    const moonStart = sunset;
+    const moonEnd = sunrise + 24;
+    const moonCurrent = hourFloat < sunset ? hourFloat + 24 : hourFloat;
 
-    if (moonHour >= moonStart && moonHour <= moonEnd) {
-      const progress = (moonHour - moonStart) / (moonEnd - moonStart);
+    if (moonCurrent >= moonStart && moonCurrent <= moonEnd) {
+      const progress = (moonCurrent - moonStart) / (moonEnd - moonStart);
       moonX = progress * 100;
       moonY = 400 * Math.pow(progress - 0.5, 2) + 10;
       moonOpacity = 1;
-    } else if (moonHour >= moonStart - 1 && moonHour < moonStart) {
+    } else if (moonCurrent >= moonStart - 0.5 && moonCurrent < moonStart) {
       moonX = 0;
       moonY = 110;
-      moonOpacity = moonHour - (moonStart - 1);
-    } else if (moonHour > moonEnd && moonHour <= moonEnd + 1) {
+      moonOpacity = (moonCurrent - (moonStart - 0.5)) * 2;
+    } else if (moonCurrent > moonEnd && moonCurrent <= moonEnd + 0.5) {
       moonX = 100;
       moonY = 110;
-      moonOpacity = 1 - (moonHour - moonEnd);
+      moonOpacity = 1 - (moonCurrent - moonEnd) * 2;
     }
 
     return {
@@ -140,6 +159,7 @@ export class PrayerTimesComponent implements OnInit, OnDestroy {
     return this.prayerService.getPrayerTimes(this.selectedDate(), this.prayerService.isHanafi())
       .pipe(
         map((namazTimes: NamazTimes | null) => {
+          this.rawPrayerTimes.set(namazTimes); // Store for celestial calculations
           if (!namazTimes) {
             return [];
           }

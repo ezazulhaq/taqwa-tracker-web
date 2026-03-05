@@ -1,17 +1,17 @@
 <!-- Sky Background Layers -->
 <div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
   <!-- 1. Sky Color Layers -->
-  <!-- Night / Midnight -->
-  <div class="sky-layer bg-gradient-to-br from-slate-200 via-indigo-200 to-blue-200 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().night"></div>
+  <!-- Night / Midnight (Deeper indigo/navy even in light mode) -->
+  <div class="sky-layer bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().night"></div>
 
-  <!-- Dawn / Sunrise -->
-  <div class="sky-layer bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().dawn"></div>
+  <!-- Dawn / Sunrise (Vibrant amber, pink, and purple) -->
+  <div class="sky-layer bg-gradient-to-br from-amber-200 via-pink-300 to-indigo-400 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().dawn"></div>
 
-  <!-- Day / Noon -->
-  <div class="sky-layer bg-gradient-to-br from-sky-100 via-blue-100 to-cyan-100 dark:from-slate-800 dark:via-sky-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().day"></div>
+  <!-- Day / Noon (Vibrant sky blue) -->
+  <div class="sky-layer bg-gradient-to-br from-sky-400 via-blue-300 to-cyan-200 dark:from-slate-800 dark:via-sky-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().day"></div>
 
-  <!-- Afternoon / Sunset -->
-  <div class="sky-layer bg-gradient-to-br from-orange-200 via-rose-200 to-red-200 dark:from-slate-900 dark:via-rose-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().sunset"></div>
+  <!-- Afternoon / Sunset (Deep orange and red) -->
+  <div class="sky-layer bg-gradient-to-br from-orange-500 via-rose-500 to-red-600 dark:from-slate-900 dark:via-rose-950 dark:to-slate-900 transition-opacity duration-1000" [style.opacity]="opacities().sunset"></div>
 
   <!-- 2. Stars Layer (Visible at Night) -->
   <div class="absolute inset-0 transition-opacity duration-1000" [style.opacity]="opacities().night">
@@ -34,7 +34,7 @@
   <!-- 3. Celestial Bodies (Sun & Moon) -->
   <div class="absolute w-full h-full">
     <!-- Sun -->
-    <div class="absolute w-24 h-24 -ml-12 -mt-12 rounded-full bg-yellow-300 shadow-[0_0_60px_30px_rgba(253,224,71,0.6)] transition-all duration-1000 ease-linear"
+    <div class="absolute w-24 h-24 -ml-12 -mt-12 rounded-full bg-yellow-300 shadow-[0_0_60px_30px_rgba(253,224,71,0.7),0_0_100px_50px_rgba(253,224,71,0.3)] transition-all duration-1000 ease-linear"
          [style.left.%]="celestialPositions().sun.x"
          [style.top.%]="celestialPositions().sun.y"
          [style.opacity]="celestialPositions().sun.opacity">
@@ -54,14 +54,14 @@
 
   <!-- 4. Clouds Layers (Drifting slowly) -->
   <div class="absolute inset-0 opacity-70 dark:opacity-40 transition-opacity duration-1000" [style.opacity]="opacities().night > 0.8 ? 0.2 : (1 - opacities().night)">
-    <div class="cloud cloud-1">
-      <svg viewBox="0 0 24 24" fill="currentColor" class="w-40 h-40 text-white"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
+    <div class="cloud cloud-1 filter drop-shadow-lg">
+      <svg viewBox="0 0 24 24" fill="currentColor" class="w-40 h-40 text-white/90"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
     </div>
-    <div class="cloud cloud-2">
-      <svg viewBox="0 0 24 24" fill="currentColor" class="w-64 h-64 text-white"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
+    <div class="cloud cloud-2 filter drop-shadow-xl">
+      <svg viewBox="0 0 24 24" fill="currentColor" class="w-64 h-64 text-white/80"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
     </div>
-    <div class="cloud cloud-3">
-      <svg viewBox="0 0 24 24" fill="currentColor" class="w-32 h-32 text-white"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
+    <div class="cloud cloud-3 filter drop-shadow-md">
+      <svg viewBox="0 0 24 24" fill="currentColor" class="w-32 h-32 text-white/95"><path d="M6 14.5a4.5 4.5 0 014.1-4.47 5 5 0 019.8 1.47 4 4 0 01-1.9 7.5H6a4.5 4.5 0 010-9zm0-2a6.5 6.5 0 000 13h12a6 6 0 001.9-11.7A7 7 0 0010.1 8a6.5 6.5 0 00-4.1 4.5z" clip-rule="evenodd" fill-rule="evenodd"/></svg>
     </div>
   </div>
 </div>
@@ -72,7 +72,7 @@
 
   @if(prayerName() && prayerName() !== 'sunrise'){
   <div (click)="prayerName.set('')"
-    class="fixed z-10 top-0 left-0 w-full h-full bg-gray-500/60 flex items-center justify-center">
+    class="fixed z-10 top-0 left-0 w-full h-full bg-gray-500/40 backdrop-blur-sm flex items-center justify-center">
     <app-rakat class="transform" [name]="prayerName()" (resetName)="prayerName.set($event)">
     </app-rakat>
   </div>
@@ -81,9 +81,9 @@
   <!-- Current Location -->
   <div class="w-full mx-4">
     <div
-      class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 mx-4 shadow-lg border border-emerald-100 dark:border-slate-600">
+      class="bg-white/40 backdrop-blur-md dark:bg-slate-800/60 rounded-2xl p-6 mx-4 shadow-xl border border-white/40 dark:border-slate-600/50">
       <div class="flex flex-row items-center justify-center space-x-4 mx-auto">
-        <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+        <div class="p-3 bg-emerald-100/50 dark:bg-emerald-900/30 rounded-full backdrop-blur-sm">
           <svg class="size-6 text-emerald-600 dark:text-emerald-400" fill="currentColor"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
             <path
@@ -93,7 +93,7 @@
         @defer(when address()){
         <div class="flex-1 overflow-hidden">
           <div class="whitespace-nowrap animate-scroll">
-            <p class="font-medium text-stone-800 dark:text-stone-200 inline-block">{{ address() }}</p>
+            <p class="font-semibold text-stone-900 dark:text-stone-100 inline-block">{{ address() }}</p>
           </div>
         </div>
         }
@@ -106,10 +106,10 @@
     </div>
   </div>
 
-  <div class="bg-white dark:bg-slate-800 rounded-xl p-4 mx-4 shadow-md border border-stone-200 dark:border-slate-600">
+  <div class="bg-white/60 backdrop-blur-lg dark:bg-slate-800/70 rounded-xl p-4 mx-4 shadow-lg border border-white/30 dark:border-slate-600/40">
     <div class="flex flex-row justify-center items-center space-x-6">
       <button type="button" (click)="changeSelectedDate('previous')"
-        class="p-2 rounded-lg bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors">
+        class="p-2 rounded-lg bg-stone-100/50 dark:bg-slate-700/50 hover:bg-stone-200/70 dark:hover:bg-slate-600/70 transition-colors backdrop-blur-sm">
         <svg class="size-5 text-stone-600 dark:text-stone-300" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd"
             d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -118,17 +118,17 @@
       </button>
       <div class="relative flex-1 text-center">
         <button
-          class="text-stone-800 dark:text-stone-200 font-medium hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          class="text-stone-900 dark:text-stone-100 font-bold hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
           (click)="isCalendarVisible.set(!isCalendarVisible())">
           {{selectedDate() | date:'fullDate'}}
         </button>
         @if (isCalendarVisible()) {
-        <app-calendar class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10"
+        <app-calendar class="absolute top-8 left-1/2 transform -translate-x-1/2 z-10 shadow-2xl"
           (dateSelected)="onDateSelected($event)"></app-calendar>
         }
       </div>
       <button type="button" (click)="changeSelectedDate('next')"
-        class="p-2 rounded-lg bg-stone-100 dark:bg-slate-700 hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors">
+        class="p-2 rounded-lg bg-stone-100/50 dark:bg-slate-700/50 hover:bg-stone-200/70 dark:hover:bg-slate-600/70 transition-colors backdrop-blur-sm">
         <svg class="size-5 text-stone-600 dark:text-stone-300" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd"
             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -141,8 +141,8 @@
 
   @if (notificationService.permissionStatus() === 'denied') {
   <div
-    class="flex flex-row justify-center items-center space-x-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg">
-    <p class="text-xs text-red-600 dark:text-red-400 leading-tight">
+    class="flex flex-row justify-center items-center space-x-2 p-3 bg-red-100/60 backdrop-blur-md dark:bg-red-900/30 border border-red-200/50 dark:border-red-800/50 rounded-lg mx-4">
+    <p class="text-xs font-medium text-red-700 dark:text-red-400 leading-tight">
       Notifications are blocked by your browser. Please reset site permissions in your browser settings to enable
       alerts.
     </p>
@@ -152,38 +152,38 @@
   @defer (when getTimes()) {
   <div class="w-full px-4">
     <div
-      class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 overflow-hidden">
-      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-4">
-        <h3 class="text-white font-semibold text-lg text-center">Salah Time</h3>
+      class="bg-white/60 backdrop-blur-xl dark:bg-slate-800/80 rounded-2xl shadow-2xl border border-white/30 dark:border-slate-600/40 overflow-hidden">
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 shadow-inner">
+        <h3 class="text-white font-bold text-xl text-center">Salah Time</h3>
       </div>
-      <div class="divide-y divide-stone-200 dark:divide-slate-600">
+      <div class="divide-y divide-white/20 dark:divide-slate-600/30">
         @for (prayer of getTimes() | async; track prayer.value) {
         <div (click)="prayerName.set(prayer.key)"
-          class="relative group p-4 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-          [ngClass]="prayer.isClosest ? 'bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500' : ''">
+          class="relative group p-5 hover:bg-white/40 dark:hover:bg-slate-700/40 transition-all cursor-pointer"
+          [ngClass]="prayer.isClosest ? 'bg-emerald-100/30 dark:bg-emerald-900/20 border-l-4 border-emerald-500' : ''">
           <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-4">
               @if(prayer.isClosest){
               <div class="relative">
-                <div class="size-3 rounded-full bg-emerald-500 animate-pulse"></div>
-                <div class="absolute inset-0 size-3 rounded-full bg-emerald-500 animate-ping opacity-75">
+                <div class="size-4 rounded-full bg-emerald-500 animate-pulse"></div>
+                <div class="absolute inset-0 size-4 rounded-full bg-emerald-500 animate-ping opacity-75">
                 </div>
               </div>
               }
               <div>
                 <h4
-                  class="font-medium text-stone-800 dark:text-stone-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                  class="font-semibold text-stone-900 dark:text-stone-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 text-lg">
                   {{ prayer.key | titlecase }}
                 </h4>
               </div>
             </div>
             <div class="text-right">
               <p
-                class="font-semibold text-lg text-stone-800 dark:text-stone-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                class="font-bold text-2xl text-stone-900 dark:text-stone-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400">
                 {{ prayer.value | date:'shortTime' }}
               </p>
               @if(prayer.isClosest){
-              <p class="text-xs text-stone-600 dark:text-stone-400">Now</p>
+              <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Now</p>
               }
             </div>
           </div>
@@ -195,7 +195,7 @@
   }
   @loading {
   <div class="w-full px-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-12">
+    <div class="bg-white/40 backdrop-blur-lg dark:bg-slate-800/60 rounded-2xl shadow-lg border border-white/20 dark:border-slate-600 p-12">
       <div class="flex flex-col items-center space-y-4">
         <svg aria-hidden="true" class="size-12 text-stone-200 dark:text-slate-600 animate-spin fill-emerald-600"
           viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -206,25 +206,25 @@
             d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
             fill="currentFill" />
         </svg>
-        <p class="text-stone-600 dark:text-stone-400 font-medium">Loading prayer times...</p>
+        <p class="text-stone-700 dark:text-stone-300 font-bold">Loading prayer times...</p>
       </div>
     </div>
   </div>
   }
   @if(!haveLocationAccess()) {
   <div class="w-full px-4">
-    <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6">
-      <div class="flex items-center space-x-3">
-        <div class="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-full">
-          <svg class="size-6 text-amber-600 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+    <div class="bg-amber-100/60 backdrop-blur-md dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 shadow-lg">
+      <div class="flex items-center space-x-4">
+        <div class="p-3 bg-amber-200/50 dark:bg-amber-900/30 rounded-full">
+          <svg class="size-6 text-amber-700 dark:text-amber-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd"
               d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
               clip-rule="evenodd" />
           </svg>
         </div>
         <div>
-          <h3 class="font-medium text-amber-800 dark:text-amber-200">Location Access Required</h3>
-          <p class="text-sm text-amber-700 dark:text-amber-300">Please allow location access to view accurate
+          <h3 class="font-bold text-amber-900 dark:text-amber-100 text-lg">Location Access Required</h3>
+          <p class="text-sm text-amber-800 dark:text-amber-200 font-medium">Please allow location access to view accurate
             prayer times for your area.</p>
         </div>
       </div>
