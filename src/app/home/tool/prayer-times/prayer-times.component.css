@@ -73,8 +73,8 @@
     opacity: 0;
   }
   5% {
+    transform: translateX(0) translateY(0) rotate(-45deg) scale(1);
     opacity: 1;
-    scale(1);
   }
   15% {
     transform: translateX(-400px) translateY(400px) rotate(-45deg) scale(0.6);
