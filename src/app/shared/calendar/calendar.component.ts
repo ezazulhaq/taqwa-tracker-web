@@ -66,4 +66,13 @@ export class CalendarComponent {
   isCurrentMonth(index: number): boolean {
     return index >= this.days.indexOf(1);
   }
+
+  isToday(day: number): boolean {
+    const today = new Date();
+    return (
+      day === today.getDate() &&
+      this.currentDate.getMonth() === today.getMonth() &&
+      this.currentDate.getFullYear() === today.getFullYear()
+    );
+  }
 }
