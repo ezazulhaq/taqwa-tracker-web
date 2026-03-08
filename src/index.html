@@ -7,10 +7,33 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" id="favicon-32" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
+  <link rel="icon" id="favicon-16" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+  <link rel="apple-touch-icon" id="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+  <link rel="manifest" id="manifest" href="manifest.webmanifest">
+
+  <script>
+    (function() {
+      const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (isDark) {
+        document.getElementById('favicon-32').href = 'icons/icon-dark-96x96.png';
+        document.getElementById('favicon-16').href = 'icons/icon-dark-72x72.png';
+        document.getElementById('apple-touch-icon').href = 'icons/icon-dark-192x192.png';
+        document.getElementById('manifest').href = 'manifest-dark.webmanifest';
+      }
+
+      // Optional: Listen for changes
+      if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+          const dark = event.matches;
+          document.getElementById('favicon-32').href = dark ? 'icons/icon-dark-96x96.png' : 'icons/icon-96x96.png';
+          document.getElementById('favicon-16').href = dark ? 'icons/icon-dark-72x72.png' : 'icons/icon-72x72.png';
+          document.getElementById('apple-touch-icon').href = dark ? 'icons/icon-dark-192x192.png' : 'icons/icon-192x192.png';
+          document.getElementById('manifest').href = dark ? 'manifest-dark.webmanifest' : 'manifest.webmanifest';
+        });
+      }
+    })();
+  </script>
 
   <link rel="preconnect" href="https://static-cdn.tarteel.ai">
 
