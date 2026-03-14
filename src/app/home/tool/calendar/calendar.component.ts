@@ -62,6 +62,10 @@ export class IslamicCalendarComponent implements OnInit {
     { month: 12, day: 13, name: 'Tashriq Day 3', description: 'Days of Tashriq, remembrance of Allah', type: 'important' }
   ];
 
+  private islamicEventsMap = new Map<string, IslamicEvent>(
+    this.islamicEvents.map(event => [`${event.month}-${event.day}`, event])
+  );
+
   currentMonthName = computed(() => {
     return this.currentDate().format('MMMM YYYY');
   });
@@ -95,9 +99,7 @@ export class IslamicCalendarComponent implements OnInit {
       const hijriMonth = parseInt(adjustedDate.format('iM'));
       const hijriDay = parseInt(adjustedDate.format('iD'));
 
-      const event = this.islamicEvents.find(e =>
-        e.month === hijriMonth && e.day === hijriDay
-      );
+      const event = this.islamicEventsMap.get(`${hijriMonth}-${hijriDay}`);
 
       if (event) {
         events.push({
@@ -154,9 +156,7 @@ export class IslamicCalendarComponent implements OnInit {
     const isToday = date.isSame(moment(), 'day');
     const isFriday = date.day() === 5;
 
-    const event = this.islamicEvents.find(e =>
-      e.month === hijriMonth && e.day === hijriDay
-    );
+    const event = this.islamicEventsMap.get(`${hijriMonth}-${hijriDay}`);
 
     return {
       gregorianDate: moment(date),
