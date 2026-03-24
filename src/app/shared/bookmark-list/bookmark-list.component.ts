@@ -72,21 +72,21 @@ export class BookmarkListComponent implements OnInit {
             .filter(surah => uniqueSurahIds.has(surah.surah_id));
 
         this.bookMarkDetails.set(
-            filteredBookmarks.reduce((acc, bookmark) => {
-                const surah = surahMap.get(bookmark.surah_id);
-                if (surah) {
-                    let juz: Juz | undefined;
-                    if (contextType === 'juz' && bookmark.juz_id) {
-                        juz = this.juzList().find(j => j.juz_id === bookmark.juz_id);
-                    }
-                    acc.push({
-                        bookmarked: bookmark,
-                        surah: surah,
-                        juz: juz
-                    });
+            filteredBookmarks.map(bookmark => {
+                const surah = bookMarkedSurahs.find(surah => surah.surah_id === bookmark.surah_id);
+                if (!surah) return null;
+
+                let juz: Juz | undefined;
+                if (contextType === 'juz' && bookmark.juz_id) {
+                    juz = this.juzList().find(j => j.juz_id === bookmark.juz_id);
                 }
-                return acc;
-            }, [] as { bookmarked: BookMarkedSurah, surah: Surah, juz?: Juz }[])
+
+                return {
+                    bookmarked: bookmark,
+                    surah: surah,
+                    juz: juz
+                };
+            }).filter(item => item !== null) as { bookmarked: BookMarkedSurah, surah: Surah, juz?: Juz }[]
         );
     }
 
