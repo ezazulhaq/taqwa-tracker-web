@@ -67,9 +67,9 @@ export class BookmarkListComponent implements OnInit {
         const contextType = this.type();
         const filteredBookmarks = allBookmarks.filter(b => b.type === contextType);
 
-        const uniqueSurahIds = [...new Set(filteredBookmarks.map(ayah => ayah.surah_id))];
+        const uniqueSurahIds = new Set(filteredBookmarks.map(ayah => ayah.surah_id));
         const bookMarkedSurahs = this.surahList()
-            .filter(surah => uniqueSurahIds.includes(surah.surah_id));
+            .filter(surah => uniqueSurahIds.has(surah.surah_id));
 
         this.bookMarkDetails.set(
             filteredBookmarks.map(bookmark => {
