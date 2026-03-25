@@ -47,7 +47,7 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
     @ViewChild('ayahContainer') ayahContainer!: ElementRef;
 
     private ayahIdToScrollTo = signal<number | null>(null);
-    private readAyahsSet = new Set<number>(); // Track read ayahs in current session
+    private readAyahsSet = new Set<string>(); // Track read ayahs in current session
     private lastReadAyahNo = signal<number | null>(null);
 
     /** The surah currently in the viewport (for sticky sub-header) */
@@ -56,6 +56,7 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
     juzNumber = signal<string>('');
     juzName = signal<string>('');
     juzName_en = signal<string>('');
+    surahNoParam = signal<string>('');
     ayahNoParam = signal<string>('');
 
     ayahs = signal<Ayah[]>([]);
@@ -111,6 +112,7 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
             this.juzNumber.set(params['juzNumber'] || '');
             this.juzName.set(params['juzName'] || '');
             this.juzName_en.set(params['juzName_en'] || '');
+            this.surahNoParam.set(params['surahNo'] || '');
             this.ayahNoParam.set(params['ayahNo'] || '');
 
             if (this.ayahNoParam()) {
@@ -134,11 +136,17 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
         if (this.ayahIdToScrollTo() !== null && this.ayahs().length > 0) {
             setTimeout(() => {
                 const targetAyahNo = this.ayahIdToScrollTo();
-                const targetAyah = this.ayahs().find(a => a.ayah_no === targetAyahNo);
+                const targetSurahNo = +this.surahNoParam();
+
+                const targetAyah = this.ayahs().find(a =>
+                    a.ayah_no === targetAyahNo &&
+                    (!targetSurahNo || a.surah_no === targetSurahNo)
+                );
 
                 if (targetAyah) {
                     this.scrollToAyah(targetAyah.surah_no, targetAyah.ayah_no);
                     this.selectedAyahNumber.set(`${targetAyah.surah_no}:${targetAyah.ayah_no}`);
+                    this.selectedAyahLabel.set(`${targetAyah.surah_name} : ${targetAyah.ayah_no}`);
                 }
             }, 100);
         }
@@ -168,10 +176,13 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
                         // Expected ID format: "ayah-{surah_no}-{ayah_no}"
                         const idParts = ayahElement.id.split('-');
                         if (idParts.length >= 3) {
+                            const surahNumber = parseInt(idParts[1]);
                             const ayahNumber = parseInt(idParts[2]);
+                            const compositeId = `${surahNumber}-${ayahNumber}`;
 
-                            if (!this.readAyahsSet.has(ayahNumber)) {
-                                this.readAyahsSet.add(ayahNumber);
+                            if (!this.readAyahsSet.has(compositeId)) {
+                                this.readAyahsSet.add(compositeId);
+                                this.surahNoParam.set(String(surahNumber));
                                 this.lastReadAyahNo.set(ayahNumber);
                                 this.trackReading();
                             }
@@ -193,6 +204,9 @@ export class JuzAyahComponent implements AfterViewInit, OnDestroy {
         let title = this.juzName_en();
         let subtitle = `Juz ${this.juzNumber()}`;
 
+        if (this.surahNoParam()) {
+            link += `&surahNo=${this.surahNoParam()}`;
+        }
         if (this.lastReadAyahNo()) {
             link += `&ayahNo=${this.lastReadAyahNo()}`;
         }
