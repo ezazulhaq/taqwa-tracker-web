@@ -39,7 +39,7 @@ export class SurahAyahComponent {
     @ViewChild('ayahContainer') ayahContainer!: ElementRef;
 
     private ayahIdToScrollTo = signal<number | null>(null);
-    private readAyahsSet = new Set<number>(); // Track read ayahs in current session
+    private readAyahsSet = new Set<string>(); // Track read ayahs in current session
     private lastReadAyahNo = signal<number | null>(null);
 
     surahNumber = signal<string>('');
@@ -104,6 +104,7 @@ export class SurahAyahComponent {
                 if (targetAyah) {
                     this.scrollToAyah(targetAyah.surah_no, targetAyah.ayah_no);
                     this.selectedAyahNumber.set(`${targetAyah.surah_no}:${targetAyah.ayah_no}`);
+                    this.selectedAyahLabel.set(`Ayah ${targetAyah.ayah_no}`);
                 }
             }, 100);
         }
@@ -132,10 +133,12 @@ export class SurahAyahComponent {
                         // Expected ID format: "ayah-{surah_no}-{ayah_no}"
                         const idParts = ayahElement.id.split('-');
                         if (idParts.length >= 3) {
+                            const surahNumber = parseInt(idParts[1]);
                             const ayahNumber = parseInt(idParts[2]);
+                            const compositeId = `${surahNumber}-${ayahNumber}`;
 
-                            if (!this.readAyahsSet.has(ayahNumber)) {
-                                this.readAyahsSet.add(ayahNumber);
+                            if (!this.readAyahsSet.has(compositeId)) {
+                                this.readAyahsSet.add(compositeId);
                                 this.lastReadAyahNo.set(ayahNumber);
                                 this.trackReading();
                             }
