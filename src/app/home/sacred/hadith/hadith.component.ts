@@ -88,14 +88,7 @@ export class HadithComponent {
   };
 
   removeBookmark(bookmark: HadithDetail) {
-    this.hadithService.getHadithByChapterId(bookmark.chapter_id).subscribe(
-      {
-        next: (data: any) => {
-          const hadith = data.data.find((hadith: HadithDetail) => hadith.hadith_no === bookmark.hadith_no);
-          this.bookMarkService.removeHadithBookmark(hadith);
-        },
-        complete: () => this.getBookmarkedHadiths()
-      }
-    );
+    this.bookMarkService.removeHadithBookmark(bookmark);
+    this.getBookmarkedHadiths();
   }
 }
