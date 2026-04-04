@@ -34,7 +34,9 @@ export class ContributionTrackerComponent implements OnInit {
 
     @ViewChild('confirmPopup') confirmPopup!: PopupComponent;
     @ViewChild('addPopup') addPopup!: PopupComponent;
+    @ViewChild('resetPopup') resetPopup!: PopupComponent;
     pendingReversal = signal<{ id: string, amount: number, date: Date } | null>(null);
+    isResetting = signal(false);
 
     // Expose Math to template
     Math = Math;
@@ -164,5 +166,31 @@ export class ContributionTrackerComponent implements OnInit {
 
     isReversing(contributionId: string): boolean {
         return this.reversingId() === contributionId;
+    }
+
+    openResetPopup(): void {
+        this.resetPopup.show();
+    }
+
+    cancelReset(): void {
+        this.resetPopup.close();
+    }
+
+    confirmReset(): void {
+        this.isResetting.set(true);
+        this.resetPopup.close();
+
+        this.zakatService.resetContributions().subscribe({
+            next: (success) => {
+                this.isResetting.set(false);
+                if (!success) {
+                    alert('Failed to reset contribution history. Please try again.');
+                }
+            },
+            error: () => {
+                this.isResetting.set(false);
+                alert('An error occurred while resetting the contribution history.');
+            }
+        });
     }
 }
