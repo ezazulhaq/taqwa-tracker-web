@@ -301,4 +301,21 @@ export class ZakatService {
                 })
             );
     }
+
+    resetContributions(): Observable<boolean> {
+        return this.httpClient.delete<{ message: string, deleted_count: number }>(
+            `${environment.apiBaseUrl}/calculator/zakat/contributions`
+        ).pipe(
+            tap(() => {
+                // Reload contributions and summary after successful reset
+                this.loadContributions();
+                this.loadContributionSummary();
+            }),
+            map(() => true),
+            catchError(error => {
+                console.error('Error resetting contributions:', error);
+                return of(false);
+            })
+        );
+    }
 }

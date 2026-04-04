@@ -115,6 +115,20 @@
 <div class="history-section bg-white dark:bg-gray-800 shadow-md">
     <div class="flex justify-between items-center mb-6">
         <h2 class="section-title text-gray-900 dark:text-white mb-0">Contribution History</h2>
+        @if (zakatService.contributions().length > 0) {
+        <button (click)="openResetPopup()"
+            [disabled]="isResetting()"
+            class="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            @if (isResetting()) {
+            <span>Resetting...</span>
+            } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span>Reset History</span>
+            }
+        </button>
+        }
     </div>
     @if (zakatService.contributions().length > 0) {
     <div class="contributions-table">
@@ -218,6 +232,38 @@
         <button (click)="confirmReverse()"
             class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
             Reverse Contribution
+        </button>
+    </div>
+</app-popup>
+
+<!-- Reset History Confirmation Popup -->
+<app-popup #resetPopup [title]="'Reset Contribution History'" [showActions]="true" (closed)="cancelReset()">
+    <div class="text-center">
+        <div class="mb-4">
+            <div class="text-red-600 dark:text-red-400 text-4xl mb-2">🛑</div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4 font-medium">
+                Are you absolutely sure you want to delete all contributions?
+            </p>
+        </div>
+
+        <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 mb-4 text-left border border-red-100 dark:border-red-800">
+            <p class="text-sm text-red-700 dark:text-red-300">
+                This action will permanently remove your entire contribution history. All payment records will be lost, and your remaining balance will be reset.
+            </p>
+            <p class="text-sm text-red-700 dark:text-red-300 font-semibold mt-2">
+                This action cannot be undone.
+            </p>
+        </div>
+    </div>
+
+    <div slot="actions">
+        <button (click)="cancelReset()"
+            class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+            Cancel
+        </button>
+        <button (click)="confirmReset()"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
+            Yes, Reset History
         </button>
     </div>
 </app-popup>
