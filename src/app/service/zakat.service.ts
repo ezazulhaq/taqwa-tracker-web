@@ -19,6 +19,7 @@ import { AuthService } from './auth.service';
 })
 export class ZakatService {
     private readonly STORAGE_KEY = 'taqwa_tracker_zakat_state';
+    private readonly RATES_CACHE_KEY = 'taqwa_tracker_nisab_rates';
     private httpClient = inject(HttpClient);
 
     readonly currencies: Currency[] = [
@@ -58,6 +59,7 @@ export class ZakatService {
     assetCategories = signal<AssetCategory[]>(this.defaultAssetCategories);
     liabilities = signal<Liabilities>(this.defaultLiabilities);
     selectedCurrencyCode = signal<string>(this.currencies[0].code);
+    liveSilverRates = signal<Record<string, number> | null>(null);
 
     private readonly authService = inject(AuthService);
 
@@ -86,7 +88,16 @@ export class ZakatService {
         return mapping[this.selectedCurrencyCode()] || 'en-US';
     });
 
-    nisabAmount = computed(() => this.selectedCurrency().nisabDefault);
+    nisabAmount = computed(() => {
+        const rates = this.liveSilverRates();
+        const curr = this.selectedCurrency();
+        if (rates && rates[curr.code.toLowerCase()]) {
+            const ratePerOunce = rates[curr.code.toLowerCase()];
+            const pricePerGram = ratePerOunce / 31.1034768; // 1 Troy Ounce = 31.1034768 grams
+            return pricePerGram * 612.36; // Silver Nisab threshold is 612.36 grams
+        }
+        return curr.nisabDefault;
+    });
 
     totalAssets = computed(() =>
         this.assetCategories()
@@ -110,6 +121,7 @@ export class ZakatService {
 
     constructor() {
         this.loadFromStorage();
+        this.fetchLiveNisabRates();
 
         // Load from backend if authenticated
         effect(() => {
@@ -129,6 +141,41 @@ export class ZakatService {
             };
             this.saveToStorage(state);
         });
+    }
+
+    private fetchLiveNisabRates(): void {
+        const cached = localStorage.getItem(this.RATES_CACHE_KEY);
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                const now = new Date().getTime();
+                // 24 hour cache
+                if (parsed.timestamp && (now - parsed.timestamp < 24 * 60 * 60 * 1000) && parsed.rates) {
+                    this.liveSilverRates.set(parsed.rates);
+                    return;
+                }
+            } catch (e) {
+                console.error('Error parsing cached rates:', e);
+            }
+        }
+
+        fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/xag.json')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch rates');
+                return res.json();
+            })
+            .then(response => {
+                if (response && response.xag) {
+                    this.liveSilverRates.set(response.xag);
+                    localStorage.setItem(this.RATES_CACHE_KEY, JSON.stringify({
+                        timestamp: new Date().getTime(),
+                        rates: response.xag
+                    }));
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching live nisab rates:', error);
+            });
     }
 
     private fetchFromBackend(): void {

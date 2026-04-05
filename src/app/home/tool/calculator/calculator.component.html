@@ -37,9 +37,11 @@
     <div class="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-4">
       <p class="text-sm">Nisab Threshold: <span class="font-bold text-lg">{{ zakatService.selectedCurrency().symbol }}
           {{
-          formatCurrency(zakatService.nisabAmount()) }}</span></p>
-      <!-- Optional: If you want to keep manual nisab adjustment, we'd need a signal for it in the service -->
-      <!-- For now, I'll keep it as informative but you might want to add setNisab to service if needed -->
+          formatCurrency(zakatService.nisabAmount()) }}</span>
+          @if (zakatService.liveSilverRates()) {
+            <span class="block mt-1 text-xs text-emerald-100 opacity-90">(Based on 612.36g of Silver via live prices)</span>
+          }
+      </p>
     </div>
   </div>
 
