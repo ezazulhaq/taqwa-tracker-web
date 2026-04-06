@@ -23,7 +23,7 @@ export const SECURITY_CONFIG = {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
     'style-src': ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-    'font-src': ["'self'", "https://fonts.gstatic.com", "https://static-cdn.tarteel.ai", "data:"],
+    'font-src': ["'self'", "https://fonts.gstatic.com", "data:"],
     'img-src': ["'self'", "data:", "https:", "blob:"],
     'connect-src': ["'self'", "https://*.supabase.co", "https://*.openstreetmap.org", "https://raw.githubusercontent.com", "https://cdn.jsdelivr.net", `${environment.apiBaseUrl}`],
     'worker-src': ["'self'", "blob:", "https://cdn.jsdelivr.net"],
