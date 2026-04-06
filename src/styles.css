@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'IndoPak';
-  src: url('https://static-cdn.tarteel.ai/qul/fonts/nastaleeq/Hanafi/normal-v4.2.2/with-waqf-lazmi/font.ttf') format('truetype');
+  src: url('/fonts/al-qalam-quran-majeed-2.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
