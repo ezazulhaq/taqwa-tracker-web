@@ -7,14 +7,16 @@ import { BookmarkService } from '../../../service/bookmark.service';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { AuthService } from '../../../service/auth.service';
 import { HadithService } from './hadith.service';
+import { SearchComponent } from './search/search.component';
 
 @Component({
   selector: 'app-hadith',
   imports: [
     RouterLink,
     ListHomeComponent,
-    TitleComponent
-],
+    TitleComponent,
+    SearchComponent
+  ],
   templateUrl: './hadith.component.html',
   styleUrl: './hadith.component.css',
   host: {
@@ -34,6 +36,8 @@ export class HadithComponent {
 
   bookMarkDetails = signal<HadithDetail[]>([]);
 
+  isSearchOpen = signal<boolean>(false);
+
   constructor(
     private readonly router: Router,
     private readonly bookMarkService: BookmarkService
@@ -43,6 +47,14 @@ export class HadithComponent {
       this.getChaptersFromSource();
       this.getBookmarkedHadiths();
     });
+  }
+
+  openSearch() {
+    this.isSearchOpen.set(true);
+  }
+
+  closeSearch() {
+    this.isSearchOpen.set(false);
   }
 
   ngOnInit(): void {

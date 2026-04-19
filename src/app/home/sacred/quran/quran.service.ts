@@ -44,4 +44,9 @@ export class QuranService {
         return this.http.get<Translator[]>(`${this.API_BASE_URL}/quran/translators?language_code=${languageCode}&active_only=${activeOnly}`)
             .pipe(map(translators => translators.map(t => ({ name: t.name, full_name: t.full_name }))));
     }
+
+    searchQuran(query: string, topK: number = 10, translator?: string): Observable<Ayah[]> {
+        const selectedTranslator = translator || this.quranTranslator();
+        return this.http.get<Ayah[]>(`${this.API_BASE_URL}/quran/search?query=${encodeURIComponent(query)}&top_k=${topK}&translator=${encodeURIComponent(selectedTranslator)}`);
+    }
 }
