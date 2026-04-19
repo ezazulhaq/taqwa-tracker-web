@@ -1,4 +1,4 @@
-<div class="fixed inset-0 z-50 bg-stone-50 dark:bg-slate-900 flex flex-col h-screen overflow-hidden">
+<div class="fixed inset-0 z-50 bg-stone-50 dark:bg-slate-900 flex flex-col" style="height: 100dvh;">
     <!-- Header with Search Input -->
     <div
         class="p-4 border-b border-stone-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm flex items-center space-x-3">
@@ -27,7 +27,7 @@
     </div>
 
     <!-- Results Area -->
-    <div class="flex-1 overflow-y-auto p-4 bg-stone-50 dark:bg-slate-900">
+    <div class="flex-1 overflow-y-auto overscroll-contain p-4 pb-8 bg-stone-50 dark:bg-slate-900">
         @if(isSearching()) {
         <div class="flex justify-center p-8">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
