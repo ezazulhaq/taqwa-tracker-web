@@ -1,26 +1,106 @@
 <app-title [title]="'Hadith'" [subTitle]="hadithSource()" [routerLink]="'/home'"></app-title>
 
+<!-- Floating Search Button -->
+<button (click)="openSearch()"
+    class="fixed top-6 right-6 z-40 p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+</button>
+
+@if(isSearchOpen()) {
+<div class="fixed inset-0 z-50 bg-stone-50 dark:bg-slate-900 flex flex-col h-screen overflow-hidden">
+    <!-- Header with Search Input -->
+    <div
+        class="p-4 border-b border-stone-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm flex items-center space-x-3">
+        <button (click)="closeSearch()"
+            class="p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </button>
+        <div class="flex-grow relative">
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="onSearchInput($event)"
+                placeholder="Search Hadith..."
+                class="w-full bg-stone-100 dark:bg-slate-700 border-none rounded-xl py-3 pl-4 pr-10 text-stone-800 dark:text-stone-200 focus:ring-2 focus:ring-emerald-500 outline-none"
+                autofocus>
+            @if(searchQuery()) {
+            <button (click)="clearSearch()"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Results Area -->
+    <div class="flex-1 overflow-y-auto p-4 bg-stone-50 dark:bg-slate-900">
+        @if(isSearching()) {
+        <div class="flex justify-center p-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        </div>
+        } @else if (searchResults().length > 0) {
+        <div class="space-y-4">
+            @for(hadith of searchResults(); track $index) {
+            <div (click)="goToHadith(hadith)"
+                class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-stone-100 dark:border-slate-700 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all">
+                <div class="flex justify-between items-center mb-3">
+                    <span
+                        class="text-sm px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-md font-semibold">
+                        {{ hadith.chapter_no }} - {{ hadith.chapter_name }} ({{hadith.hadith_no }})</span>
+                </div>
+                <div class="text-stone-600 dark:text-stone-300 text-base leading-relaxed">{{ hadith.text_en }}</div>
+            </div>
+            }
+        </div>
+        } @else if (searchQuery() && !isSearching() && searchResults().length === 0) {
+        <div class="text-center text-stone-500 dark:text-stone-400 mt-10">
+            No results found for "{{ searchQuery() }}"
+        </div>
+        } @else {
+        <div class="text-center text-stone-400 dark:text-stone-500 mt-10 flex flex-col items-center">
+            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p>Type to search across Hadiths in {{ hadithSource() }}</p>
+        </div>
+        }
+    </div>
+</div>
+}
+
 @if(bookMarkDetails().length > 0 && isAuthenticated()){
-<div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-emerald-100 dark:border-slate-600">
+<div
+    class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-emerald-100 dark:border-slate-600">
     <div class="flex items-center mb-4">
         <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mr-3">
             <svg class="size-5 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/>
+                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
             </svg>
         </div>
         <h3 class="text-lg font-semibold text-stone-800 dark:text-stone-200">Your Bookmarks</h3>
     </div>
     <div class="flex flex-wrap gap-2">
         @for(bookmark of bookMarkDetails(); track $index){
-        <div class="flex items-center bg-white dark:bg-slate-700 rounded-lg border border-emerald-200 dark:border-slate-600 overflow-hidden shadow-sm">
-            <button class="font-indopak px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-200 hover:bg-emerald-50 dark:hover:bg-slate-600 transition-colors" [routerLink]="['./chapter']"
-                [queryParams]="{ id: bookmark.chapter_id, hadithNo: bookmark.hadith_no }">
+        <div
+            class="flex items-center bg-white dark:bg-slate-700 rounded-lg border border-emerald-200 dark:border-slate-600 overflow-hidden shadow-sm">
+            <button
+                class="font-indopak px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-200 hover:bg-emerald-50 dark:hover:bg-slate-600 transition-colors"
+                [routerLink]="['./chapter']" [queryParams]="{ id: bookmark.chapter_id, hadithNo: bookmark.hadith_no }">
                 {{ bookmark.chapter_name }} : {{ bookmark.hadith_no }}
             </button>
             <button (click)="removeBookmark(bookmark)"
                 class="px-2 py-2 text-stone-500 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                 <svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
                 </svg>
             </button>
         </div>
@@ -32,18 +112,21 @@
 <div class="flex flex-col space-y-4 w-full px-4 mx-auto pb-20">
     @defer(when chapterList() && chapterList().length > 0){
     @for (chapter of chapterList(); track $index) {
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-6 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer" 
-         [routerLink]="['./chapter']" [queryParams]="{ id: chapter.id }">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-6 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer"
+        [routerLink]="['./chapter']" [queryParams]="{ id: chapter.id }">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="flex-shrink-0">
-                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center border-2 border-emerald-200 dark:border-emerald-800">
-                        <span class="text-emerald-700 dark:text-emerald-300 font-bold text-lg">{{ chapter.chapter_no }}</span>
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center border-2 border-emerald-200 dark:border-emerald-800">
+                        <span class="text-emerald-700 dark:text-emerald-300 font-bold text-lg">{{ chapter.chapter_no
+                            }}</span>
                     </div>
                 </div>
             </div>
             <div class="text-right flex-grow">
-                <h3 class="text-lg font-semibold font-indopak text-stone-800 dark:text-stone-200 text-right">{{ chapter.chapter_name }}</h3>
+                <h3 class="text-lg font-semibold font-indopak text-stone-800 dark:text-stone-200 text-right">{{
+                    chapter.chapter_name }}</h3>
             </div>
         </div>
     </div>

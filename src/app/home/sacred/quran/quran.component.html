@@ -1,5 +1,14 @@
 <app-title [title]="'Qur\'ān'" [routerLink]="'/home'"></app-title>
 
+<!-- Floating Search Button -->
+<button (click)="openSearch()"
+    class="fixed top-6 right-6 z-40 p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+</button>
+
 <!-- Tabs -->
 <div class="flex justify-center mb-6 px-4">
     <div class="bg-stone-100 dark:bg-slate-700/50 p-1.5 rounded-2xl flex shadow-inner">
@@ -17,3 +26,72 @@
 </div>
 
 <router-outlet></router-outlet>
+
+@if(isSearchOpen()) {
+<div class="fixed inset-0 z-50 bg-stone-50 dark:bg-slate-900 flex flex-col h-screen overflow-hidden">
+    <!-- Header with Search Input -->
+    <div
+        class="p-4 border-b border-stone-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm flex items-center space-x-3">
+        <button (click)="closeSearch()"
+            class="p-2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+        </button>
+        <div class="flex-grow relative">
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="onSearchInput($event)"
+                placeholder="Search Quran..."
+                class="w-full bg-stone-100 dark:bg-slate-700 border-none rounded-xl py-3 pl-4 pr-10 text-stone-800 dark:text-stone-200 focus:ring-2 focus:ring-emerald-500 outline-none"
+                autofocus>
+            @if(searchQuery()) {
+            <button (click)="clearSearch()"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-stone-400 hover:text-stone-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Results Area -->
+    <div class="flex-1 overflow-y-auto p-4 bg-stone-50 dark:bg-slate-900">
+        @if(isSearching()) {
+        <div class="flex justify-center p-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        </div>
+        } @else if (searchResults().length > 0) {
+        <div class="space-y-4">
+            @for(ayah of searchResults(); track $index) {
+            <div (click)="goToAyah(ayah)"
+                class="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-stone-100 dark:border-slate-700 cursor-pointer hover:shadow-md hover:border-emerald-200 transition-all">
+                <div class="flex justify-between items-center mb-3">
+                    <span
+                        class="text-sm px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-md font-semibold">{{
+                        ayah.surah_name }} ({{ ayah.surah_no }}:{{ ayah.ayah_no }})</span>
+                </div>
+                <div class="font-indopak text-right text-2xl text-stone-800 dark:text-stone-200 mb-3 leading-loose"
+                    dir="rtl">{{ ayah.arabic_text }}</div>
+                <div class="text-stone-600 dark:text-stone-300 text-base leading-relaxed">{{ ayah.translation_text }}
+                </div>
+            </div>
+            }
+        </div>
+        } @else if (searchQuery() && !isSearching() && searchResults().length === 0) {
+        <div class="text-center text-stone-500 dark:text-stone-400 mt-10">
+            No results found for "{{ searchQuery() }}"
+        </div>
+        } @else {
+        <div class="text-center text-stone-400 dark:text-stone-500 mt-10 flex flex-col items-center">
+            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p>Type to search across the entire Quran</p>
+        </div>
+        }
+    </div>
+</div>
+}

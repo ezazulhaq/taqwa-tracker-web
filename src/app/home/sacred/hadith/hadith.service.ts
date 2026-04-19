@@ -43,4 +43,11 @@ export class HadithService {
     return this.http.get<HadithDetail[]>(`${this.apiUrl}/hadith/hadiths/chapter/${chapterId}`);
   }
 
+  searchHadith(query: string, topK: number = 10, sourceName?: string): Observable<HadithDetail[]> {
+    let url = `${this.apiUrl}/hadith/search?query=${encodeURIComponent(query)}&top_k=${topK}`;
+    if (sourceName) {
+      url += `&source_name=${encodeURIComponent(sourceName)}`;
+    }
+    return this.http.get<HadithDetail[]>(url);
+  }
 }
