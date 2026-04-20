@@ -135,3 +135,148 @@
 .cdd-option--selected .cdd-option__badge {
     @apply bg-emerald-200 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-200;
 }
+
+/* ════════════════════════════════════════════════════════════
+   AYAH READABLE — subtle hover hint in read mode
+════════════════════════════════════════════════════════════ */
+.ayah-readable {
+    transition: background-color 0.15s ease, border-radius 0.15s ease;
+    border-radius: 4px;
+    padding: 1px 2px;
+}
+
+.ayah-readable:hover {
+    @apply bg-emerald-100/50 dark:bg-emerald-900/20;
+}
+
+.ayah-readable:active {
+    @apply bg-emerald-200/60 dark:bg-emerald-800/30;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TRANSLATION POPUP — backdrop + bottom sheet
+════════════════════════════════════════════════════════════ */
+
+/* Backdrop */
+.popup-backdrop {
+    @apply fixed inset-0 z-[100] flex items-end justify-center;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.25s ease;
+    pointer-events: none;
+}
+
+.popup-backdrop--visible {
+    background: rgba(0, 0, 0, 0.45);
+    pointer-events: all;
+    backdrop-filter: blur(2px);
+}
+
+/* Bottom sheet */
+.popup-sheet {
+    @apply w-full md:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl md:rounded-3xl shadow-2xl
+           border border-transparent dark:border-slate-700/60;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    max-height: 85dvh;
+    overflow-y: auto;
+    pointer-events: all;
+    will-change: transform;
+}
+
+@media (min-width: 768px) {
+    .popup-sheet {
+        margin-bottom: 2rem;
+    }
+}
+
+.popup-sheet--visible {
+    transform: translateY(0);
+}
+
+/* Handle bar */
+.popup-handle {
+    @apply w-10 h-1 rounded-full bg-stone-300 dark:bg-slate-600 mx-auto mt-3 mb-1;
+}
+
+/* Header */
+.popup-header {
+    @apply flex items-start justify-between gap-3 px-5 pt-4 pb-3;
+}
+
+.popup-ayah-badge {
+    @apply flex flex-col gap-0.5;
+}
+
+.popup-surah-name {
+    @apply text-2xl text-emerald-800 dark:text-emerald-300 leading-snug;
+}
+
+.popup-ayah-ref {
+    @apply text-xs font-semibold uppercase tracking-widest text-stone-400 dark:text-slate-500;
+}
+
+.popup-close-btn {
+    @apply flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 dark:bg-slate-700 text-stone-500 dark:text-slate-400 hover:bg-stone-200 dark:hover:bg-slate-600 transition-colors;
+}
+
+.popup-close-btn svg {
+    @apply w-4 h-4;
+}
+
+/* Arabic preview */
+.popup-arabic {
+    @apply px-5 py-4 text-right text-stone-800 dark:text-stone-100;
+    @apply bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20;
+    @apply border-b border-emerald-200 dark:border-emerald-400/20;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    line-height: 2;
+}
+
+.popup-ayah-circle {
+    @apply inline-flex items-center justify-center w-8 h-8 mx-2
+           bg-emerald-100 dark:bg-emerald-800/60
+           text-emerald-700 dark:text-emerald-200
+           rounded-full border border-emerald-200 dark:border-emerald-600
+           text-sm font-bold;
+}
+
+/* Divider */
+.popup-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-stone-200 to-transparent dark:via-slate-700 mx-5;
+}
+
+/* Translation body */
+.popup-translation {
+    @apply px-5 py-5 flex flex-col gap-3;
+}
+
+.popup-translation-text {
+    @apply text-base text-stone-700 dark:text-stone-300 leading-relaxed;
+}
+
+.popup-translator {
+    @apply text-xs text-stone-400 dark:text-slate-400 italic;
+}
+
+/* Footer actions */
+.popup-actions {
+    @apply flex items-center justify-end gap-3 px-5 pb-6 pt-2;
+}
+
+.popup-action-btn {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30;
+}
+
+.popup-action-btn--secondary {
+    @apply bg-stone-100 dark:bg-slate-700/80 text-stone-600 dark:text-slate-200
+           hover:bg-stone-200 dark:hover:bg-slate-600
+           border border-stone-200 dark:border-slate-600;
+}
+
+.popup-action-btn--primary {
+    @apply bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/25;
+}
+
+.popup-action-btn--primary svg {
+    @apply w-4 h-4 flex-shrink-0;
+}

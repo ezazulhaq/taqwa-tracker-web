@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, HostListener, inject, signal, ViewChild, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookmarkService } from '../../../../service/bookmark.service';
@@ -52,6 +52,11 @@ export class SurahAyahComponent {
 
     isTranslationVisible = signal<boolean>(true);
 
+    // ── Translation Popup state ────────────────────────────────
+    selectedPopupAyah = signal<Ayah | null>(null);
+    isPopupVisible = signal<boolean>(false);
+    private longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
     // ── Custom Jump-to-Ayah dropdown state ────────────────────────
     @ViewChild('dropdownRef') dropdownRef!: ElementRef;
     isDropdownOpen = signal<boolean>(false);
@@ -68,6 +73,8 @@ export class SurahAyahComponent {
     translator = computed(() => this.quranService.quranTranslator());
 
     isAuthenticated = computed(() => this.authService.isAuthenticated());
+
+    private readonly ngZone = inject(NgZone);
 
     constructor(
         private readonly bookmarkService: BookmarkService,
@@ -220,6 +227,74 @@ export class SurahAyahComponent {
         if (value && value !== '') {
             const [surahNo, ayahNo] = value.split(':').map(Number);
             this.scrollToAyah(surahNo, ayahNo);
+        }
+    }
+
+    // ── Translation Popup handlers ─────────────────────────────
+
+    private singleClickTimer: ReturnType<typeof setTimeout> | null = null;
+    private clickCount = 0;
+
+    /**
+     * Handle single and double clicks properly to prevent single click 
+     * navigation from overriding double click popup behavior.
+     */
+    onAyahClick(ayah: Ayah, event: Event): void {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        this.clickCount++;
+        
+        if (this.clickCount === 1) {
+            this.singleClickTimer = setTimeout(() => {
+                this.clickCount = 0;
+                this.navigateToTranslation(ayah);
+            }, 250); // 250ms window to wait for a second click
+        } else if (this.clickCount === 2) {
+            if (this.singleClickTimer) {
+                clearTimeout(this.singleClickTimer);
+                this.singleClickTimer = null;
+            }
+            this.clickCount = 0;
+            this.showTranslationPopup(ayah, event);
+        }
+    }
+
+    /**
+     * Show the translation popup for a specific ayah.
+     * Called on double-click or long-press in reader mode.
+     */
+    showTranslationPopup(ayah: Ayah, event: Event): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.selectedPopupAyah.set(ayah);
+        this.isPopupVisible.set(true);
+    }
+
+    closePopup(): void {
+        this.isPopupVisible.set(false);
+        // Delay clearing so exit animation can play
+        setTimeout(() => this.selectedPopupAyah.set(null), 300);
+    }
+
+    closePopupOnBackdrop(event: MouseEvent): void {
+        if ((event.target as HTMLElement).classList.contains('popup-backdrop')) {
+            this.closePopup();
+        }
+    }
+
+    /** Long-press: start timer on touchstart */
+    onAyahTouchStart(ayah: Ayah, event: TouchEvent): void {
+        this.longPressTimer = setTimeout(() => {
+            this.ngZone.run(() => this.showTranslationPopup(ayah, event));
+        }, 600);
+    }
+
+    /** Long-press: cancel timer if touch ends early */
+    onAyahTouchEnd(): void {
+        if (this.longPressTimer) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = null;
         }
     }
 
