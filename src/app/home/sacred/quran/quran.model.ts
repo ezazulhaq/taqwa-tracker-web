@@ -22,6 +22,7 @@ export interface Ayah {
     ayah_no: number;
     arabic_text: string;
     translation_text: string;
+    transliteration_text?: string;
     translator_name: string;
 }
 

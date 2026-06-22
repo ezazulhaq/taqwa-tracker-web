@@ -1,0 +1,7 @@
+:host ::ng-deep .transliteration-text u {
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+}
+:host ::ng-deep .transliteration-text b {
+    font-weight: 600;
+}

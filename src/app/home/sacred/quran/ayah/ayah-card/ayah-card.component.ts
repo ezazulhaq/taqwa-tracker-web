@@ -60,8 +60,12 @@ export class AyahCardComponent {
             // Add Arabic text
             textToCopy += `${ayah.arabic_text}\n\n`;
 
-            // Add translation if visible
+            // Add transliteration and translation if visible
             if (this.isTranslationVisible()) {
+                if (ayah.transliteration_text) {
+                    const cleanTransliteration = ayah.transliteration_text.replace(/<[^>]*>/g, '');
+                    textToCopy += `Transliteration: ${cleanTransliteration}\n\n`;
+                }
                 textToCopy += `Translation: ${ayah.translation_text}\n\n`;
             }
 
@@ -93,6 +97,10 @@ export class AyahCardComponent {
         textToCopy += `${ayah.arabic_text}\n\n`;
 
         if (this.isTranslationVisible()) {
+            if (ayah.transliteration_text) {
+                const cleanTransliteration = ayah.transliteration_text.replace(/<[^>]*>/g, '');
+                textToCopy += `Transliteration: ${cleanTransliteration}\n\n`;
+            }
             textToCopy += `Translation: ${ayah.translation_text}\n\n`;
         }
 
