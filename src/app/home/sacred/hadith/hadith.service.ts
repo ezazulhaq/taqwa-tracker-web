@@ -1,6 +1,6 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { HadithChapters, HadithSource, HadithDetail } from './hadith.model';
@@ -35,9 +35,16 @@ export class HadithService {
   }
 
   getHadithDetailsByIds(hadithIds: string[]): Observable<HadithDetail[]> {
-    const requests = hadithIds.map(id => this.getHadithDetailsFromId(id));
-    return forkJoin(requests);
+    if (hadithIds.length === 0) {
+      return of([]);
+    }
+    let params = new HttpParams();
+    hadithIds.forEach(id => {
+      params = params.append('ids', id);
+    });
+    return this.http.get<HadithDetail[]>(`${this.apiUrl}/hadith/hadiths/batch`, { params });
   }
+
 
   getHadithByChapterId(chapterId: string): Observable<HadithDetail[]> {
     return this.http.get<HadithDetail[]>(`${this.apiUrl}/hadith/hadiths/chapter/${chapterId}`);

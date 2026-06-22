@@ -104,7 +104,7 @@ export class PdfViewerComponent implements OnInit {
     this.isLoaded.set(progressData.loaded >= progressData.total);
   }
 
-  updateIslamicLibrary = computed(() => {
+  updateIslamicLibrary(): void {
     if (isPlatformBrowser(this.platformId)) {
       const islamicLibrary = this.getIslamicLibraryFromLocalStorage();
       if (islamicLibrary) {
@@ -120,5 +120,6 @@ export class PdfViewerComponent implements OnInit {
         localStorage.setItem('islamic_library', JSON.stringify(updatedLibrary));
       }
     }
-  });
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Hadiths } from '../home/sacred/hadith/hadith.model';
 import { BookMarkedSurah } from '../home/sacred/quran/quran.model';
 
@@ -10,6 +10,14 @@ export class BookmarkService {
   private bookmarkedHadiths = signal<Set<string>>(new Set());
 
   private bookmarkedAyahs = signal<Set<BookMarkedSurah>>(new Set());
+
+  private bookmarkedAyahsKeys = computed(() => {
+    const keys = new Set<string>();
+    for (const item of this.bookmarkedAyahs()) {
+      keys.add(`${item.surah_id}_${item.ayah_id}_${item.type ?? ''}`);
+    }
+    return keys;
+  });
 
   constructor() {
     this.loadFromStorageHadith();
@@ -71,15 +79,16 @@ export class BookmarkService {
   }
 
   isBookmarkedAyah(bookmarked: BookMarkedSurah): boolean {
-    // Using Array.from() to convert Set to Array, then use some() to check existence
-    return Array.from(this.bookmarkedAyahs()).some(item =>
-      item.surah_id === bookmarked.surah_id &&
-      item.ayah_id === bookmarked.ayah_id &&
-      // If bookmarked.type is provided, check for match. If not provided (legacy), maybe match any?
-      // Strict matching: undefined/null type matches undefined/null type
-      (bookmarked.type ? item.type === bookmarked.type : true)
-    );
+    if (bookmarked.type) {
+      const key = `${bookmarked.surah_id}_${bookmarked.ayah_id}_${bookmarked.type}`;
+      return this.bookmarkedAyahsKeys().has(key);
+    }
+    // Fallback if type is not provided: match any type
+    return this.bookmarkedAyahsKeys().has(`${bookmarked.surah_id}_${bookmarked.ayah_id}_surah`) ||
+           this.bookmarkedAyahsKeys().has(`${bookmarked.surah_id}_${bookmarked.ayah_id}_juz`) ||
+           this.bookmarkedAyahsKeys().has(`${bookmarked.surah_id}_${bookmarked.ayah_id}_`);
   }
+
 
   toggleBookmarkAyah(bookMarkedSurah: BookMarkedSurah) {
     this.bookmarkedAyahs.update(bookmarked => {

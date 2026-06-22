@@ -54,30 +54,38 @@ export class LibraryService {
   }
 
   private addPageToLibraryItems(library: IslamicLibrary[]): IslamicLibrary[] {
-    return library
-      .map(
-        item => {
-          const storedPage = localStorage.getItem(item.storageKey!);
-          const page = storedPage ? +storedPage : 1;
-          return { ...item, page };
-        }
-      );
+    const storedLibraryJson = localStorage.getItem('islamic_library');
+    let storedLibrary: IslamicLibrary[] = [];
+    if (storedLibraryJson) {
+      try {
+        storedLibrary = JSON.parse(storedLibraryJson);
+      } catch (e) {
+        console.error('Error parsing stored library', e);
+      }
+    }
+
+    return library.map(item => {
+      const storedItem = Array.isArray(storedLibrary)
+        ? storedLibrary.find(s => s.storageKey === item.storageKey)
+        : null;
+      const page = storedItem?.page ?? 1;
+      return { ...item, page };
+    });
   }
 
   private saveToLocalStorage(library: IslamicLibrary[]): void {
     const libraryData = localStorage.getItem('islamic_library');
 
     if (!libraryData) {
-      library.map(
-        item => {
-          return {
-            ...item,
-            page: 1,
-            totalPage: 0
-          };
-        }
+      const initializedLibrary = library.map(
+        item => ({
+          ...item,
+          page: 1,
+          totalPage: 0
+        })
       );
-      localStorage.setItem('islamic_library', JSON.stringify(library));
+      localStorage.setItem('islamic_library', JSON.stringify(initializedLibrary));
     }
   }
+
 }
