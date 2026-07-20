@@ -83,10 +83,12 @@ export class PdfViewerComponent implements OnInit {
 
   afterLoadComplete(pdfData: PDFDocumentProxy) {
     const savedLibrary = this.getIslamicLibraryFromLocalStorage()?.find(item => item.storageKey === this.storageKey());
-    const savedPage = savedLibrary?.page ?? 1;
+    
+    const overridePage = this.initialPage();
+    const targetPage = (overridePage && overridePage > 0) ? overridePage : (savedLibrary?.page ?? 1);
     const savedZoom = savedLibrary?.zoom ?? 1;
 
-    this.page.set(savedPage > pdfData.numPages ? pdfData.numPages : savedPage); // Ensure valid page number
+    this.page.set(targetPage > pdfData.numPages ? pdfData.numPages : targetPage); // Ensure valid page number
     this.zoom.set(savedZoom);
     this.totalPages.set(pdfData.numPages);
     this.isLoaded.set(true);
