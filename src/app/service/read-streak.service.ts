@@ -65,7 +65,10 @@ export class ReadStreakService {
      */
     private getTodayDate(): string {
         const today = new Date();
-        return today.toISOString().split('T')[0];
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
     /**
@@ -222,9 +225,9 @@ export class ReadStreakService {
         todayActivity.recentItems = todayActivity.recentItems || [];
         todayActivity.recentItems.unshift(newItem);
 
-        // Keep only last 5 items per day
-        if (todayActivity.recentItems.length > 5) {
-            todayActivity.recentItems = todayActivity.recentItems.slice(0, 5);
+        // Keep only last 20 items per day
+        if (todayActivity.recentItems.length > 20) {
+            todayActivity.recentItems = todayActivity.recentItems.slice(0, 20);
         }
     }
 

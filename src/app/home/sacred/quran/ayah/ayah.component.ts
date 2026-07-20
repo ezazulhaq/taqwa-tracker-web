@@ -165,8 +165,8 @@ export class AyahComponent {
 
     if (this.juzNumber()) {
       link = `/quran/ayah?juzNumber=${this.juzNumber()}&juzName=${encodeURIComponent(this.juzName())}&juzName_en=${encodeURIComponent(this.juzName_en())}`;
-      title = `Juz ${this.juzNumber()}`;
-      subtitle = this.juzName_en();
+      title = this.juzName_en();
+      subtitle = `Juz ${this.juzNumber()}`;
     } else {
       link = `/quran/ayah?surahNumber=${this.surahNumber()}&surahName=${encodeURIComponent(this.surahName())}&surahName_ar=${encodeURIComponent(this.surahName_ar())}`;
       title = `${this.surahName()}`;

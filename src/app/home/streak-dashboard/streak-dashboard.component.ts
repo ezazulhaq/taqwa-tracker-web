@@ -22,10 +22,11 @@ export class StreakDashboardComponent {
     const lastRead = this.streakStats().lastReadDate;
     if (!lastRead) return 'Never';
 
-    const lastReadDate = new Date(lastRead);
+    const [year, month, day] = lastRead.split('-');
+    const lastReadDate = new Date(Number(year), Number(month) - 1, Number(day));
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    lastReadDate.setHours(0, 0, 0, 0);
 
     const diffTime = today.getTime() - lastReadDate.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
