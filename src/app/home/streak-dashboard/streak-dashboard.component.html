@@ -105,3 +105,12 @@
     </div>
 
 </div>
+
+<app-confirm-dialog
+  #confirmDialog
+  title="Reset Streak"
+  message="Are you sure you want to reset your reading streak? This cannot be undone."
+  confirmText="Reset Streak"
+  type="danger"
+  (confirmed)="onConfirmReset()"
+></app-confirm-dialog>

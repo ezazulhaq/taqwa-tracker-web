@@ -1,12 +1,13 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ViewChild } from '@angular/core';
 import { ReadStreakService } from '../../service/read-streak.service';
 import { Router } from '@angular/router';
 import { ReadItem } from './streak-dashboard.model';
 import { ItemIconPipe } from './item-icon.pipe';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-streak-dashboard',
-  imports: [ItemIconPipe],
+  imports: [ItemIconPipe, ConfirmDialogComponent],
   templateUrl: './streak-dashboard.component.html',
   styleUrl: './streak-dashboard.component.css',
 })
@@ -54,10 +55,14 @@ export class StreakDashboardComponent {
     }
   }
 
+  @ViewChild('confirmDialog') confirmDialog!: ConfirmDialogComponent;
+
   resetStreak(): void {
-    if (confirm('Are you sure you want to reset your reading streak? This cannot be undone.')) {
-      this.readStreakService.resetStreak();
-    }
+    this.confirmDialog.show();
+  }
+
+  onConfirmReset(): void {
+    this.readStreakService.resetStreak();
   }
 
   navigateToRead(item: ReadItem): void {
