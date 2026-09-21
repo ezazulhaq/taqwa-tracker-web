@@ -85,6 +85,29 @@ export class LibraryService {
         })
       );
       localStorage.setItem('islamic_library', JSON.stringify(initializedLibrary));
+    } else {
+      try {
+        const storedLibrary: IslamicLibrary[] = JSON.parse(libraryData);
+        let hasChanges = false;
+
+        library.forEach(apiItem => {
+          const exists = storedLibrary.some(s => s.storageKey === apiItem.storageKey);
+          if (!exists) {
+            storedLibrary.push({
+              ...apiItem,
+              page: 1,
+              totalPage: 0
+            });
+            hasChanges = true;
+          }
+        });
+
+        if (hasChanges) {
+          localStorage.setItem('islamic_library', JSON.stringify(storedLibrary));
+        }
+      } catch (e) {
+        console.error('Error updating stored library', e);
+      }
     }
   }
 
