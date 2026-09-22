@@ -139,3 +139,8 @@ ul {
     min-height: 100dvh;
   }
 }
+@layer components {
+  .glass-panel {
+    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-white/40 dark:border-slate-700/50 shadow-xl rounded-2xl;
+  }
+}
