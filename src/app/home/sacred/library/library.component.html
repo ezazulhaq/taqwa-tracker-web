@@ -1,10 +1,9 @@
 <app-title [title]="'Islamic Library'" [routerLink]="'/home'"></app-title>
 
 @defer (when islamic_library().length > 0) {
-<div class="flex flex-col space-y-6 w-full px-4 mx-auto pb-20">
+<div class="flex flex-col space-y-6 w-full px-4 md:px-6 mx-auto pb-20 max-w-4xl">
     @for (category of getCategories(); track $index) {
-    <div
-        class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 overflow-hidden">
+    <div class="glass-panel overflow-hidden">
         <details class="group" (toggle)="onToggle($event, $index)">
             <summary
                 class="flex items-center justify-between p-6 cursor-pointer hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors"
