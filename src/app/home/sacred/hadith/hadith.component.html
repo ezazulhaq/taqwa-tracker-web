@@ -47,10 +47,10 @@
 </div>
 }
 
-<div class="flex flex-col space-y-4 w-full px-4 mx-auto pb-20">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-4 md:px-6 mx-auto pb-20 max-w-7xl">
     @defer(when chapterList() && chapterList().length > 0){
     @for (chapter of chapterList(); track $index) {
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-stone-200 dark:border-slate-600 p-6 hover:shadow-xl hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-200 cursor-pointer"
+    <div class="glass-panel p-6 hover:-translate-y-1 hover:shadow-emerald-500/10 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 cursor-pointer"
         [routerLink]="['./chapter']" [queryParams]="{ id: chapter.id }">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">

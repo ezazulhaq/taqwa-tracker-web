@@ -106,7 +106,7 @@ export class PrayerTimesWidgetComponent {
         isCurrent,
         cardClass: isCurrent
           ? 'bg-emerald-600 shadow-md scale-105 border-0'
-          : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700',
+          : 'bg-white/50 dark:bg-slate-800/50 border border-white/40 dark:border-slate-700/50',
         nameClass: isCurrent ? 'text-white' : 'text-slate-400 dark:text-slate-500',
         timeClass: isCurrent ? 'text-white' : 'text-slate-800 dark:text-slate-200'
       };
