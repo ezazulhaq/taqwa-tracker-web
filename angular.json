@@ -78,7 +78,10 @@
               "hmr": false
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "allowedHosts": ["taqwatracker.chotabuziness.com"]
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
