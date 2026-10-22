@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { TitleComponent } from '../shared/title/title.component';
 import { PrayerTimesWidgetComponent } from './prayer-times-widget/prayer-times-widget.component';
 import { RecommendedAppsWidgetComponent } from './recommended-apps-widget/recommended-apps-widget.component';
@@ -19,6 +19,7 @@ import { AuthService } from '../service/auth.service';
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "app-bg"
   }

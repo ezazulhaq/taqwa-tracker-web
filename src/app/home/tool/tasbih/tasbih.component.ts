@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, linkedSignal, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, linkedSignal, OnInit, signal } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { TitleComponent } from '../../../shared/title/title.component';
 ],
   templateUrl: './tasbih.component.html',
   styleUrl: './tasbih.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'app-bg'
   }

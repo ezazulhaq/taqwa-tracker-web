@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { SalahAppService } from '../../../service/salah-app.service';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
@@ -18,6 +18,7 @@ interface ExtendedDeviceOrientationEvent extends DeviceOrientationEvent {
   ],
   templateUrl: './kaaba.component.html',
   styleUrl: './kaaba.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'app-bg'
   }
@@ -29,6 +30,8 @@ export class KaabaComponent implements OnInit, OnDestroy {
   heading$: BehaviorSubject<number>;
   kaabaDirection$: Observable<number | null>;
   private compassSubscription: Subscription | null = null;
+  private orientationListener?: (event: ExtendedDeviceOrientationEvent) => void;
+  private orientationEventType?: string;
   compassDeg = signal<number>(0);
 
   isIOS = signal<boolean>(false);
@@ -54,6 +57,9 @@ export class KaabaComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.compassSubscription) {
       this.compassSubscription.unsubscribe();
+    }
+    if (this.isBrowser && this.orientationListener && this.orientationEventType) {
+      window.removeEventListener(this.orientationEventType, this.orientationListener as EventListener, true);
     }
   }
 
@@ -101,7 +107,7 @@ export class KaabaComponent implements OnInit, OnDestroy {
 
     const win = window as any;
     if (typeof win !== 'undefined' && ('DeviceOrientationEvent' in win || 'ondeviceorientationabsolute' in win)) {
-      const handleOrientation = (event: ExtendedDeviceOrientationEvent) => {
+      this.orientationListener = (event: ExtendedDeviceOrientationEvent) => {
         let heading: number | null = null;
         if (this.isIOS()) {
           // For iOS devices
@@ -117,12 +123,14 @@ export class KaabaComponent implements OnInit, OnDestroy {
       };
 
       if (this.isIOS()) {
-        win.addEventListener('deviceorientation', handleOrientation as EventListener, true);
+        this.orientationEventType = 'deviceorientation';
       } else if ('ondeviceorientationabsolute' in win) {
-        win.addEventListener('deviceorientationabsolute', handleOrientation as EventListener, true);
+        this.orientationEventType = 'deviceorientationabsolute';
       } else {
-        win.addEventListener('deviceorientation', handleOrientation as EventListener, true);
+        this.orientationEventType = 'deviceorientation';
       }
+
+      win.addEventListener(this.orientationEventType, this.orientationListener as EventListener, true);
 
       this.compassSubscription = combineLatest([this.heading$, this.kaabaDirection$])
         .pipe(

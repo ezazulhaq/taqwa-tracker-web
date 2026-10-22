@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal, effect } from '@angular/core';
 import { CalendarDay, IslamicEvent } from './calendar.model';
 import moment from 'moment-hijri';
 import { SalahAppService } from '../../../service/salah-app.service';
@@ -12,6 +12,7 @@ import { TitleComponent } from '../../../shared/title/title.component';
   ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "app-bg"
   }

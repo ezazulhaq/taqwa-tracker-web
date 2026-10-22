@@ -9,13 +9,14 @@ import { CalendarComponent } from "../../../shared/calendar/calendar.component";
 import { RakatComponent } from './rakat/rakat.component';
 import { TitleComponent } from '../../../shared/title/title.component';
 import { NotificationService } from '../../../service/notification.service';
-import { Component, linkedSignal, OnInit, signal, OnDestroy, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, linkedSignal, OnInit, signal, OnDestroy, computed } from '@angular/core';
 
 @Component({
   selector: 'app-prayer-times',
   imports: [CommonModule, DatePipe, CalendarComponent, RakatComponent, TitleComponent],
   templateUrl: './prayer-times.component.html',
   styleUrl: './prayer-times.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'class': 'app-bg !bg-transparent dark:!bg-transparent relative isolate overflow-hidden'
   }

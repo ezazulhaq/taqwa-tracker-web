@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { RakatDetailComponent } from './rakat-detail/rakat-detail.component';
 import { Rakats } from './rakat.model';
 import { rakats } from './rakat.contant';
@@ -11,7 +11,8 @@ import { TitleCasePipe } from '@angular/common';
     RakatDetailComponent
   ],
   templateUrl: './rakat.component.html',
-  styleUrl: './rakat.component.css'
+  styleUrl: './rakat.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RakatComponent {
 

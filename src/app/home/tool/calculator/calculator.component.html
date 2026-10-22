@@ -2,26 +2,12 @@
   [subTitle]="'Calculate your obligatory charity (Zakat) based on your assets and liabilities'"
   [routerLink]="'/home'"></app-title>
 
-<!-- Floating Action Button -->
-@if (authService.isAuthenticated()) {
-<div class="fixed top-6 left-6 z-50">
-  <button [routerLink]="'/calculator/contributions'"
-    class="size-12 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 transform"
-    title="Open Tracker">
-    <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-    </svg>
-  </button>
-</div>
-}
-
 <div class="max-w-5xl mx-auto p-4 sm:p-6">
   <!-- Header -->
   <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl shadow-lg p-6 sm:p-8 mb-6 sm:mb-8 text-white">
-    <div class="w-full flex flex-col items-center mb-4">
+    <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
       <!-- Currency Selector -->
-      <div class="flex-shrink-0">
+      <div class="flex-shrink-0 w-full sm:w-auto">
         <label class="block text-xs font-medium text-emerald-100 mb-2">Select Currency</label>
         <select [ngModel]="zakatService.selectedCurrencyCode()" (ngModelChange)="zakatService.setCurrency($event)"
           class="w-full sm:w-48 px-4 py-2.5 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 font-medium">
@@ -32,6 +18,19 @@
           }
         </select>
       </div>
+
+      @if (authService.isAuthenticated()) {
+      <div class="flex-shrink-0 self-end">
+        <a [routerLink]="'/calculator/contributions'"
+          class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 text-white rounded-lg transition-colors text-sm font-medium shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+          <span>Contributions Tracker</span>
+        </a>
+      </div>
+      }
     </div>
 
     <div class="mt-4 bg-white/20 backdrop-blur-sm rounded-lg p-4">

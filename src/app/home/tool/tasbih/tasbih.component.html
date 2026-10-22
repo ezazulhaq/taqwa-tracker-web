@@ -19,7 +19,7 @@
         </label>
       </div>
       <div class="relative">
-        <select id="tasbihSelect" [(ngModel)]="selectedTasbihId" (change)="onTasbihSelect(selectedTasbihId())"
+        <select id="tasbihSelect" [ngModel]="selectedTasbihId()" (ngModelChange)="onTasbihSelect($event)"
           class="block w-full rounded-xl border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-4 text-stone-800 dark:text-stone-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors text-lg">
           @for (tasbih of tasbihs(); track tasbih) {
           <option [value]="tasbih.id">
