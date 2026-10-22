@@ -1,10 +1,11 @@
-import { Component, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 
 @Component({
   selector: 'app-success',
   imports: [],
   templateUrl: './success.component.html',
-  styleUrl: './success.component.css'
+  styleUrl: './success.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SuccessComponent {
 
