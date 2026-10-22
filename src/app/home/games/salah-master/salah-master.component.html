@@ -28,6 +28,41 @@
             }
         </div>
     </div>
+    } @else if (state().isFinished) {
+    <!-- Completion Screen -->
+    <div class="completion-view p-6 max-w-xl mx-auto text-center animate-fadeIn">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl p-8 border border-slate-100 dark:border-white/10">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-5xl">
+                🎉
+            </div>
+            <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Masha'Allah!</h2>
+            <p class="text-slate-600 dark:text-slate-300 mb-6">
+                You have successfully completed the <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ currentPrayer()?.name }}</span> guide!
+            </p>
+
+            <div class="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl mb-8 flex justify-around">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-semibold">Total Steps</p>
+                    <p class="text-2xl font-bold text-slate-800 dark:text-white">{{ currentPrayer()?.steps?.length }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase font-semibold">Mode</p>
+                    <p class="text-2xl font-bold capitalize text-slate-800 dark:text-white">{{ state().currentMode }}</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button (click)="selectPrayer(state().currentPrayerId!)"
+                    class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95">
+                    Practice Again
+                </button>
+                <button (click)="reset()"
+                    class="px-6 py-3 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-slate-700 dark:text-white font-semibold rounded-xl transition-all hover:scale-105 active:scale-95">
+                    Choose Another
+                </button>
+            </div>
+        </div>
+    </div>
     } @else {
     <!-- Active Game Screen -->
     <div class="game-view p-4 md:p-8 max-w-3xl mx-auto animate-fadeIn">
