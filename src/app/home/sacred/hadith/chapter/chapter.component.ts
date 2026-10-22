@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HadithDetail, Hadiths } from '../hadith.model';
 import { BookmarkService } from '../../../../service/bookmark.service';
@@ -7,12 +7,14 @@ import { ReadStreakService } from '../../../../service/read-streak.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 import { HadithService } from '../hadith.service';
 import { ToastService } from '../../../../shared/toast/toast.service';
+import { TitleComponent } from '../../../../shared/title/title.component';
 
 @Component({
   selector: 'app-chapter',
-  imports: [],
+  imports: [TitleComponent],
   templateUrl: './chapter.component.html',
   styleUrl: './chapter.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'app-bg',
   }

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID, computed, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, PLATFORM_ID, computed, effect, input, output, signal } from '@angular/core';
 import { PDFProgressData, PDFDocumentProxy, PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormsModule } from '@angular/forms';
 import { IslamicLibrary } from '../../model/islamic-library.model';
@@ -12,7 +12,8 @@ import { IslamicLibrary } from '../../model/islamic-library.model';
     FormsModule,
   ],
   templateUrl: './pdf-viewer.component.html',
-  styleUrl: './pdf-viewer.component.css'
+  styleUrl: './pdf-viewer.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PdfViewerComponent implements OnInit {
 

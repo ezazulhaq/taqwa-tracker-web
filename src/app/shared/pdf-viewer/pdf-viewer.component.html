@@ -1,13 +1,12 @@
-<div class="relative flex flex-col items-center justify-center max-w-md mx-auto">
+<div class="relative flex flex-col items-center justify-center max-w-2xl mx-auto w-full px-2">
     @if(isLoaded()){
-    <div class="absolute top-2 md:top-4 left-0 right-0 flex flex-row justify-center items-center pb-4 z-[5]">
-        <div class="flex flex-row">
+    <div class="sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-stone-200 dark:border-slate-700 py-2.5 px-4 flex flex-row justify-between items-center z-10 w-full rounded-xl mb-4 shadow-sm">
+        <div class="flex flex-row items-center space-x-1">
             <!-- Zoom Out Button -->
             <button type="button" (click)="zoomOut()"
-                class="mr-2 p-1 rounded hover:bg-gray-100 active:bg-gray-200 focus:bg-gray-100"
-                [disabled]="zoom() <= 0.5">
-                <svg class="size-6 text-slate-600 hover:text-slate-800 active:text-slate-800 focus:text-slate-800"
-                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 disabled:opacity-40 transition-colors"
+                [disabled]="zoom() <= 0.5" title="Zoom Out">
+                <svg class="size-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
                         d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                     <path d="M7 9h5v1H7z" />
@@ -16,40 +15,45 @@
 
             <!-- Zoom In Button -->
             <button type="button" (click)="zoomIn()"
-                class="mr-2 p-1 rounded hover:bg-gray-100 active:bg-gray-200 focus:bg-gray-100"
-                [disabled]="zoom() >= 3">
-                <svg class="size-6 text-slate-600 hover:text-slate-800 active:text-slate-800 focus:text-slate-800"
-                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 disabled:opacity-40 transition-colors"
+                [disabled]="zoom() >= 3" title="Zoom In">
+                <svg class="size-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
                         d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                     <path d="M7 9h5v1H7z" />
                     <path d="M9 7h1v5H9z" />
                 </svg>
             </button>
+        </div>
 
+        <div class="flex items-center space-x-2">
             <!-- Previous Page Button -->
-            <button type="button" (click)="prevPage()">
-                <svg class="size-8 text-slate-600 hover:text-slate-800 active:text-slate-800 focus:text-slate-800"
-                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+            <button type="button" (click)="prevPage()"
+                class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 disabled:opacity-40 transition-colors"
+                [disabled]="page() <= 1" title="Previous Page">
+                <svg class="size-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
                     <path
                         d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z" />
                 </svg>
             </button>
 
+            <div class="font-semibold text-sm px-2 text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                <input
+                    class="w-14 text-center py-1 border border-stone-300 dark:border-slate-600 bg-stone-50 dark:bg-slate-700 text-stone-900 dark:text-white rounded-md text-sm"
+                    type="text" placeholder="Page" [ngModel]="page()" (ngModelChange)="page.set($event)"
+                    pattern="-?[0-9]*(\.[0-9]+)?">
+                <span class="text-stone-500 dark:text-slate-400">/ {{totalPages()}}</span>
+            </div>
+
             <!-- Next Page Button -->
-            <button type="button" (click)="nextPage()">
-                <svg class="size-8 text-slate-600 hover:text-slate-800 active:text-slate-800 focus:text-slate-800"
-                    fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+            <button type="button" (click)="nextPage()"
+                class="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 disabled:opacity-40 transition-colors"
+                [disabled]="page() >= totalPages()" title="Next Page">
+                <svg class="size-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
                     <path
                         d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z" />
                 </svg>
             </button>
-        </div>
-        <div class="font-semibold text-md px-4 text-slate-800">
-            <input
-                class="w-20 text-center border-none bg-gray-100 hover:bg-gray-200 active:bg-gray-200 focus:bg-gray-200 outline-1 outline-slate-300 rounded-md placeholder:text-xs placeholder:font-light"
-                type="text" placeholder="Page" [ngModel]="page()" (ngModelChange)="page.set($event)"
-                pattern="-?[0-9]*(\.[0-9]+)?"> / {{totalPages()}}
         </div>
     </div>
     }

@@ -1,5 +1,5 @@
 
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HadithChapters, HadithDetail } from './hadith.model';
 import { ListHomeComponent } from '../../../shared/skeleton/list-home/list-home.component';
@@ -19,6 +19,7 @@ import { SearchComponent } from './search/search.component';
   ],
   templateUrl: './hadith.component.html',
   styleUrl: './hadith.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'app-bg'
   }
