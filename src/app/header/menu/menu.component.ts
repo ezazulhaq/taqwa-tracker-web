@@ -1,4 +1,4 @@
-import { Component, effect, inject, linkedSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, linkedSignal, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HeaderService } from '../header.service';
 import { AuthService } from '../../service/auth.service';
@@ -12,7 +12,8 @@ import { TitleCasePipe } from '@angular/common';
     TitleCasePipe,
   ],
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.css'
+  styleUrl: './menu.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenuComponent {
 

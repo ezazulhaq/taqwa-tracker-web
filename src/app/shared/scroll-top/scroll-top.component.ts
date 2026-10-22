@@ -1,10 +1,11 @@
-import { Component, HostListener, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, effect, signal } from '@angular/core';
 
 @Component({
   selector: 'app-scroll-top',
   imports: [],
   templateUrl: './scroll-top.component.html',
-  styleUrl: './scroll-top.component.css'
+  styleUrl: './scroll-top.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScrollTopComponent {
 

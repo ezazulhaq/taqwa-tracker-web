@@ -1,4 +1,4 @@
-import { Component, computed, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, ViewChild } from '@angular/core';
 import { ReadStreakService } from '../../service/read-streak.service';
 import { Router } from '@angular/router';
 import { ReadItem } from './streak-dashboard.model';
@@ -10,6 +10,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
   imports: [ItemIconPipe, ConfirmDialogComponent],
   templateUrl: './streak-dashboard.component.html',
   styleUrl: './streak-dashboard.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StreakDashboardComponent {
 

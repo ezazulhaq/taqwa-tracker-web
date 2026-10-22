@@ -16,7 +16,7 @@
     <div class="items-center md:items-start italic font-light text-slate-700 dark:text-gray-400">
         Assalamualaikum, {{ userName() | titlecase }}
     </div>
-    <button type="button" class="group app-menu-item" routerLink="home" (click)="onMenuItemClick()">
+    <button type="button" class="group app-menu-item" routerLink="/home" (click)="onMenuItemClick()">
         <div class="app-menu-title">
             Home
         </div>
@@ -28,7 +28,7 @@
 
     @if (authService.isAuthenticated()) {
     <!-- Profile Item -->
-    <button type="button" class="group app-menu-item" routerLink="profile" (click)="onMenuItemClick()">
+    <button type="button" class="group app-menu-item" routerLink="/profile" (click)="onMenuItemClick()">
         <div class="app-menu-title">
             Profile
         </div>
@@ -40,7 +40,7 @@
     }
 
     <!-- Feedback Item -->
-    <button type="button" class="group app-menu-item" routerLink="feedback" (click)="onMenuItemClick()">
+    <button type="button" class="group app-menu-item" routerLink="/feedback" (click)="onMenuItemClick()">
         <div class="app-menu-title">
             Feedback
         </div>
@@ -51,7 +51,7 @@
     </button>
 
     <!-- Privacy Policy Item -->
-    <button type="button" class="group app-menu-item" routerLink="privacy-policy" (click)="onMenuItemClick()">
+    <button type="button" class="group app-menu-item" routerLink="/privacy-policy" (click)="onMenuItemClick()">
         <div class="app-menu-title">
             Privacy Policy
         </div>
@@ -63,7 +63,7 @@
 
     @if (!authService.isAuthenticated()) {
     <!-- LogIn Item -->
-    <button type="button" class="group app-menu-item" routerLink="login" (click)="onMenuItemClick()">
+    <button type="button" class="group app-menu-item" routerLink="/auth/login" (click)="onMenuItemClick()">
         <div class="app-menu-title">
             LogIn
         </div>

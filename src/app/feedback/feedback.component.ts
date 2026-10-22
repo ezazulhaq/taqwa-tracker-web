@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { FeedbackService } from './feedback.service';
@@ -19,6 +19,7 @@ import { FeedbackResponse } from './feedback.model';
   ],
   templateUrl: './feedback.component.html',
   styleUrl: './feedback.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "app-bg"
   }
@@ -27,10 +28,10 @@ export class FeedbackComponent {
   feedbackForm: FormGroup;
   isSubmitting = signal<boolean>(false);
   submitSuccess = signal<boolean>(false);
-  submitError: string | null = null;
+  submitError = signal<string | null>(null);
   isAuthenticated = signal<boolean>(false);
 
-  captchaVerified = false;
+  captchaVerified = signal<boolean>(false);
   showCaptcha = true; // Show CAPTCHA after first failed attempt or always
 
   constructor(
@@ -52,7 +53,7 @@ export class FeedbackComponent {
   }
 
   onCaptchaVerified(isVerified: boolean): void {
-    this.captchaVerified = isVerified;
+    this.captchaVerified.set(isVerified);
     this.feedbackForm.patchValue({ captcha: isVerified });
   }
 
@@ -65,13 +66,13 @@ export class FeedbackComponent {
       return;
     }
 
-    if (this.showCaptcha && !this.captchaVerified) {
-      this.submitError = 'Please complete the CAPTCHA verification';
+    if (this.showCaptcha && !this.captchaVerified()) {
+      this.submitError.set('Please complete the CAPTCHA verification');
       return;
     }
 
     this.isSubmitting.set(true);
-    this.submitError = null;
+    this.submitError.set(null);
 
     this.feedbackService.submitFeedback({
       content: this.feedbackForm.value.content,
@@ -87,12 +88,12 @@ export class FeedbackComponent {
         this.isSubmitting.set(false);
       },
       error: () => {
-        this.submitError = 'An unexpected error occurred.';
+        this.submitError.set('An unexpected error occurred.');
         this.isSubmitting.set(false);
 
         // Show CAPTCHA after failed submission
         this.showCaptcha = true;
-        this.captchaVerified = false;
+        this.captchaVerified.set(false);
         this.feedbackForm.patchValue({ captcha: false });
       }
     });
@@ -100,7 +101,7 @@ export class FeedbackComponent {
 
   get isFormValid(): boolean {
     const basicFormValid = this.feedbackForm.valid;
-    const captchaValid = !this.showCaptcha || this.captchaVerified;
+    const captchaValid = !this.showCaptcha || this.captchaVerified();
     return basicFormValid && captchaValid;
   }
 }

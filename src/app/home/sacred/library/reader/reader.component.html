@@ -1,3 +1,5 @@
+<app-title [title]="pdfTitle()" [subTitle]="categoryTitle()" [routerLink]="'/library'"></app-title>
+
 @if(pdfSrc) {
 <app-pdf-viewer [pdfSrc]="pdfSrc" [storageKey]="storageKey" [initialPage]="initialPage()"
     (pageChange)="onPageChange($event)"></app-pdf-viewer>

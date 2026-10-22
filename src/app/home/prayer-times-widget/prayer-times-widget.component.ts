@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, effect, viewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, effect, viewChild, ElementRef, DestroyRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SalahAppService } from '../../service/salah-app.service';
@@ -14,6 +14,7 @@ import moment from 'moment-hijri';
 })
 export class PrayerTimesWidgetComponent {
   private salahService = inject(SalahAppService);
+  private destroyRef = inject(DestroyRef);
   scrollContainer = viewChild<ElementRef>('scrollContainer');
   private lastScrolledPrayer = '';
 
@@ -34,9 +35,10 @@ export class PrayerTimesWidgetComponent {
     });
 
     // Update current time every minute for live countdown
-    setInterval(() => {
+    const timeInterval = setInterval(() => {
       this.currentTime.set(new Date());
     }, 60000); // Update every 60 seconds
+    this.destroyRef.onDestroy(() => clearInterval(timeInterval));
 
     // Scroll to current prayer when it changes
     effect(() => {

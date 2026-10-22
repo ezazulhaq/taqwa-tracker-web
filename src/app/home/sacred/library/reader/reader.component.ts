@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { PdfViewerComponent } from '../../../../shared/pdf-viewer/pdf-viewer.component';
+import { TitleComponent } from '../../../../shared/title/title.component';
 import { ReadStreakService } from '../../../../service/read-streak.service';
 import { AuthTokenService } from '../../../../service/auth-token.service';
 import { ReadItem } from '../../../streak-dashboard/streak-dashboard.model';
 
 @Component({
   selector: 'app-reader',
-  imports: [PdfViewerComponent],
+  imports: [PdfViewerComponent, TitleComponent],
   templateUrl: './reader.component.html',
   styleUrl: './reader.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +22,8 @@ export class ReaderComponent implements OnDestroy {
   pdfSrc!: string;
   storageKey!: string;
   initialPage = signal<number | undefined>(undefined);
+  pdfTitle = signal<string>('Library Reader');
+  categoryTitle = signal<string>('');
 
   private pdfName = '';
   private category = '';
@@ -36,6 +39,8 @@ export class ReaderComponent implements OnDestroy {
       this.pdfName = params['pdfName'] ?? '';
       this.category = params['category'] ?? '';
       this.storageKey = params['storageKey'] ?? '';
+      this.pdfTitle.set(this.formatTitle(this.pdfName) || 'Library Reader');
+      this.categoryTitle.set(this.formatTitle(this.category));
       const pageParam = params['page'];
       if (pageParam) {
         this.initialPage.set(+pageParam);

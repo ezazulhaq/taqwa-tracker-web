@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
@@ -12,16 +12,17 @@ import { AuthService } from '../../service/auth.service';
   ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: "app-bg"
   }
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
-  error = '';
-  loading = false;
+  error = signal('');
+  loading = signal(false);
   returnUrl: string;
-  resetEmailSent = false;
+  resetEmailSent = signal(false);
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -42,20 +43,20 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     const email = this.forgotPasswordForm.controls['email'].value;
 
     this.authService.forgotPassword(email).subscribe({
       next: () => {
-        this.resetEmailSent = true;
+        this.resetEmailSent.set(true);
       },
       error: (err) => {
-        this.error = err.message || 'Forgot password failed';
+        this.error.set(err.message || 'Forgot password failed');
       },
       complete: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

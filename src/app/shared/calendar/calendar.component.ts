@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
     selector: 'app-calendar',
     imports: [CommonModule],
     templateUrl: './calendar.component.html',
-    styleUrl: './calendar.component.css'
+    styleUrl: './calendar.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalendarComponent {
   @Output() dateSelected = new EventEmitter<Date>();
