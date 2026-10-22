@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, computed } from '@angular/core';
 import { ThemeSelectorService } from '../../service/theme.service';
 import { HeaderService } from '../../header/header.service';
 import { AuthService } from '../../service/auth.service';
@@ -15,7 +15,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-settings',
   imports: [CommonModule],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  styleUrl: './settings.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SettingsComponent implements OnInit {
 
