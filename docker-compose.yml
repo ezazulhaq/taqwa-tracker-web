@@ -1,0 +1,22 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: taqwa-tracker-web:latest
+    container_name: taqwa-tracker-web
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8274}:80"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - NODE_ENV=production
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    name: taqwa-internal-network
+    driver: bridge

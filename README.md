@@ -129,7 +129,11 @@ taqwa-tracker-web/
 ├── ngsw-config.json            # Service Worker config
 ├── package.json
 ├── tailwind.config.js          # TailwindCSS configuration
-└── tsconfig.json               # TypeScript configuration
+├── tsconfig.json               # TypeScript configuration
+├── Dockerfile                  # Multi-stage production Docker build
+├── docker-compose.yml          # Docker Compose specification
+├── nginx.conf                  # Production Nginx SPA & PWA configuration
+└── .dockerignore               # Docker build ignore rules
 ```
 
 ## Core Features
@@ -479,25 +483,48 @@ npm test
 
 ## Deployment
 
-### Prerequisites
-- Web server or static hosting service
-- SSL certificate (required for PWA and geolocation)
-- Domain name
+### Docker Deployment
 
-### Deployment Steps
+Build and run using Docker:
 
-1. Build production bundle:
-   ```bash
-   npm run build
-   ```
+```bash
+# Build the production image
+docker build -t taqwa-tracker-web:latest .
 
-2. Deploy `dist/taqwa-tracker` contents to hosting provider
+# Run the container
+docker run -d \
+  --name taqwa-tracker-web \
+  -p 8274:80 \
+  taqwa-tracker-web:latest
+```
 
-3. Configure server:
-   - Serve `index.html` for all routes (SPA fallback)
-   - Enable HTTPS
-   - Set appropriate cache headers
-   - Configure CORS if needed
+The web application will be accessible at `http://localhost:8274`.
+
+### Docker Compose
+
+Run using Docker Compose with automatic health check:
+
+```bash
+# Start container in detached mode
+docker compose up -d
+
+# Check service status and health
+docker compose ps
+
+# View application logs
+docker compose logs -f web
+
+# Stop container
+docker compose down
+```
+
+### Production Server Configuration (Static Hosting)
+
+If deploying to static hosting or a non-containerized server:
+- Serve `index.html` for all routes (SPA fallback)
+- Enable HTTPS (required for PWA and geolocation)
+- Set appropriate cache headers (`no-store` for `index.html` & `ngsw.json`, long cache for hashed assets)
+- Configure CORS if needed
 
 ### Recommended Hosting Platforms
 - **Vercel**: Zero-config deployment with analytics
