@@ -21,7 +21,6 @@ This modern web application combines cutting-edge technologies with authentic Is
 - **`ng2-pdf-viewer` (10.4.0)**: PDF document viewing for Islamic library
 - **`marked` (16.3.0)**: Markdown rendering for chatbot responses
 - **`dompurify` (3.3.1)**: HTML sanitization for security
-- **`@vercel/analytics` (1.6.1)**: Web analytics integration
 
 ### Backend Integration
 - **API**: Centralized REST API at `https://api.thetaqwatracker.com`
@@ -527,7 +526,8 @@ If deploying to static hosting or a non-containerized server:
 - Configure CORS if needed
 
 ### Recommended Hosting Platforms
-- **Vercel**: Zero-config deployment with analytics
+- **Docker / Self-Hosted (Nginx)**: Containerized deployment with reverse proxy (e.g., Traefik, Cloudflare)
+- **Vercel**: Zero-config static/SPA hosting
 - **Netlify**: Automatic HTTPS and CDN
 - **Firebase Hosting**: Google Cloud integration
 - **AWS S3 + CloudFront**: Scalable static hosting
