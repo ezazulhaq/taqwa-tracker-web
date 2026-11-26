@@ -29,6 +29,7 @@
     "ng2-pdf-viewer": "^10.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "web-vitals": "^6.2.3",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {

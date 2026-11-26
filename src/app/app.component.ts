@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { HeaderService } from './header/header.service';
 import { SecurityHeadersService } from './service/security-headers.service';
 import { PreferenceSyncService } from './service/preference-sync.service';
+import { RumTelemetryService } from './service/rum-telemetry.service';
 import { UpdateNotificationComponent } from './shared/update-notification/update-notification.component';
 
 @Component({
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit {
 
   headerService = inject(HeaderService);
   private prefSyncService = inject(PreferenceSyncService);
+  private rumTelemetryService = inject(RumTelemetryService);
   autoUpdateService = inject(AutoUpdateService);
 
   constructor(
@@ -40,6 +42,7 @@ export class AppComponent implements OnInit {
     this.prefSyncService.init();
     this.autoUpdateService.checkForUpdate();
     this.securityHeadersService.initializeSecurityHeaders();
+    this.rumTelemetryService.init();
   }
 
 }
